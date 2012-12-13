@@ -1,0 +1,15 @@
+{% extends "/shared/base_layout.html" %}
+
+{% block body %}
+
+<form action="" method="post">
+    <fieldset>
+        {% block form %}
+        {% endblock %}
+    </fieldset>
+    {% block form_buttons %}
+        {% include "/shared/footer_buttons.html" %}
+    {% endblock %}
+</form>
+
+{% endblock %}

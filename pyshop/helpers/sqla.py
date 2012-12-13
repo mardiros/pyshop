@@ -1,0 +1,142 @@
+import re
+
+from zope.sqlalchemy import ZopeTransactionExtension
+
+from sqlalchemy import Column, Integer, DateTime, engine_from_config
+from sqlalchemy.interfaces import PoolListener
+from sqlalchemy.exc import DisconnectionError
+from sqlalchemy.sql.expression import func, asc, desc
+
+from sqlalchemy.orm import scoped_session, sessionmaker, joinedload
+from sqlalchemy.ext.declarative import declarative_base, declared_attr
+
+
+class _Base(object):
+
+    @declared_attr
+    def __tablename__(cls):
+        # CamelCase to underscore cast
+        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', cls.__name__)
+        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
+    __table_args__ = {'mysql_engine': 'InnoDB',
+                      'mysql_charset': 'utf8'
+                      }
+
+    id =  Column(Integer(unsigned=True), primary_key=True)
+    created_at = Column(DateTime, default=func.now())
+
+    @classmethod
+    def by_id(cls, session, id):
+        return cls.first(session, where=(cls.id == id,))
+
+    @classmethod
+    def find(cls, session, join=None, where=None, order_by=None, limit=None,
+             offset=None, count=False):
+        qry = cls.build_query(session, join, where, order_by, limit,
+                              offset)
+        return qry.count() if count else qry.all()
+
+    @classmethod
+    def first(cls, session, join=None, where=None, order_by=None):
+        return cls.build_query(session, join, where, order_by).first()
+
+    @classmethod
+    def all(cls, session, page_size=1000, order_by=None):
+        offset = 0
+        order_by = order_by or cls.id
+        while True:
+            page = cls.find(session, order_by=order_by,
+                limit=page_size, offset=offset)
+            for m in page:
+                yield m
+            session.flush()
+            if len(page) != page_size:
+                raise StopIteration()
+            offset += page_size
+
+    @classmethod
+    def build_query(cls, session, join=None, where=None, order_by=None,
+                    limit=None, offset=None):
+        query = session.query(cls)
+
+        to_model = lambda m: getattr(cls, m) if isinstance(m, basestring)\
+                             else m
+
+        if join:
+            if isinstance(join, (list, tuple)):
+                for j in join:
+                    query = query.join(to_model(j))
+            else:
+                query = query.join(to_model(join))
+
+        if where:
+            for filter in where:
+                query = query.filter(filter)
+
+        if order_by is not None:
+            if isinstance(order_by, (list, tuple)):
+                fields = []
+                for ob in order_by:
+                    fields.append(ob)
+                query = query.order_by(*fields)
+            else:
+                if isinstance(order_by, basestring):
+                    order_by = order_by.split(' ', 1)
+                    field = getattr(cls, order_by[0])
+                    if len(order_by) > 1 and order_by[1] == 'desc':
+                        field = desc(field)
+                else:
+                    field = order_by
+                query = query.order_by(field)
+        if limit:
+            query = query.limit(limit)
+        if offset:
+            query = query.offset(offset)
+        return query
+
+
+class Database(object):
+    databases = {}
+
+    @classmethod
+    def register(cls, name):
+        if name not in cls.databases:
+            cls.databases[name] = declarative_base(cls=_Base)
+        return cls.databases[name]
+
+    @classmethod
+    def get(cls, name):
+        return cls.databases[name]
+
+
+class SessionFactory(object):
+
+    sessions = {}
+
+    @classmethod
+    def register(cls, name, scoped):
+        if scoped:
+            cls.sessions[name] = scoped_session(sessionmaker(
+                extension=ZopeTransactionExtension()))
+        else:
+            cls.sessions[name] = sessionmaker()
+        return cls.sessions[name]
+
+    @classmethod
+    def get(cls, name):
+        return cls.sessions[name]
+
+
+def create_engine(db_name, settings, prefix='sqlalchemy.', scoped=False):
+    engine = engine_from_config(settings, prefix)
+
+    DBSession = SessionFactory.register(db_name, scoped)
+    DBSession.configure(bind=engine)
+    Database.get(db_name).metadata.bind = engine
+
+    return engine
+
+
+def dispose_engine(db_name):
+    Database.get(db_name).metadata.bind.dispose()

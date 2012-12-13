@@ -1,0 +1,8 @@
+0.1
+---
+
+-  Initial version.
+vital functionnality:
+  - work with pip, setuptools
+  - mirror package
+  - secure access with login password

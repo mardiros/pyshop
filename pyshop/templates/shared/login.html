@@ -1,0 +1,23 @@
+{% extends "/shared/form_layout.html" %}
+
+{% block form %}
+
+    {% if errors %}
+        {%for errormessage in errors %}
+            <div class="error">
+                <span>{{ errormessage }}</span>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <ul>
+        <li>
+            <label>Login:</label>
+            <input name="user.login" type="text" value="{{user.login}}">
+        </li>
+        <li>
+            <label>Password:</label>
+            <input name="user.password" type="password">
+        </li>
+    </ul>
+{% endblock %}

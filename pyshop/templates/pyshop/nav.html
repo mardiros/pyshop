@@ -1,0 +1,5 @@
+{% import "macro/nav.html" as nav %}
+
+{{nav.nav(request, 'list_package', 'packages',
+    ['list_package', 'create_package',
+     'edit_package', 'delete_package'])}}

@@ -1,0 +1,40 @@
+{% extends "/pyshop/layout.html" %}
+
+{% block title %}
+    {% trans %}Available Packages{% endtrans %}
+{% endblock %}
+
+
+{% block main %}
+<h4>{% trans %}Local package{% endtrans %}</h4>
+
+<table>
+    {% for pkg in local_packages %}
+        <tr>
+            <td>
+                <a href="{{ route_url('show_package', package_name=pkg.name) }}">
+                    {{ pkg.name }}
+                </a>
+            </td>
+            <td>{{ pkg.releases[-1].version }}</td>
+            <td></td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h4>{% trans %}Mirrored package{% endtrans %}</h4>
+<table>
+    {% for pkg in mirrored_packages %}
+        <tr>
+            <td>
+                <a href="{{ route_url('show_package', package_name=pkg.name) }}">
+                    {{ pkg.name }}
+                </a>
+            </td>
+            <td>{{ pkg.releases[-1].version }}</td>
+            <td>{{ pkg.downloads }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

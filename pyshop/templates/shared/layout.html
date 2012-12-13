@@ -1,0 +1,75 @@
+{% extends "/shared/base_layout.html" %}
+
+{% block body %}
+
+    <header>
+        <h1>{% block maintitle %}
+        <a href="{{ route_url('index') }}">pyshop</a>
+        <figure>
+            {{pyshop.login}}
+        </figure>
+        {% endblock %}</h1>
+        <nav>
+            {% block mainnav %}
+            {% endblock %}
+        </nav>
+    </header>
+    <section class="main">
+        <nav class="subnav">
+            {% block subnav %}
+            {% endblock %}
+        </nav>
+        <article class="page">
+            <header>
+                <h4>{% block title %}{% endblock %}</h4>
+            </header>
+            {% block messages %}
+                {% block error %}
+                    {% if errormessage %}
+                        <div class="error">
+                            <span>{{ errormessage }}</span>
+                        </div>
+                    {% endif %}
+                    {% if errors %}
+                        {%for errormessage in errors %}
+                            <div class="error">
+                                <span>{{ errormessage }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endblock %}
+                {% block warn %}
+                    {% if warnmessage %}
+                        <div class="warn">
+                            <span>{{ warnmessage }}</span>
+                        </div>
+                    {% endif %}
+                {% endblock %}
+                {% block info %}
+                    {% if infomessage %}
+                        <div class="info">
+                            <span>{{ infomessage }}</span>
+                        </div>
+                    {% endif %}
+                {% endblock %}
+            {% endblock %}
+            <div>
+                <nav class="toolbar">
+                    {% block toolbar %}
+                    {% endblock %}
+                </nav>
+                <section>
+                    {% block main %}
+                    {% endblock %}
+                </section>
+                <footer class="paging">
+                    {% block paging %}
+                    {% endblock %}
+                </footer>
+            </div>
+        </article>
+    </section>
+    <footer>
+        <div>pyshop v{{pyshop.version}}</div>
+    </footer>
+{% endblock %}

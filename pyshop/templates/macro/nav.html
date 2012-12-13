@@ -1,0 +1,7 @@
+{% macro nav(request, route, text, selected=None) -%}
+    {% set selected = selected or [route] %}
+    <a href="{{ request.route_url(route) }}"
+    {%if request.matched_route.name in selected %}class="selected"{%endif%}>
+       {{text}}
+    </a>
+{%- endmacro %}
