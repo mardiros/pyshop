@@ -7,7 +7,7 @@ A cheeseshop clone (PyPI server) written in pyramid
 Getting Started
 ---------------
 
-.. code-block: bash
+::
 
     $ virtualenv pyshop
     $ cd pyshop
@@ -23,7 +23,7 @@ with restriction right.
 For editing permission, the web user interface is not ready.
 You can use the pyshop shell.
 
-.. code-block: bash
+::
 
     (pyshop)$ pyshop_shell
 
@@ -43,7 +43,7 @@ edit to use PyShop.
 
 Configuration used by pip
 
-.. code-block: ini
+::
 
     [install]
     index-url = http://admin:changeme@localhost:6543/simple/
@@ -55,7 +55,7 @@ Configuration used by pip
 
 Configuration used by setuptools to upload package
 
-.. code-block: ini
+::
 
     [distutils]
     index-servers =
@@ -70,7 +70,7 @@ Configuration used by setuptools to upload package
 setup.cfg
 ~~~~~~~~~
 
-.. code-block: ini
+::
 
     [easy_install]
     index-url = http://admin:changeme@localhost:6543/simple/
