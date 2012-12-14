@@ -46,7 +46,7 @@ class Group(Base):
 
     @classmethod
     def by_name(cls, session, name):
-        return cls.first(where=(cls.name == name,))
+        return cls.first(session, where=(cls.name == name,))
 
 
 user__group = Table('user__group', Base.metadata,
@@ -106,14 +106,6 @@ class User(Base):
             return None
         if crypt.check(user.password, password):
             return user
-
-
-class AuthorizedIP(Base):
-    address = Column(Unicode(40), unique=True)
-
-    @classmethod
-    def by_address(cls, session, address):
-        return cls.find(session, where=(cls.address == address,))
 
 
 class Classifier(Base):
