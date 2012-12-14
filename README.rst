@@ -13,7 +13,7 @@ Getting Started
     $ cd pyshop
     (pyshop)$ source bin/activate
     (pyshop)$ pip install git+https://github.com/mardiros/pyshop.git
-    (pyshop)$ initialize_pyshop_db development.ini
+    (pyshop)$ pyshop_install development.ini
     (pyshop)$ pserve development.ini  --log-file=pyshop.log
 
 
