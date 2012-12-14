@@ -7,7 +7,7 @@ from pyramid.security import authenticated_userid, remember, forget
 from pyramid.response import Response
 
 from pyshop.helpers.i18n import trans as _
-from pyshop.models import DBSession, User, AuthorizedIP
+from pyshop.models import DBSession, User
 
 from .base import View
 
@@ -59,10 +59,8 @@ def authbasic(request):
         username, password = data.decode('base64').split(':', 1)
         if User.by_credentials(DBSession(), username, password):
             headers = remember(request, username)
-            return HTTPFound(location=route_url('repository', request,
-                             file_id=request.matchdict['file_id'],
-                             filename=request.matchdict['filename']))
+            return HTTPFound(location=request.url)
     return Response(status=401,
-                    headerlist=[('WWW-Authenticate', 
+                    headerlist=[('WWW-Authenticate',
                                  'Basic realm="pyshop repository access"',)],
                     )
