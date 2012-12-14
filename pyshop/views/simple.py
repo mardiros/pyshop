@@ -11,7 +11,6 @@ from pyramid.url import route_url
 from pyshop.models import User, Package, Classifier, Release, ReleaseFile
 from pyshop.helpers import pypi
 from pyshop.helpers.i18n import trans as _
-from pyshop.tasks import MirrorPyPIRelease
 
 from .base import View
 
@@ -203,7 +202,6 @@ class Show(View):
                     pkg.maintainers.append(user)
 
         session.flush()
-        # MirrorPyPIRelease.delay(package_name)
 
         refresh = True
         if not pkg.local and refresh:
