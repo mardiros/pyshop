@@ -13,6 +13,7 @@ with open(os.path.join(here, 'pyshop', '__init__.py')) as v_file:
 
 requires = [
     'pyramid',
+    'waitress',  # XXX not used but missing deps ?
     'SQLAlchemy',
     'pyramid_debugtoolbar',
     'pyramid_scss',
@@ -67,7 +68,7 @@ setup(name='pyshop',
       [paste.app_factory]
       main = pyshop:main
       [console_scripts]
-      initialize_pyshop_db = pyshop.bin.install:main
+      pyshop_install = pyshop.bin.install:main
       pyshop_shell = pyshop.bin.shell:main
       """,
       paster_plugins=['pyramid'],
