@@ -7,7 +7,7 @@ from sqlalchemy import engine_from_config
 from pyshop.helpers.sqla import create_engine, dispose_engine
 from pyshop.models import (Base, DBSession,
                            Permission, Group, User,
-                           AuthorizedIP)
+                           )
 
 
 def usage(argv):
@@ -23,27 +23,38 @@ def populate(engine):
     session = DBSession()
     user_perm = Permission(name=u'user_view')
     admin_perm = Permission(name=u'admin_view')
+    download_perm = Permission(name=u'download_releasefile')
+    upload_perm = Permission(name=u'upload_releasefile')
     session.add(user_perm)
+    session.add(upload_perm)
+    session.add(download_perm)
     session.add(admin_perm)
 
     user_group = Group(name=u'user')
     user_group.permissions.append(user_perm)
+    user_group.permissions.append(download_perm)
+    user_group.permissions.append(upload_perm)
     session.add(user_group)
+
     admin_group = Group(name=u'admin')
     admin_group.permissions.append(user_perm)
+    admin_group.permissions.append(download_perm)
+    admin_group.permissions.append(upload_perm)
     admin_group.permissions.append(admin_perm)
     session.add(admin_group)
 
-    admin = User(login=u'admin', password=u'changeme', email=u'root@localhost')
+
+    login = raw_input('administrator login [admin]:') or 'admin'
+    password = raw_input('administrator password [changeme]:') or 'changeme'
+    email = raw_input('administrator email [root@localhost]') or 'root@localhost'
+
+    admin = User(login=unicode(login),
+                 password=unicode(password),
+                 email=unicode(email))
     admin.groups.append(user_group)
     admin.groups.append(admin_group)
     session.add(admin)
 
-    ip = User(login=u'ip', password=u'changeme', email=u'root@localhost')
-    ip.groups.append(user_group)
-    session.add(ip)
-
-    session.add(AuthorizedIP(address=u'127.0.0.1'))
     session.commit()
 
 
