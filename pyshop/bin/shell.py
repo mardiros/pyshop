@@ -11,7 +11,8 @@ from sqlalchemy import engine_from_config
 from pyramid.paster import get_appsettings, setup_logging
 from pyramid.config import Configurator
 
-from pyshop.models import DBSession, initialize_sql
+from pyshop.helpers.sqla import create_engine, dispose_engine
+from pyshop.models import DBSession
 from pyshop.helpers import pypi
 
 
@@ -27,20 +28,12 @@ def main(argv=sys.argv):
     if len(argv) != 2:
         usage(argv)
     config_uri = argv[1]
-    setup_logging(config_uri)
-    settings = get_appsettings(config_uri, 'main')
-    engine = engine_from_config(settings, 'sqlalchemy.')
-    initialize_sql(engine)
-    pypi.set_proxy(settings['pypi.url'])
+    settings = get_appsettings(config_uri)
+    engine = create_engine('pyshop', settings, scoped=False)
 
     config = Configurator(settings=settings)
     config.end()
 
-    # XXX Configure pyramid_celery, something looks wrong, the bad way ???
-    # from pyramid_celery.commands.celeryctl import CeleryCtl
-    # CeleryCtl().setup_app_from_commandline(argv)
-
-    # add models and session to locals
     from pyshop.models import (User, Group,
                                Package, Release, ReleaseFile)
 
@@ -50,7 +43,7 @@ def main(argv=sys.argv):
         from IPython.config.loader import Config
         cfg = Config()
         cfg.InteractiveShellEmbed.confirm_exit = False
-        embed(config=cfg, banner1="pyshop shell.")
+        embed(config=cfg, banner1="Welcome to PyShop shell.")
     except ImportError:
         import code
         code.interact("pyshop shell", local=locals())
