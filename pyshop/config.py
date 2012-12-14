@@ -38,7 +38,8 @@ def includeme(config):
     config.add_translation_dirs('locale/')
 
     # PyPI url for XML RPC service consume
-    pypi.set_proxy(config.registry.settings['pypi.url'])
+    pypi.set_proxy(config.registry.settings['pypi.url'],
+                   config.registry.settings.get('pypi.transport_proxy'))
 
     # Javascript + Media
     config.add_static_view('static', 'static', cache_max_age=3600)
@@ -63,6 +64,12 @@ def includeme(config):
                     route_name='show_simple',
                     context='pyramid.exceptions.Forbidden'
                     )
+
+    config.add_view('pyshop.views.credentials.authbasic',
+                    route_name='repository',
+                    context='pyramid.exceptions.Forbidden'
+                    )
+
 
     config.add_route(u'login', u'/login',)
     config.add_view(u'pyshop.views.login',
