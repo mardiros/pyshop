@@ -31,7 +31,7 @@ class ReleaseFileRenderer(object):
                 dir_ = os.path.join(self.repository_root,
                              value['filename'][0].lower())
                 if not os.path.exists(dir_):
-                    os.mkdir(dir_, 0750)
+                    os.makedirs(dir_, 0750)
 
                 resp = requests.get(value['url'])
                 with open(f, 'wb') as rf:
