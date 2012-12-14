@@ -39,7 +39,8 @@ class RouteSwithchAuthPolicy(CallbackAuthenticationPolicy):
     def __init__(self, secret='key',callback=None):
         self.impl = {'basic': AuthBasicAuthenticationPolicy(callback=callback),
                      'tk': AuthTktAuthenticationPolicy(secret,
-                                                       callback=callback)
+                                                       callback=callback,
+                                                       hashalg='sha512')
                      }
         self.callback=callback
 

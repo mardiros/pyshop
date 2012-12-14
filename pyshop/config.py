@@ -54,84 +54,83 @@ def includeme(config):
                     renderer=u'shared/login.html',
                     context=u'pyramid.exceptions.Forbidden')
 
-    config.add_view('pyshop.views.credentials.authbasic', 
+    config.add_view('pyshop.views.credentials.authbasic',
                     route_name='list_simple',
                     context='pyramid.exceptions.Forbidden'
                     )
 
-    config.add_view('pyshop.views.credentials.authbasic', 
+    config.add_view('pyshop.views.credentials.authbasic',
                     route_name='show_simple',
                     context='pyramid.exceptions.Forbidden'
                     )
 
-    config.add_route(u'login', u'/login',
-        view=u'pyshop.views.login',
-        view_renderer=u'shared/login.html')
+    config.add_route(u'login', u'/login',)
+    config.add_view(u'pyshop.views.login',
+                    route_name=u'login',
+                    renderer=u'shared/login.html')
 
-    config.add_route(u'logout', u'/logout',
-        view=u'pyshop.views.logout',
-        view_permission=u'user_view')
+    config.add_route(u'logout', u'/logout')
+    config.add_view(u'pyshop.views.logout',
+                    route_name=u'logout',
+                    permission=u'user_view')
 
     # Home page
-    config.add_route(u'index', u'/',
-        view=u'pyshop.views.index',
-        view_permission=u'user_view')
+    config.add_route(u'index', u'/')
+    config.add_view(u'pyshop.views.index',
+                    route_name=u'index',
+                    permission=u'user_view')
 
     # Archive downloads
     config.add_route(u'repository',
                      u'/repository/{file_id}/{filename:.*}',
-                     renderer=u'repository',
-                     request_method=u'GET',
-                     view=u'pyshop.views.repository.get_release_file',
-                     view_permission=u'download_releasefile')
+                     request_method=u'GET')
+    config.add_view(u'pyshop.views.repository.get_release_file',
+                    route_name=u'repository',
+                    renderer=u'repository',
+                    permission=u'download_releasefile')
 
     # Simple views used by pip
 
-    config.add_route(u'list_simple',
-                     u'/simple/',
-                     request_method=u'GET',
-                     view=u'pyshop.views.list_simple',
-                     view_renderer=u'pyshop/simple/list.html')
+    #config.add_route(u'list_simple', u'/simple', request_method=u'GET')
+    config.add_route(u'list_simple', u'/simple/', request_method=u'GET')
 
-    config.add_route(u'show_simple',
-                     u'/simple/{package_name}/',
-                     view=u'pyshop.views.show_simple',
-                     view_renderer=u'pyshop/simple/show.html',
-                     view_permission=u'user_view')
+    config.add_view(u'pyshop.views.list_simple',
+                    route_name=u'list_simple',
+                    renderer=u'pyshop/simple/list.html',
+                    permission=u"download_releasefile")
+
+    config.add_route(u'show_simple', u'/simple/{package_name}/')
+    config.add_view(u'pyshop.views.show_simple',
+                    route_name=u'show_simple',
+                    renderer=u'pyshop/simple/show.html',
+                    permission=u'user_view')
 
     # Used by setup.py sdist upload
 
-    config.add_route(u'upload_releasefile',
-                     u'/simple/',
-                     request_method=u'POST',
-                     view=u'pyshop.views.list_simple',
-                     view_permission=u'upload_releasefile')
+    config.add_route(u'upload_releasefile', u'/simple/',
+                     request_method=u'POST')
 
+    config.add_view(u'pyshop.views.list_simple',
+                     route_name=u'upload_releasefile',
+                     permission=u'upload_releasefile')
 
     # Web Services
-
-    config.add_route(u'json_list_package',
-                     u'/pypi/{package_name}/json',
-                     view=u'pyshop.views.json.list_package',
-                     view_renderer='json')
-
-    config.add_route(u'json_list_package_version',
-                     u'/pypi/{package_name}/{version}/json',
-                     view=u'pyshop.views.json.list_package_version',
-                     view_renderer='json')
 
     config.add_view('pyshop.views.xmlrpc.PyPI', name='pypi')
 
     # Backoffice Views
 
-    config.add_route(u'list_package',
-                     u'/pyshop/package',
-                     view=u'pyshop.views.list_package',
-                     view_renderer=u'pyshop/package/list.html',
-                     view_permission=u'user_view')
+    config.add_route(u'list_package', u'/pyshop/package')
+    config.add_view(u'pyshop.views.list_package',
+                    route_name='list_package',
+                    renderer=u'pyshop/package/list.html',
+                    permission=u'user_view')
 
     config.add_route(u'show_package',
-                     u'/pyshop/package/{package_name}',
-                     view=u'pyshop.views.show_package',
-                     view_renderer=u'pyshop/package/show.html',
-                     view_permission=u'user_view')
+                     u'/pyshop/package/{package_name}')
+
+    config.add_view(u'pyshop.views.show_package',
+                    route_name=u'show_package',
+                    renderer=u'pyshop/package/show.html',
+                    permission=u'user_view')
+
