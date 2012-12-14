@@ -41,6 +41,7 @@ class RouteSwithchAuthPolicy(CallbackAuthenticationPolicy):
                      'tk': AuthTktAuthenticationPolicy(secret,
                                                        callback=callback)
                      }
+        self.callback=callback
 
     def get_impl(self,request):
         if request.matched_route.name in ('list_simple', 'show_simple'):
