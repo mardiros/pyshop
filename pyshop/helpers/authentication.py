@@ -45,7 +45,8 @@ class RouteSwithchAuthPolicy(CallbackAuthenticationPolicy):
         self.callback=callback
 
     def get_impl(self,request):
-        if request.matched_route.name in ('list_simple', 'show_simple'):
+        if request.matched_route.name in ('list_simple', 'show_simple',
+                                          'repository'):
             return self.impl['basic']
         return self.impl['tk']
 
