@@ -9,10 +9,6 @@ class GroupFinder(object):
 
     def __call__(self, login, request):
 
-        print "*"*80
-        print login
-        print "*"*80
-
         if login in self._users:
             return self._users[login]
 
