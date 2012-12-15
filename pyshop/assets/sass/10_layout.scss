@@ -1,0 +1,86 @@
+body.pyshop {
+    > header {
+        margin: 0;
+        padding: 0;
+        position: relative;
+        height: 6em;
+        background-color: #111;
+        color: #BBB;
+        h1 {
+            padding: 0;
+            margin: 0;
+            display: inline-block;
+            line-height: 2em;
+            a {
+                display: inline-block;
+                vertical-align: bottom;
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+        }
+        figure {
+            float: right;
+            padding: 1em;
+            margin: 0;
+            white-space: no-wrap;
+            a:before {
+                content: "|";
+            }
+        }
+        a, a:active, a:visited {
+            color: #40CCFF;
+        }
+
+        .subnav {
+            clear: both;
+            &:before {
+                content: "»";
+            }
+            a:after {
+                content: "»";
+            }
+            a {
+                display: inline-block;
+            }
+            h2 {
+                margin: 0;
+                padding: 0;
+                display: inline-block;
+            }
+        }
+    }
+
+    > .main {
+        width: 100%;
+        overflow: auto;
+        position:absolute;
+        top: 6em;
+        bottom: 1.6em;
+        margin :0;
+        background-color: #F4F4F4;
+        .page {
+            padding: 1em;
+        }
+    }
+    > footer {
+        position: absolute;
+        display:block;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        bottom: 0;
+        background-color: #111;
+        color: #BBB;
+        height: 1.6em;
+        div {
+            display: inline-block;
+            vertical-align: middle;
+
+            a, a:active, a:visited {
+                color: #40CCFF;
+            }
+
+        }
+    }
+}

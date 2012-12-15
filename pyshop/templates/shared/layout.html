@@ -4,25 +4,28 @@
 
     <header>
         <h1>{% block maintitle %}
-        <a href="{{ route_url('index') }}">pyshop</a>
+            <a href="{{ route_url('index') }}">pyshop</a>
+        </h1>
         <figure>
+            {% trans %}Logged as {% endtrans %}
             {{pyshop.login}}
+            <a href="{{route_url('logout')}}">
+              {% trans %}Sign out{% endtrans %}
+            </a>
         </figure>
-        {% endblock %}</h1>
+        {% endblock %}
         <nav>
             {% block mainnav %}
             {% endblock %}
         </nav>
-    </header>
-    <section class="main">
         <nav class="subnav">
             {% block subnav %}
             {% endblock %}
         </nav>
+    </header>
+    <section class="main">
         <article class="page">
-            <header>
-                <h4>{% block title %}{% endblock %}</h4>
-            </header>
+            {% block title %}{% endblock %}
             {% block messages %}
                 {% block error %}
                     {% if errormessage %}
@@ -54,22 +57,18 @@
                 {% endblock %}
             {% endblock %}
             <div>
-                <nav class="toolbar">
-                    {% block toolbar %}
-                    {% endblock %}
-                </nav>
                 <section>
                     {% block main %}
                     {% endblock %}
                 </section>
-                <footer class="paging">
-                    {% block paging %}
-                    {% endblock %}
-                </footer>
             </div>
         </article>
     </section>
     <footer>
-        <div>pyshop v{{pyshop.version}}</div>
+        <div>
+            <a href="https://github.com/mardiros/pyshop/">
+                pyshop v{{pyshop.version}}
+            </a>
+        </div>
     </footer>
 {% endblock %}

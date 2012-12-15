@@ -1,44 +1,66 @@
 {% extends "/pyshop/layout.html" %}
 
-{% block title %}
-    Package {{package.name}}
+{% block subnav %}
+    <a href="{{ route_url('list_package')}}">
+        {% trans %}package{% endtrans %}
+    </a>
+    <h2>{{package.name}}</h2>
 {% endblock %}
 
 {% set release = package.releases[-1] %}
 
 {% block main %}
-
-<section class="release-download">
-    <h4>download</h4>
+<section id="release-download" class="release-download">
+    <h5>download</h5>
+    <a class="anchor" href="#release-files">&darr;</a>
     {% for f in release.files %}
-        <a href="{{ route_url('repository', file_id=f.id, filename=f.filename)
-                                   }}#{{ f.md5_digest }}">{{f.filename}}
-        </a><br/>
+        <a class="download"
+           href="{{ route_url('repository', file_id=f.id, filename=f.filename)
+                   }}#{{ f.md5_digest }}">{{f.filename}}
+        </a>
     {% endfor %}
 </section>
 
-<section class="release-summary">
-    <h4> {{ release.summary }} </h4>
+<section id="release-summary" class="release-summary">
+    <h5> {{ release.summary }} </h5>
     <div> {{ parse_rest(release.description) }} </div>
 </section>
 
-<table>
-    {% for release in package.releases|reverse %}
-    <tr>
-        <td>
-            {{ package.name }}
-        </td>
-        <td>
-            {{ release.version }}
-        </td>
-        <td>
-            {{ release.author.login }}
-        </td>
-        <td>{% if release.downloads > 0 %}
-                [mirrored]
-            {% endif%}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+<section id="release-files" class="release-files">
+    <h5>{% trans %}release files{% endtrans %}</h5>
+    <table>
+        <colgroup>
+            <col class="label"></col>
+            <col class="version"></col>
+            <col class="author"></col>
+            <col class="download"></col>
+        </colgroup>
+        <tr>
+            <th>{% trans %} files {% endtrans %}</th>
+            <th>{% trans %} version {% endtrans %}</th>
+            <th>{% trans %} author {% endtrans %}</th>
+            <th>{% trans %} downloads {% endtrans %}</th>
+        </tr>
+        {% for release in package.releases|reverse %}
+        <tr>
+            <td>
+                {% for f in release.files %}
+                    <a class="download"
+                       href="{{ route_url('repository', file_id=f.id,
+                                filename=f.filename)
+                               }}#{{ f.md5_digest }}">{{f.filename}}
+                    </a>
+                {% endfor %}
+            </td>
+            <td class="num">
+                v{{ release.version }}
+            </td>
+            <td>
+                {{ release.author.login }}
+            </td>
+            <td class="num">{{ release.downloads }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</section
 {% endblock %}

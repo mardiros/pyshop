@@ -1,12 +1,12 @@
 {% extends "/pyshop/layout.html" %}
 
-{% block title %}
-    {% trans %}Available Packages{% endtrans %}
+{% block subnav %}
+    <h2>{% trans %}Available Packages{% endtrans %}</h2>
 {% endblock %}
 
 
 {% block main %}
-<h4>{% trans %}Local package{% endtrans %}</h4>
+<h4>{% trans %}Local packages:{% endtrans %}</h4>
 
 <table>
     {% for pkg in local_packages %}
@@ -22,8 +22,17 @@
     {% endfor %}
 </table>
 
-<h4>{% trans %}Mirrored package{% endtrans %}</h4>
+<h4>{% trans %}Mirrored packages:{% endtrans %}</h4>
 <table>
+    <colgroup>
+        <col class="label"><col class="version"><col class="download">
+    </colgroup>
+    <tr>
+        <th>{% trans %} package {% endtrans %}</th>
+        <th>{% trans %} last version {% endtrans %}</th>
+        <th>{% trans %} downloads {% endtrans %}</th>
+    </tr>
+
     {% for pkg in mirrored_packages %}
         <tr>
             <td>
@@ -31,8 +40,8 @@
                     {{ pkg.name }}
                 </a>
             </td>
-            <td>{{ pkg.releases[-1].version }}</td>
-            <td>{{ pkg.downloads }}</td>
+            <td class="num">{{ pkg.releases[-1].version }}</td>
+            <td class="num">{{ pkg.downloads }}</td>
         </tr>
     {% endfor %}
 </table>
