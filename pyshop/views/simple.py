@@ -45,18 +45,19 @@ class List(View):
 
             input_file = request.POST['content'].file
             filename = request.POST['content'].filename.split(os.path.sep)[-1]
+            filename = filename.split('.', 1)
+            filename[0] = u'%s-%s' % (params['name'], params['version'])
+            filename = u'.'.join(filename)
             dir_ = os.path.join(request.registry.settings['repository.root'],
                                 filename[0].lower())
             if not os.path.exists(dir_):
                 os.mkdir(dir_, 0750)
 
-            basename, ext = filename.split('.', 1)
             filepath = os.path.join(dir_, filename)
-            cnt = 1
             while os.path.exists(filepath):
-                filename = '%s[%i].%s' % (basename, cnt, ext)
-                filepath = os.path.join(dir_, filename)
-                cnt += 1
+                log.warn("File %s exists but new upload request, deleting" %
+                         filepath)
+                os.unlink(filepath)
 
             with open(filepath, 'wb') as output_file:
                 input_file.seek(0)
@@ -68,11 +69,11 @@ class List(View):
                     output_file.close()
 
             release = Release.by_version(session, pkg.name,
-                                         params.get('version'))
+                                         params['version'])
             if not release:
                 release = Release(package=pkg,
-                                  version = params.get('version'),
-                                  summary = params.get('summary'),
+                                  version=params['version'],
+                                  summary=params.get('summary'),
                                   author=remote_user,
                                   home_page=params.get('home_page'),
                                   license=params.get('license'),
