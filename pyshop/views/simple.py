@@ -168,28 +168,42 @@ class Show(View):
                            )
 
     def render(self, request, session):
+
         api = pypi.proxy
         package_name = request.matchdict['package_name']
         pkg = Package.by_name(session, package_name)
         refresh = True
+
         if pkg:
             if pkg.local:
                 refresh = False
             else:
                 if pkg.update_at:
                     td = datetime.now() - pkg.update_at
-                    refresh = td.days != 0 or td.seconds > 10800
+                    refresh = td.days > 0 or td.seconds > 10800
 
         if refresh:
             pypi_versions = api.package_releases(package_name, True)
+            # XXX package_releases is case sensitive
+            # but dependancies declaration not...
+            if not pypi_versions:
+                package_name = package_name.lower()
+                search_result = api.search({'name': package_name}, True)
+                search_result = [p for p in search_result
+                                 if p['name'].lower() == package_name]
+                if search_result:
+                    package_name = search_result[0]['name']
+                    pypi_versions = api.package_releases(package_name, True)
         else:
             pypi_versions = []
 
         if not pkg:
             if not pypi_versions:
+                log.info('package %s has no versions' % package_name)
                 return {'package': None,
                         'package_name': package_name}
             # mirror the package now
+            log.info('mirror package %s now' % package_name)
             pkg = Package(name=package_name, local=False)
             roles = api.package_roles(package_name)
             for role, login in roles:
@@ -223,4 +237,5 @@ class Show(View):
 
         pkg.update_at = func.now()
         session.add(pkg)
-        return {"package": pkg}
+        log.info('package %s mirrored' % package_name)
+        return {'package': pkg}
