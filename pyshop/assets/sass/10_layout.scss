@@ -84,3 +84,27 @@ body.pyshop {
         }
     }
 }
+
+body.login {
+    form {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        width: 300px;
+        min-height: 300px;
+        margin-top: -150px;
+        margin-left: -150px;
+        border: 1px solid $border-color;
+        border-radiuse: 5px;
+
+        h1 {
+            font-size: 2em;
+            padding: 0 1.5em;
+        }
+
+        ul {
+            padding: 0 3em;
+        }
+    }
+}

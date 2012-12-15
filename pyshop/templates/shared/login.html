@@ -1,6 +1,9 @@
 {% extends "/shared/form_layout.html" %}
 
+{% block css_section %}login{% endblock %}
+
 {% block form %}
+    <h1>pyshop</h1>
 
     {% if errors %}
         {%for errormessage in errors %}
@@ -20,4 +23,12 @@
             <input name="user.password" type="password">
         </li>
     </ul>
+{% endblock %}
+
+{% block form_buttons %}
+<footer>
+    <button name="form.submitted" class="primary">
+        <span>Submit</span>
+    </button>
+</footer>
 {% endblock %}

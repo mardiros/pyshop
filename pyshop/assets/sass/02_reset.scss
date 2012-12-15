@@ -23,6 +23,7 @@ button {
     margin: 0;
     padding: 1px 1em;
     background-color: $button-color;
+    border-color: $button-border-color;
     line-height: 1.4em;
     transition: line-height 0.2s linear 0s, box-shadow 0.2s linear 0s
 }
@@ -62,7 +63,7 @@ table {
         border-width: 0 1px;
     }
     td {
-        border: 0 solid $border-color;
+        border: 0 solid $table-border-color;
         border-width: 1px 0;
         padding: 3px;
         background-color: #DDD;
@@ -75,18 +76,23 @@ table {
     }
 }
 
-a {
+a, a:visited {
     text-decoration: none;
     color: $link-color;
-}
-
-a:visited {
-    @extend a;
 }
 
 a:hover {
     text-decoration: underline;
     color: $link-color;
+}
+
+form, fieldset {
+    display: block;
+    border: none;
+}
+
+input, textarea {
+    border: 1px solid $input-border-color;
 }
 
 textarea {
@@ -109,6 +115,6 @@ input[type=text]:focus,
 input[type=password]:focus,
 textarea:focus,
 button:hover {
-  border-color: #64db32;
-  box-shadow: 0px 0px 6px #64db32;
+  border-color: #3264db;
+  box-shadow: 0px 0px 6px #3264db;
 }
