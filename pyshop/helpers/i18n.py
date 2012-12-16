@@ -1,6 +1,7 @@
 #: Mapping of language codes send by browsers to supported dialects.
 from pyramid.i18n import TranslationStringFactory
 
+
 LANGUAGES = {
         'en-CA': 'en',
         'en-GB': 'en',
@@ -19,5 +20,6 @@ def locale_negotiator(request):
         locale = request.accept_language.best_match(LANGUAGES)
         locale = LANGUAGES.get(locale, 'en')
     return locale
+
 
 trans = TranslationStringFactory('pyshop')

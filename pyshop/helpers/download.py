@@ -1,9 +1,9 @@
 import os
 import os.path
 import mimetypes
-from zope.interface import implements
 
 import requests
+from zope.interface import implements
 from pyramid.interfaces import ITemplateRenderer
 
 
@@ -52,4 +52,3 @@ class ReleaseFileRenderer(object):
 def renderer_factory(info):
     repository_root = info.settings['repository.root']
     return ReleaseFileRenderer(repository_root)
-
