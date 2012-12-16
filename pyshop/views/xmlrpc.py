@@ -218,6 +218,6 @@ class PyPI(XMLRPCView):
         The argument is a UTC integer seconds since the epoch. 
         """
         session = DBSession()
-        release = Release.by_classifier(session, classifier)
+        release = Release.by_classifiers(session, classifier)
         rv = [(r.package.name, r.version) for r in release]
         return rv
