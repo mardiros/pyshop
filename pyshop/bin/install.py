@@ -17,7 +17,7 @@ def usage(argv):
     sys.exit(1)
 
 
-def populate(engine):
+def populate(engine, interactive=True):
 
     Base.metadata.create_all(engine)
     session = DBSession()
@@ -43,10 +43,17 @@ def populate(engine):
     admin_group.permissions.append(admin_perm)
     session.add(admin_group)
 
-
-    login = raw_input('administrator login [admin]:') or 'admin'
-    password = raw_input('administrator password [changeme]:') or 'changeme'
-    email = raw_input('administrator email [root@localhost]') or 'root@localhost'
+    if interactive:
+        login = (raw_input('administrator login [admin]:')
+                 or 'admin')
+        password = (raw_input('administrator password [changeme]:')
+                    or 'changeme')
+        email = (raw_input('administrator email [root@localhost]')
+                 or 'root@localhost')
+    else:
+        login = 'admin'
+        password = 'changeme'
+        email = 'root@localhost'
 
     admin = User(login=unicode(login),
                  password=unicode(password),
