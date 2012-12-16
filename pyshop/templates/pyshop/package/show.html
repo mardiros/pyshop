@@ -14,10 +14,11 @@
     <h5>download</h5>
     <a class="anchor" href="#release-files">&darr;</a>
     {% for f in release.files %}
-        <a class="download"
-           href="{{ route_url('repository', file_id=f.id, filename=f.filename)
-                   }}#{{ f.md5_digest }}">{{f.filename}}
-        </a>
+        {% if f.package_type == 'sdist' %}
+            <a class="download"
+               href="{{ route_url('repository', file_id=f.id, filename=f.filename)
+                       }}#{{ f.md5_digest }}">{{f.filename}}</a>
+        {% endif %}
     {% endfor %}
 </section>
 
