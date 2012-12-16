@@ -25,6 +25,7 @@ def add_urlhelpers(event):
 
 
 def includeme(config):
+
     # config.add_renderer('json', JSONP())
     # release file download
     config.add_renderer('repository', dl_renderer_factory)
@@ -49,27 +50,6 @@ def includeme(config):
     config.add_route('css', '/css/{css_path:.*}.css')
     config.add_view(route_name=u'css', renderer=u'scss', request_method=u'GET',
         view=u'pyramid_scss.controller.get_scss')
-
-    # Credentials
-    config.add_view('pyshop.views.login',
-                    renderer=u'shared/login.html',
-                    context=u'pyramid.exceptions.Forbidden')
-
-    config.add_view('pyshop.views.credentials.authbasic',
-                    route_name='list_simple',
-                    context='pyramid.exceptions.Forbidden'
-                    )
-
-    config.add_view('pyshop.views.credentials.authbasic',
-                    route_name='show_simple',
-                    context='pyramid.exceptions.Forbidden'
-                    )
-
-    config.add_view('pyshop.views.credentials.authbasic',
-                    route_name='repository',
-                    context='pyramid.exceptions.Forbidden'
-                    )
-
 
     config.add_route(u'login', u'/login',)
     config.add_view(u'pyshop.views.login',
@@ -97,8 +77,6 @@ def includeme(config):
                     permission=u'download_releasefile')
 
     # Simple views used by pip
-
-    #config.add_route(u'list_simple', u'/simple', request_method=u'GET')
     config.add_route(u'list_simple', u'/simple/', request_method=u'GET')
 
     config.add_view(u'pyshop.views.list_simple',
@@ -141,3 +119,22 @@ def includeme(config):
                     renderer=u'pyshop/package/show.html',
                     permission=u'user_view')
 
+    # Credentials
+    config.add_view('pyshop.views.login',
+                    renderer=u'shared/login.html',
+                    context=u'pyramid.exceptions.Forbidden')
+
+    config.add_view('pyshop.views.credentials.authbasic',
+                    route_name='list_simple',
+                    context='pyramid.exceptions.Forbidden'
+                    )
+
+    config.add_view('pyshop.views.credentials.authbasic',
+                    route_name='show_simple',
+                    context='pyramid.exceptions.Forbidden'
+                    )
+
+    config.add_view('pyshop.views.credentials.authbasic',
+                    route_name='repository',
+                    context='pyramid.exceptions.Forbidden'
+                    )
