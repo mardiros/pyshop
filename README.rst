@@ -45,9 +45,14 @@ Configuration used by pip
 
 ::
 
+    [global]
+    # when mirroring a package,
+    # pyshop retrieve informations from PyPI and
+    # it can take many times.
+    default-timeout = 60
+    timeout = 60
     [install]
     index-url = http://admin:changeme@localhost:6543/simple/
-    timeout = 30
 
 
 ~/.pypirc
