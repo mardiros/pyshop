@@ -1,14 +1,4 @@
-import unittest
-from pyshop.models import DBSession
-
-
-class ModelTestCase(unittest.TestCase):
-
-    def setUp(self):
-        self.session = DBSession()
-
-    def tearDown(self):
-        self.session.commit()
+from .case import ModelTestCase
 
 
 class GroupTestCase(ModelTestCase):

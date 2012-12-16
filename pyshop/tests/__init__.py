@@ -4,23 +4,18 @@ from pyshop.models import (create_engine, dispose_engine,
                            Classifier, Package, Release,  ReleaseFile
                            )
 from pyshop.bin.install import populate
-
-
-SQLA_SETTINGS = {
-    'sqlalchemy.url': 'sqlite://',
-    'sqlalchemy.echo': False,
-    'sqlalchemy.pool_size': 1
-    }
+from .conf import settings
 
 
 def setUp():
 
-    engine = create_engine(SQLA_SETTINGS)
+    engine = create_engine(settings)
     populate(engine, interactive=False)
 
     session = DBSession()
     local_user = User(login=u'local_user', password=u'secret', local=True,
                       firstname='Local', lastname='User')
+    local_user.groups.append(Group.by_name(session, u'user'))
     jdo = User(login=u'johndo', local=False)
     jdoe = User(login=u'janedoe', local=False)
 
