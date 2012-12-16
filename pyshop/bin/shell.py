@@ -35,7 +35,7 @@ def main(argv=sys.argv):
     config.end()
 
     from pyshop.models import (User, Group,
-                               Package, Release, ReleaseFile)
+                               Classifier, Package, Release, ReleaseFile)
 
     session = DBSession()
     try:
