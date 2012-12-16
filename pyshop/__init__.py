@@ -3,7 +3,7 @@ from pyramid.config import Configurator
 from pyramid.authorization import ACLAuthorizationPolicy as ACLPolicy
 from pyramid.authentication import AuthTktAuthenticationPolicy as AuthPolicy
 
-from .security import groupfinder
+from .security import groupfinder, RootFactory
 
 # used by pyramid
 from .config import includeme
@@ -33,7 +33,7 @@ def main(global_config, **settings):
         authz_policy = ACLPolicy()
 
         config = Configurator(settings=settings,
-                              root_factory='pyshop.resources.RootFactory',
+                              root_factory=RootFactory,
                               locale_negotiator=locale_negotiator,
                               authentication_policy=authn_policy,
                               authorization_policy=authz_policy)
