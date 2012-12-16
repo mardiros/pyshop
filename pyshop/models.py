@@ -99,10 +99,8 @@ class User(Base):
 
     @classmethod
     def by_credentials(cls, session, login, password):
-        user = cls.by_login(session, login)
+        user = cls.by_login(session, login, local=True)
         if not user:
-            return None
-        if not user.local:
             return None
         if crypt.check(user.password, password):
             return user
@@ -114,7 +112,7 @@ class Classifier(Base):
 
     @classmethod
     def by_name(cls, session, name):
-        return cls.first(session, where=(cls.name == name))
+        return cls.first(session, where=(cls.name == name,))
 
 
 package__owner = Table('package__owner', Base.metadata,
@@ -134,7 +132,7 @@ class Package(Base):
 
     update_at = Column(DateTime, default=func.now())
     name = Column(Unicode(200), unique=True)
-    local = Column(Boolean, default=False)
+    local = Column(Boolean, nullable=False, default=False)
     owners = relationship(User, secondary=package__owner,
                           backref='owned_packages')
     downloads = Column(Integer(unsigned=True), default=0)
@@ -143,7 +141,7 @@ class Package(Base):
 
     @property
     def versions(self):
-        return [r.version for r in self.releases]
+        return sorted([r.version for r in self.releases], reverse=True)
 
     @classmethod
     def by_name(cls, session, name):
@@ -153,13 +151,15 @@ class Package(Base):
     def by_owner(cls, session, owner_name):
         return cls.find(session,
                         join=(cls.owners),
-                        where=(User.login == owner_name,))
+                        where=(User.login == owner_name,),
+                        order_by=cls.name)
 
     @classmethod
     def by_maintainer(cls, session, maintainer_name):
         return cls.find(session,
                         join=(cls.maintainers),
-                        where=(User.login == maintainer_name,))
+                        where=(User.login == maintainer_name,),
+                        order_by=cls.name)
 
     @classmethod
     def get_locals(cls, session):
@@ -189,26 +189,23 @@ class Release(Base):
                       'package_id', 'version', unique=True),
                 )
 
-
     version = Column(Unicode(16), nullable=False)
     summary = Column(Unicode(255))
     downloads = Column(Integer(unsigned=True), default=0)
 
     package_id = Column(Integer(unsigned=True), ForeignKey(Package.id),
                         nullable=False)
-    author_id = Column(Integer(unsigned=True), ForeignKey(User.id),
-                       nullable=True)
-    maintainer_id = Column(Integer(unsigned=True), ForeignKey(User.id),
-                           nullable=True)
+    author_id = Column(Integer(unsigned=True), ForeignKey(User.id))
+    maintainer_id = Column(Integer(unsigned=True), ForeignKey(User.id))
     stable_version = Column(Unicode(16))
     home_page = Column(Unicode(255))
     license = Column(UnicodeText())
     description = Column(UnicodeText())
     keywords = Column(Unicode(255))
     platform = Column(Unicode(24))
-    download_url = Column(Unicode(800), nullable=True)
-    bugtrack_url = Column(Unicode(800), nullable=True)
-    docs_url = Column(Unicode(800), nullable=True)
+    download_url = Column(Unicode(800))
+    bugtrack_url = Column(Unicode(800))
+    docs_url = Column(Unicode(800))
     classifiers = relationship(Classifier, secondary=classifier__release,
                                lazy='dynamic', backref='release')
     package = relationship(Package, lazy='join', backref='releases')
@@ -223,33 +220,46 @@ class Release(Base):
                                 (cls.version == version)))
 
     @classmethod
-    def by_classifier(cls, session, classifier):
+    def by_classifiers(cls, session, classifiers):
         return cls.find(session,
                         join=(cls.classifiers,),
-                        where=(cls.classifiers.name.in_(classifier),),
+                        where=(Classifier.name.in_(classifiers),),
                         )
 
     @classmethod
     def search(cls, session, opts, operator):
-        available = ['name', 'version', 'author', 'author_email', 'maintainer',
-                     'maintainer_email', 'home_page', 'license', 'summary',
-                     'description', 'keywords', 'platform', 'download_url']
+        available = {'name': Package.name,
+                     'version' : cls.version,
+                     'author': User.login,
+                     'author_email': User.email,
+                     'maintainer': User.login,
+                     'maintainer_email': User.email,
+                     'home_page': cls.home_page,
+                     'license': cls.license,
+                     'summary': cls.summary,
+                     'description': cls.description,
+                     'keywords': cls.keywords,
+                     'platform': cls.platform,
+                     'download_url': cls.download_url
+                     }
+        oper = {'or': or_, 'and': and_}
+        join_map = {'name': Package,
+                    'author': cls.author,
+                    'author_email': cls.author,
+                    'maintainer': cls.maintainer,
+                    'maintainer_email': cls.maintainer,
+                    }
         where = []
         join = []
-        oper = {'or': or_, 'and': and_}
         for opt, val in opts.items():
-            assert opt in available, u'%s is not valid' % opt
-            if opt == 'name':
-                field = Package.name
-            else:
-                field = getattr(cls, opt)
-
+            field = available[opt]
             if hasattr(val, '__iter__'):
                 stmt = or_([field.like(u'%%%s%%' % v) for v in val])
             else:
                 stmt = field.like(u'%%%s%%' % val)
             where.append(stmt)
-            join.append(Package)
+            if opt in join_map:
+                join.append(join_map[opt])
         return cls.find(session, join=join,
                         where=(oper[operator](*where),))
 
@@ -258,7 +268,7 @@ class ReleaseFile(Base):
 
     release_id = Column(Integer(unsigned=True), ForeignKey(Release.id),
                         nullable=False)
-    filename = Column(Unicode(200), nullable=True)
+    filename = Column(Unicode(200), unique=True, nullable=False)
     md5_digest = Column(Unicode(50))
     size = Column(Integer(nullable=True))
     package_type = Column(Enum(u'sdist', u'bdist_egg', u'bdist_msi',
@@ -266,7 +276,7 @@ class ReleaseFile(Base):
                                u'bdist_wininst'), nullable=False)
 
     python_version = Column(Unicode(25))
-    url = Column(Unicode(1024), nullable=True)
+    url = Column(Unicode(1024))
     downloads = Column(Integer(unsigned=True), default=0)
     has_sig = Column(Boolean(), default=False)
     comment_text = Column(UnicodeText())
@@ -285,4 +295,5 @@ class ReleaseFile(Base):
     def by_filename(cls, session, release, filename):
         return cls.first(session,
                          where=(ReleaseFile.release_id == release.id,
-                                ReleaseFile.filename == filename))
+                                ReleaseFile.filename == filename,
+                                ))
