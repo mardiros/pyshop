@@ -16,7 +16,7 @@ SQLA_SETTINGS = {
 def setUp():
 
     engine = create_engine(SQLA_SETTINGS)
-    populate(engine, user_input=False)
+    populate(engine, interactive=False)
 
     session = DBSession()
     local_user = User(login=u'local_user', password=u'secret', local=True,
