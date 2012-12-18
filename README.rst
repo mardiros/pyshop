@@ -48,7 +48,8 @@ Configuration used by pip
     [global]
     # when mirroring a package,
     # pyshop retrieve informations from PyPI and
-    # it can take many times.
+    # store them in its DB.
+    # Be patient, it is not so long.
     default-timeout = 60
     timeout = 60
     [install]
