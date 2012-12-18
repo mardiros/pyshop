@@ -15,16 +15,33 @@ class AuthBasicAuthenticationPolicy(CallbackAuthenticationPolicy):
     def __init__(self, callback=None):
         self.callback = callback
 
-    def unauthenticated_userid(self, request):
+    def authenticated_userid(self, request):
+
         auth = request.environ.get('HTTP_AUTHORIZATION')
-        if auth is None:
+        try:
+            authmeth, auth = auth.split(' ', 1)
+        except ValueError: # not enough values to unpack
             return None
-        scheme, data = auth.split(None, 1)
-        assert scheme.lower() == 'basic'
-        username, password = data.decode('base64').split(':', 1)
-        if User.by_credentials(DBSession(), username, password):
-            return username
+
+        if authmeth.lower() != 'basic':
+            return None
+
+        try:
+           auth = auth.strip().decode('base64')
+        except binascii.Error: # can't decode
+            return None
+        try:
+            login, password = auth.split(':', 1)
+        except ValueError: # not enough values to unpack
+            return None
+
+        if User.by_credentials(DBSession(), login, password):
+            return login
+
         return None
+
+    def unauthenticated_userid(self, request):
+        return self.authenticated_userid(request)
 
     def remember(self, request, principal, **kw):
         return []
@@ -45,10 +62,15 @@ class RouteSwithchAuthPolicy(CallbackAuthenticationPolicy):
         self.callback=callback
 
     def get_impl(self,request):
+        print "get impl for", request.matched_route.name
         if request.matched_route.name in ('list_simple', 'show_simple',
-                                          'repository'):
+                                          'repository', 'upload_releasefile'):
             return self.impl['basic']
         return self.impl['tk']
+
+    def authenticated_userid(self, request):
+        impl = self.get_impl(request)
+        return impl.authenticated_userid(request)
 
     def unauthenticated_userid(self, request):
         impl = self.get_impl(request)
