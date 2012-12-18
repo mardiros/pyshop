@@ -182,6 +182,11 @@ class Package(Base):
         return cls.first(session, where=(cls.name == name,))
 
     @classmethod
+    def by_filter(cls, session, opts, **kwargs):
+        return cls.find(session,  # where= TODO
+                        **kwargs)
+
+    @classmethod
     def by_owner(cls, session, owner_name):
         return cls.find(session,
                         join=(cls.owners),

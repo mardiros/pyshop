@@ -112,6 +112,12 @@ def includeme(config):
                     renderer=u'pyshop/package/list.html',
                     permission=u'user_view')
 
+    config.add_route(u'list_package_page', u'/pyshop/package/{page_no}')
+    config.add_view(u'pyshop.views.list_package',
+                    route_name='list_package_page',
+                    renderer=u'pyshop/package/list.html',
+                    permission=u'user_view')
+
     config.add_route(u'show_package',
                      u'/pyshop/package/{package_name}')
 

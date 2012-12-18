@@ -1,0 +1,42 @@
+{% if has_page %}
+    {% if paging.no > 1 %}
+        <a href="{{ route_url(paging.route, page_no=(paging.no - 1), **paging.kwargs)}}?{{paging.qs}}">
+            &laquo; previous
+        </a>
+    {% endif %}
+    {% if paging.no > 9 %}
+        <a href="{{ route_url(paging.route, page_no=1, **paging.kwargs)}}?{{paging.qs}}">1</a>
+    {% endif %}
+    {% for p in range(0, paging.no|round(-1, 'floor')|int, 10) %}
+        {% if p > 0 %}
+            {%if paging.no == p %}
+                <span>{{p}}</span>
+            {% else %}
+                <a href="{{ route_url(paging.route, page_no=p, **paging.kwargs)}}?{{paging.qs}}">{{p}}</a>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% for p in range(paging.no|round(-1, 'floor')|int, paging.no|round(-1, 'floor')|int +10) %}
+        {%if paging.no == p %}
+            <span>{{p}}</span>
+        {% else %}
+            {% if 0 < p <= paging.max %}
+                <a href="{{ route_url(paging.route, page_no=p, **paging.kwargs)}}?{{paging.qs}}">{{p}}</a>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% for p in range( paging.no|round(-1, 'floor')|int+10, paging.max, 10) %}
+        {%if paging.no == p %}
+            <span>{{p}}</span>
+        {% else %}
+            {% if p < paging.max %}
+                <a href="{{ route_url(paging.route, page_no=p, **paging.kwargs)}}?{{paging.qs}}">{{p}}</a>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% if paging.no < paging.max %}
+        <a href="{{ route_url(paging.route, probe_id=probe_id, page_no=(paging.no + 1))}}?{{paging.qs}}">
+            next &raquo;
+        </a>
+    {% endif %}
+{% endif %}
