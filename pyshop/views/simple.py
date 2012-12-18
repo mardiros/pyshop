@@ -7,6 +7,7 @@ from sqlalchemy.sql.expression import func
 
 from pyramid import httpexceptions as exc
 from pyramid.url import route_url
+from pyramid.security import authenticated_userid
 
 from pyshop.models import User, Package, Classifier, Release, ReleaseFile
 from pyshop.helpers import pypi
@@ -21,19 +22,18 @@ log = logging.getLogger(__name__)
 class List(View):
 
     def render(self, request, session):
-        if request.method == 'POST':
-            method, data = request.headers['Authorization'].split()
-            if method != 'Basic':
-                raise exc.HTTPBadRequest()
 
-            username, password = data.decode('base64').split(':', 1)
-            remote_user = User.by_credentials(session, username, password)
+        if request.method == 'POST':
+            username = authenticated_userid(request)
+            if not username:
+                 raise exc.HTTPForbidden()
+
+            remote_user = User.by_login(session, username)
             if not remote_user:
                 raise exc.HTTPForbidden()
 
             params = request.params
             pkg = Package.by_name(session, params['name'])
-
             if pkg:
                 auth = [user for user in pkg.owners + pkg.maintainers
                         if user == remote_user]
@@ -103,8 +103,7 @@ class List(View):
             session.add(release)
             pkg.update_at = func.now()
             session.add(pkg)
-
-            return {}
+            return {"release_file": rfile}
 
         return {'packages': Package.all(session, order_by=Package.name)}
 
