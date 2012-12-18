@@ -14,7 +14,7 @@ def setUp():
 
     session = DBSession()
     local_user = User(login=u'local_user', password=u'secret', local=True,
-                      firstname='Local', lastname='User')
+                      firstname=u'Local', lastname=u'User')
     local_user.groups.append(Group.by_name(session, u'user'))
     jdo = User(login=u'johndo', local=False)
     jdoe = User(login=u'janedoe', local=False)
@@ -42,7 +42,7 @@ def setUp():
     session.add(pack1)
 
     release1 = Release(package=pack1, version=u'0.1',
-                       summary='Common Usage Library',
+                       summary=u'Common Usage Library',
                        author=jdoe)
     for c in classifiers[:3]:
         release1.classifiers.append(c)
@@ -52,7 +52,7 @@ def setUp():
     session.add(release1)
 
     release2 = Release(package=pack1, version=u'0.2',
-                       summary='Common Usage Library')
+                       summary=u'Common Usage Library')
     for c in classifiers[:5]:
         release2.classifiers.append(c)
     release2.files.append(ReleaseFile(filename=u'mirrored_package1-0.2.tar.gz',
@@ -68,7 +68,7 @@ def setUp():
     session.add(pack2)
 
     release3 = Release(package=pack2, version=u'1.0',
-                       summary='Web Framework For Everybody')
+                       summary=u'Web Framework For Everybody')
     for c in classifiers[:3] + classifiers[-2:-2]:
         release3.classifiers.append(c)
     session.add(release3)
@@ -81,7 +81,7 @@ def setUp():
     session.add(pack3)
 
     release4 = Release(package=pack3, version=u'0.1',
-                       summary='Pet Shop Application')
+                       summary=u'Pet Shop Application')
     for c in classifiers:
         release4.classifiers.append(c)
     release4.files.append(ReleaseFile(filename=u'local_package1-0.1.tar.gz',

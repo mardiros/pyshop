@@ -23,7 +23,7 @@ class _Base(object):
                       'mysql_charset': 'utf8'
                       }
 
-    id =  Column(Integer(unsigned=True), primary_key=True)
+    id =  Column(Integer, primary_key=True)
     created_at = Column(DateTime, default=func.now())
 
     @classmethod

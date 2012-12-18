@@ -135,7 +135,7 @@ class Package(Base):
     local = Column(Boolean, nullable=False, default=False)
     owners = relationship(User, secondary=package__owner,
                           backref='owned_packages')
-    downloads = Column(Integer(unsigned=True), default=0)
+    downloads = Column(Integer, default=0)
     maintainers = relationship(User, secondary=package__maintainer,
                                backref='maintained_packages')
 
@@ -191,12 +191,12 @@ class Release(Base):
 
     version = Column(Unicode(16), nullable=False)
     summary = Column(Unicode(255))
-    downloads = Column(Integer(unsigned=True), default=0)
+    downloads = Column(Integer, default=0)
 
-    package_id = Column(Integer(unsigned=True), ForeignKey(Package.id),
+    package_id = Column(Integer, ForeignKey(Package.id),
                         nullable=False)
-    author_id = Column(Integer(unsigned=True), ForeignKey(User.id))
-    maintainer_id = Column(Integer(unsigned=True), ForeignKey(User.id))
+    author_id = Column(Integer, ForeignKey(User.id))
+    maintainer_id = Column(Integer, ForeignKey(User.id))
     stable_version = Column(Unicode(16))
     home_page = Column(Unicode(255))
     license = Column(UnicodeText())
@@ -266,19 +266,19 @@ class Release(Base):
 
 class ReleaseFile(Base):
 
-    release_id = Column(Integer(unsigned=True), ForeignKey(Release.id),
+    release_id = Column(Integer, ForeignKey(Release.id),
                         nullable=False)
     filename = Column(Unicode(200), unique=True, nullable=False)
     md5_digest = Column(Unicode(50))
-    size = Column(Integer(nullable=True))
+    size = Column(Integer)
     package_type = Column(Enum(u'sdist', u'bdist_egg', u'bdist_msi',
                                u'bdist_dmg', u'bdist_rpm', u'bdist_dumb',
                                u'bdist_wininst'), nullable=False)
 
     python_version = Column(Unicode(25))
     url = Column(Unicode(1024))
-    downloads = Column(Integer(unsigned=True), default=0)
-    has_sig = Column(Boolean(), default=False)
+    downloads = Column(Integer, default=0)
+    has_sig = Column(Boolean, default=False)
     comment_text = Column(UnicodeText())
 
     release = relationship(Release, backref='files', lazy='join')
