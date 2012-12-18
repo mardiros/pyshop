@@ -108,11 +108,45 @@ class User(Base):
 
 class Classifier(Base):
 
+    @declared_attr
+    def __table_args__(cls):
+        return (Index('idx_%s_category_name' % cls.__tablename__,
+                      'category', 'name', unique=True),
+                )
+
     name = Column(Unicode(255), nullable=False, unique=True)
+    parent_id = Column(Integer, ForeignKey(u'classifier.id'))
+    category = Column(Unicode(80), nullable=False)
+
+    parent = relationship(u'Classifier', remote_side=u'Classifier.id',
+                          backref=u'childs')
+
+    @property
+    def shortname(self):
+        return self.name.rsplit(u'::', 1)[-1].strip()
 
     @classmethod
     def by_name(cls, session, name):
-        return cls.first(session, where=(cls.name == name,))
+
+        classifier = cls.first(session, where=(cls.name == name,))
+
+        if not classifier:
+            splitted_names = [n.strip() for n in name.split(u'::')]
+            classifiers = [u' :: '.join(splitted_names[:i+1])
+                           for i in range(len(splitted_names))]
+            parent_id = None
+
+            for c in classifiers:
+                classifier = cls.first(session, where=(cls.name == c,))
+                if not classifier:
+                    classifier = Classifier(name=c, parent_id=parent_id,
+                                            category=splitted_names[0])
+                    session.add(classifier)
+                session.flush()
+                parent_id = classifier.id
+            category = splitted_names[0]
+
+        return classifier
 
 
 package__owner = Table('package__owner', Base.metadata,

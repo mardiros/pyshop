@@ -32,8 +32,8 @@ def setUp():
                          u'Intended Audience :: Developers',
                          u'Intended Audience :: System Administrators'
                          ]
-    classifiers = [Classifier(name=c)  for c in classifiers_names]
-    [session.add(c) for c in classifiers]
+    classifiers = [Classifier.by_name(session, name=c)
+                   for c in classifiers_names]
 
     pack1 = Package(name=u'mirrored_package1')
     pack1.owners.append(jdo)

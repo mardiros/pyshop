@@ -63,7 +63,13 @@ class ClassifierTestCase(ModelTestCase):
         clsfier = Classifier.by_name(self.session,
                                      u'Topic :: Software Development')
         self.assertIsInstance(clsfier, Classifier)
+        self.assertEqual(clsfier.category, u'Topic')
         self.assertEqual(clsfier.name, u'Topic :: Software Development')
+
+        parent = Classifier.by_name(self.session, u'Topic')
+        self.assertEqual(clsfier.parent_id, parent.id)
+        self.assertEqual(sorted([c.shortname for c in parent.childs]),
+                         [u'Software Development', u'System'])
 
 
 class PackageTestCase(ModelTestCase):

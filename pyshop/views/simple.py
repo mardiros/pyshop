@@ -87,9 +87,9 @@ class List(View):
             classifiers = params.getall('classifiers')
             for name in classifiers:
                 classifier = Classifier.by_name(session, name)
-                if not classifier:
-                    classifier = Classifier(name=name)
-                    session.add(classifier)
+                while classifier:
+                    release.classifiers.append(classifier)
+                    classifier = classifier.parent
 
             rfile = ReleaseFile(release=release,
                                 filename=filename,
