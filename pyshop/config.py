@@ -120,10 +120,6 @@ def includeme(config):
                     permission=u'user_view')
 
     # Credentials
-    config.add_view('pyshop.views.login',
-                    renderer=u'shared/login.html',
-                    context=u'pyramid.exceptions.Forbidden')
-
     config.add_view('pyshop.views.credentials.authbasic',
                     route_name='list_simple',
                     context='pyramid.exceptions.Forbidden'
@@ -138,3 +134,13 @@ def includeme(config):
                     route_name='repository',
                     context='pyramid.exceptions.Forbidden'
                     )
+
+    config.add_view('pyshop.views.credentials.authbasic',
+                    route_name='upload_releasefile',
+                    context='pyramid.exceptions.Forbidden'
+                    )
+
+    config.add_view('pyshop.views.login',
+                    renderer=u'shared/login.html',
+                    context=u'pyramid.exceptions.Forbidden')
+
