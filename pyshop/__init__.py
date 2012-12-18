@@ -20,23 +20,19 @@ def main(global_config, **settings):
 
     settings = dict(settings)
 
-    if 'celery' in sys.argv[0]:
-        # XXX celery must config sqlalchemy engine AFTER forkin consumer
-        config = Configurator(settings=settings)
-    else:
-        # Scoping sessions for Pyramid ensure session are commit/rollback
-        # after the template has been rendered
-        create_engine(settings, scoped=True)
+    # Scoping sessions for Pyramid ensure session are commit/rollback
+    # after the template has been rendered
+    create_engine(settings, scoped=True)
 
-        authn_policy = RouteSwithchAuthPolicy(secret=settings['cookie_key'],
-                                              callback=groupfinder)
-        authz_policy = ACLPolicy()
+    authn_policy = RouteSwithchAuthPolicy(secret=settings['cookie_key'],
+                                          callback=groupfinder)
+    authz_policy = ACLPolicy()
 
-        config = Configurator(settings=settings,
-                              root_factory=RootFactory,
-                              locale_negotiator=locale_negotiator,
-                              authentication_policy=authn_policy,
-                              authorization_policy=authz_policy)
+    config = Configurator(settings=settings,
+                          root_factory=RootFactory,
+                          locale_negotiator=locale_negotiator,
+                          authentication_policy=authn_policy,
+                          authorization_policy=authz_policy)
     config.end()
 
     return config.make_wsgi_app()
