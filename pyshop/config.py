@@ -96,6 +96,7 @@ def includeme(config):
                      request_method=u'POST')
 
     config.add_view(u'pyshop.views.list_simple',
+                     renderer=u'pyshop/simple/create.html',
                      route_name=u'upload_releasefile',
                      permission=u'upload_releasefile')
 
