@@ -30,18 +30,22 @@ def populate(engine, interactive=True):
     session.add(download_perm)
     session.add(admin_perm)
 
-    user_group = Group(name=u'user')
-    user_group.permissions.append(user_perm)
-    user_group.permissions.append(download_perm)
-    user_group.permissions.append(upload_perm)
-    session.add(user_group)
-
     admin_group = Group(name=u'admin')
     admin_group.permissions.append(user_perm)
     admin_group.permissions.append(download_perm)
     admin_group.permissions.append(upload_perm)
     admin_group.permissions.append(admin_perm)
     session.add(admin_group)
+
+    user_group = Group(name=u'user')
+    user_group.permissions.append(user_perm)
+    user_group.permissions.append(download_perm)
+    user_group.permissions.append(upload_perm)
+    session.add(user_group)
+
+    pip_group = Group(name=u'pip')
+    pip_group.permissions.append(download_perm)
+    session.add(pip_group)
 
     if interactive:
         login = (raw_input('administrator login [admin]:')
@@ -50,10 +54,15 @@ def populate(engine, interactive=True):
                     or 'changeme')
         email = (raw_input('administrator email [root@localhost]')
                  or 'root@localhost')
+        piplogin = (raw_input('pip login [pip]:') or 'admin')
+        pippassword = (raw_input('pip password [changeme]:') or 'changeme')
     else:
         login = 'admin'
         password = 'changeme'
         email = 'root@localhost'
+
+        piplogin = 'pip'
+        pippassword = 'changeme'
 
     admin = User(login=unicode(login),
                  password=unicode(password),
@@ -61,6 +70,11 @@ def populate(engine, interactive=True):
     admin.groups.append(user_group)
     admin.groups.append(admin_group)
     session.add(admin)
+    pip = User(login=unicode(piplogin),
+               password=unicode(pippassword),
+               )
+    admin.groups.append(pip_group)
+    session.add(pip)
 
     session.commit()
 
