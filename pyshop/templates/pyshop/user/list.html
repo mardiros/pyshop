@@ -1,0 +1,47 @@
+{% extends "/pyshop/layout.html" %}
+
+{% block subnav %}
+    <h2>{% trans %}Users{% endtrans %}</h2>
+{% endblock %}
+
+
+{% block main %}
+
+<a href="{{ route_url('create_user') }}">Create new account</a>
+<h4>{% trans %}Users:{% endtrans %} ({{user_count}})</h4>
+<table>
+    <colgroup>
+        <col class="user-login">
+        <col class="user-name">
+        <col class="user-groups">
+        <col class="edit">
+    </colgroup>
+    <tr>
+        <th>{% trans %} login {% endtrans %}</th>
+        <th>{% trans %} name {% endtrans %}</th>
+        <th>{% trans %} groups {% endtrans %}</th>
+        <th>{% trans %} edit {% endtrans %}</th>
+    </tr>
+
+    {% for user in users %}
+        <tr>
+            <td>
+                <a href="{{ route_url('edit_user', user_id=user.id) }}">
+                    {{ user.login }}
+                </a>
+            </td>
+            <td>{{ user.name }}</td>
+            <td>
+                {% set pipe = joiner(", ") %}
+                {% for g in user.groups %}{{ pipe() }}{{g.name}}{% endfor %}
+            </td>
+            <td>
+                <a href="{{ route_url('delete_user', user_id=user.id) }}">
+                    delete
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

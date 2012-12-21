@@ -109,6 +109,8 @@ class CreateView(RedirectView):
         return len(errors) == 0
 
     def save_model(self, model):
+        print "*"*80
+        print "*"*80
         log.debug('saving %s' % model.__class__.__name__)
         log.debug('%r' % model.__dict__)
         self.session.add(model)
@@ -123,12 +125,15 @@ class CreateView(RedirectView):
 
         if 'form.submitted' in self.request.params:
 
-            if self.validate(model, errors):
-                try:
-                    self.update_model(model)
-                    model.validate(self.session)
-                except ModelError, e:
-                    errors.extend(e.errors)
+            self.validate(model, errors)
+
+            try:
+                self.update_model(model)
+                model.validate(self.session)
+            except ModelError, e:
+                errors.extend(e.errors)
+
+            if not errors:
                 self.save_model(model)
                 return self.redirect()
 

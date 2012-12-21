@@ -1,0 +1,66 @@
+{% extends "/pyshop/form_layout.html" %}
+
+{% block subnav %}
+    <a href="{{ route_url('list_user')}}">
+        {% trans %}user{% endtrans %}
+    </a>
+    <h2>{{user.name}}</h2>
+{% endblock %}
+
+
+{% block form %}
+<ul>
+    <input type="hidden" name="user_id" value="{{user.id|default('', true)}}"/>
+    <li>
+        <label>
+            {% trans %}Login:{% endtrans %}
+        </label>
+        <input type="text" name="user.login" value="{{user.login|default('', true)}}"/>
+    </li>
+    <li>
+        <label>
+            {% trans %}Firstname:{% endtrans %}
+        </label>
+        <input type="text" name="user.firstname" value="{{user.firstname|default('', true)}}"/>
+    </li>
+    <li>
+        <label>
+            {% trans %}Lastname:{% endtrans %}
+        </label>
+        <input type="text" name="user.lastname" value="{{user.lastname|default('', true)}}"/>
+    </li>
+    <li>
+        <label>
+            {% trans %}Email:{% endtrans %}
+        </label>
+        <input type="text" name="user.email" value="{{user.email|default('', true)}}"/>
+    </li>
+    <li>
+        <label>
+            {% trans %}password:{% endtrans %}
+        </label>
+        <input type="password" name="user.password" value=""/>
+    </li>
+    <li>
+        <label>
+            {% trans %}confirm password:{% endtrans %}
+        </label>
+        <input type="password" name="confirm_password" value=""/>
+    </li>
+    <li>
+        <label>
+            {% trans %}groups:{% endtrans %}
+        </label>
+        <ul class="checkboxes">
+            {% for g in groups %}
+                <li>
+                    <input type="checkbox" name="groups" value="{{g.id}}"
+                        id="group_{{g.id}}"
+                        {% if g in  user.groups %}checked="checked"{% endif %} />
+                    <label for="group_{{g.id}}">{{g.name}}</label>
+                </li>
+            {% endfor %}
+        </ul>
+    </li>
+</ul>
+{% endblock %}

@@ -6,16 +6,23 @@
         <h1>{% block maintitle %}
             <a href="{{ route_url('index') }}">pyshop</a>
         </h1>
-        <figure>
-            {% trans %}Logged as {% endtrans %}
-            {{pyshop.login}}
-            <a href="{{route_url('logout')}}">
-              {% trans %}Sign out{% endtrans %}
-            </a>
-        </figure>
+         {% if pyshop.user %}
+            <figure>
+                {% trans %}Logged as {% endtrans %}
+                {{pyshop.login}}
+                <a href="{{route_url('logout')}}">
+                  {% trans %}Sign out{% endtrans %}
+                </a>
+            </figure>
+        {% endif %}
         {% endblock %}
-        <nav>
+        <nav class="mainnav">
             {% block mainnav %}
+                {%if has_permission('admin_view') %}
+                    <a href="{{route_url('list_user')}}">
+                        {% trans %}Manage Account{% endtrans %}
+                    </a>
+                {% endif %}
             {% endblock %}
         </nav>
         <nav class="subnav">
@@ -34,11 +41,11 @@
                         </div>
                     {% endif %}
                     {% if errors %}
-                        {%for errormessage in errors %}
-                            <div class="error">
-                                <span>{{ errormessage }}</span>
-                            </div>
-                        {% endfor %}
+                        <ul class="errors">
+                            {% for msg in errors %}
+                                <li>{{ msg }}</li>
+                            {% endfor %}
+                        </ul>
                     {% endif %}
                 {% endblock %}
                 {% block warn %}

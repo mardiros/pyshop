@@ -122,16 +122,13 @@ class User(Base):
             other = User.by_login(session, self.login)
             if other and other.id != self.id:
                 errors.append(u'duplicate login %s' % self.login)
-        if not self.firstname:
-            errors.append(u'firstname is required')
-        if not self.lastname:
-            errors.append(u'lastname is required')
         if not self.password:
             errors.append(u'password is required')
         if not self.email:
             errors.append(u'email is required')
         elif not re_email.match(self.email):
             errors.append(u'%s is not a valid email' % self.email)
+
         if len(errors):
             raise ModelError(errors)
         return True
