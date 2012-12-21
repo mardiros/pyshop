@@ -54,7 +54,7 @@ def populate(engine, interactive=True):
                     or 'changeme')
         email = (raw_input('administrator email [root@localhost]')
                  or 'root@localhost')
-        piplogin = (raw_input('pip login [pip]:') or 'admin')
+        piplogin = (raw_input('pip login [pip]:') or 'pip')
         pippassword = (raw_input('pip password [changeme]:') or 'changeme')
     else:
         login = 'admin'
@@ -67,13 +67,12 @@ def populate(engine, interactive=True):
     admin = User(login=unicode(login),
                  password=unicode(password),
                  email=unicode(email))
-    admin.groups.append(user_group)
     admin.groups.append(admin_group)
     session.add(admin)
     pip = User(login=unicode(piplogin),
                password=unicode(pippassword),
                )
-    admin.groups.append(pip_group)
+    pip.groups.append(pip_group)
     session.add(pip)
 
     session.commit()
