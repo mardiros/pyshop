@@ -52,18 +52,18 @@ def includeme(config):
         view=u'pyramid_scss.controller.get_scss')
 
     config.add_route(u'login', u'/login',)
-    config.add_view(u'pyshop.views.login',
+    config.add_view(u'pyshop.views.credentials.Login',
                     route_name=u'login',
                     renderer=u'shared/login.html')
 
     config.add_route(u'logout', u'/logout')
-    config.add_view(u'pyshop.views.logout',
+    config.add_view(u'pyshop.views.credentials.Logout',
                     route_name=u'logout',
                     permission=u'user_view')
 
     # Home page
     config.add_route(u'index', u'/')
-    config.add_view(u'pyshop.views.index',
+    config.add_view(u'pyshop.views.Index',
                     route_name=u'index',
                     permission=u'user_view')
 
@@ -79,13 +79,13 @@ def includeme(config):
     # Simple views used by pip
     config.add_route(u'list_simple', u'/simple/', request_method=u'GET')
 
-    config.add_view(u'pyshop.views.list_simple',
+    config.add_view(u'pyshop.views.simple.List',
                     route_name=u'list_simple',
                     renderer=u'pyshop/simple/list.html',
                     permission=u"download_releasefile")
 
     config.add_route(u'show_simple', u'/simple/{package_name}/')
-    config.add_view(u'pyshop.views.show_simple',
+    config.add_view(u'pyshop.views.simple.Show',
                     route_name=u'show_simple',
                     renderer=u'pyshop/simple/show.html',
                     permission=u'user_view')
@@ -95,7 +95,7 @@ def includeme(config):
     config.add_route(u'upload_releasefile', u'/simple/',
                      request_method=u'POST')
 
-    config.add_view(u'pyshop.views.list_simple',
+    config.add_view(u'pyshop.views.simple.List',
                      renderer=u'pyshop/simple/create.html',
                      route_name=u'upload_releasefile',
                      permission=u'upload_releasefile')
@@ -107,13 +107,13 @@ def includeme(config):
     # Backoffice Views
 
     config.add_route(u'list_package', u'/pyshop/package')
-    config.add_view(u'pyshop.views.list_package',
+    config.add_view(u'pyshop.views.package.List',
                     route_name='list_package',
                     renderer=u'pyshop/package/list.html',
                     permission=u'user_view')
 
     config.add_route(u'list_package_page', u'/pyshop/package/{page_no}')
-    config.add_view(u'pyshop.views.list_package',
+    config.add_view(u'pyshop.views.package.List',
                     route_name='list_package_page',
                     renderer=u'pyshop/package/list.html',
                     permission=u'user_view')
@@ -121,9 +121,34 @@ def includeme(config):
     config.add_route(u'show_package',
                      u'/pyshop/package/{package_name}')
 
-    config.add_view(u'pyshop.views.show_package',
+    config.add_view(u'pyshop.views.package.Show',
                     route_name=u'show_package',
                     renderer=u'pyshop/package/show.html',
+                    permission=u'user_view')
+
+    # Admin  view
+    config.add_route(u'list_user', u'/pyshop/user')
+    config.add_view(u'pyshop.views.user.List',
+                    route_name=u'list_user',
+                    renderer=u'pyshop/user/list.html',
+                    permission=u'user_view')
+
+    config.add_route(u'create_user', u'/pyshop/user/new')
+    config.add_view(u'pyshop.views.user.Create',
+                    route_name=u'create_user',
+                    renderer=u'pyshop/user/edit.html',
+                    permission=u'user_view')
+
+    config.add_route(u'edit_user', u'/pyshop/user/{user_id}')
+    config.add_view(u'pyshop.views.user.Edit',
+                    route_name=u'edit_user',
+                    renderer=u'pyshop/user/edit.html',
+                    permission=u'user_view')
+
+    config.add_route(u'delete_user', u'/pyshop/delete/user/{user_id}')
+    config.add_view(u'pyshop.views.user.Delete',
+                    route_name=u'delete_user',
+                    renderer=u'pyshop/user/delete.html',
                     permission=u'user_view')
 
     # Credentials
@@ -147,7 +172,6 @@ def includeme(config):
                     context='pyramid.exceptions.Forbidden'
                     )
 
-    config.add_view('pyshop.views.login',
+    config.add_view('pyshop.views.credentials.Login',
                     renderer=u'shared/login.html',
                     context=u'pyramid.exceptions.Forbidden')
-

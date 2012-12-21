@@ -21,96 +21,99 @@ log = logging.getLogger(__name__)
 
 class List(View):
 
-    def render(self, request, session):
+    def render(self):
+        return {'packages': Package.all(self.session, order_by=Package.name)}
 
-        if request.method == 'POST':
-            username = authenticated_userid(request)
-            if not username:
-                 raise exc.HTTPForbidden()
 
-            remote_user = User.by_login(session, username)
-            if not remote_user:
+class UploadReleaseFile(View):
+    def render(self):
+        username = authenticated_userid(self.request)
+        if not username:
+             raise exc.HTTPForbidden()
+
+        remote_user = User.by_login(self.session, username)
+        if not remote_user:
+            raise exc.HTTPForbidden()
+
+        params = self.request.params
+        pkg = Package.by_name(self.session, params['name'])
+        if pkg:
+            auth = [user for user in pkg.owners + pkg.maintainers
+                    if user == remote_user]
+            if not auth:
                 raise exc.HTTPForbidden()
+        else:
+            pkg = Package(name=params['name'], local=True)
+            pkg.owners.append(remote_user)
 
-            params = request.params
-            pkg = Package.by_name(session, params['name'])
-            if pkg:
-                auth = [user for user in pkg.owners + pkg.maintainers
-                        if user == remote_user]
-                if not auth:
-                    raise exc.HTTPForbidden()
-            else:
-                pkg = Package(name=params['name'], local=True)
-                pkg.owners.append(remote_user)
+        content = self.request.POST['content']
+        input_file = content.file
+        filename = content.filename.split(os.path.sep)[-1]
+        filename = filename.split('.', 1)
+        filename[0] = u'%s-%s' % (params['name'], params['version'])
+        filename = u'.'.join(filename)
+        settings = self.request.registry.settings
+        dir_ = os.path.join(settings['repository.root'],
+                            filename[0].lower())
+        if not os.path.exists(dir_):
+            os.mkdir(dir_, 0750)
 
-            input_file = request.POST['content'].file
-            filename = request.POST['content'].filename.split(os.path.sep)[-1]
-            filename = filename.split('.', 1)
-            filename[0] = u'%s-%s' % (params['name'], params['version'])
-            filename = u'.'.join(filename)
-            dir_ = os.path.join(request.registry.settings['repository.root'],
-                                filename[0].lower())
-            if not os.path.exists(dir_):
-                os.mkdir(dir_, 0750)
+        filepath = os.path.join(dir_, filename)
+        while os.path.exists(filepath):
+            log.warn('File %s exists but new upload self.request, deleting'
+                     % filepath)
+            os.unlink(filepath)
 
-            filepath = os.path.join(dir_, filename)
-            while os.path.exists(filepath):
-                log.warn("File %s exists but new upload request, deleting" %
-                         filepath)
-                os.unlink(filepath)
+        with open(filepath, 'wb') as output_file:
+            input_file.seek(0)
+            while True:
+                data = input_file.read(2<<16)
+                if not data:
+                    break
+                output_file.write(data)
+                output_file.close()
 
-            with open(filepath, 'wb') as output_file:
-                input_file.seek(0)
-                while True:
-                    data = input_file.read(2<<16)
-                    if not data:
-                        break
-                    output_file.write(data)
-                    output_file.close()
+        release = Release.by_version(self.session, pkg.name,
+                                     params['version'])
+        if not release:
+            release = Release(package=pkg,
+                              version=params['version'],
+                              summary=params.get('summary'),
+                              author=remote_user,
+                              home_page=params.get('home_page'),
+                              license=params.get('license'),
+                              description=params.get('description'),
+                              keywords=params.get('keywords'),
+                              platform=params.get('platform'),
+                              download_url=params.get('download_url'),
+                              docs_url=params.get('docs_url'),
+                              )
 
-            release = Release.by_version(session, pkg.name,
-                                         params['version'])
-            if not release:
-                release = Release(package=pkg,
-                                  version=params['version'],
-                                  summary=params.get('summary'),
-                                  author=remote_user,
-                                  home_page=params.get('home_page'),
-                                  license=params.get('license'),
-                                  description=params.get('description'),
-                                  keywords=params.get('keywords'),
-                                  platform=params.get('platform'),
-                                  download_url=params.get('download_url'),
-                                  docs_url=params.get('docs_url'),
-                                  )
+        classifiers = params.getall('classifiers')
+        for name in classifiers:
+            classifier = Classifier.by_name(self.session, name)
+            while classifier:
+                release.classifiers.append(classifier)
+                classifier = classifier.parent
 
-            classifiers = params.getall('classifiers')
-            for name in classifiers:
-                classifier = Classifier.by_name(session, name)
-                while classifier:
-                    release.classifiers.append(classifier)
-                    classifier = classifier.parent
+        rfile = ReleaseFile(release=release,
+                            filename=filename,
+                            md5_digest=params.get('md5_digest'),
+                            package_type=params.get('filetype'),
+                            python_version=params.get('pyversion'),
+                            comment_text=params.get('comment'),
+                            )
 
-            rfile = ReleaseFile(release=release,
-                                filename=filename,
-                                md5_digest=params.get('md5_digest'),
-                                package_type=params.get('filetype'),
-                                python_version=params.get('pyversion'),
-                                comment_text=params.get('comment'),
-                                )
-
-            session.add(rfile)
-            session.add(release)
-            pkg.update_at = func.now()
-            session.add(pkg)
-            return {"release_file": rfile}
-
-        return {'packages': Package.all(session, order_by=Package.name)}
+        self.session.add(rfile)
+        self.session.add(release)
+        pkg.update_at = func.now()
+        self.session.add(pkg)
+        return {u'release_file': rfile}
 
 
 class Show(View):
 
-    def _create_release(self, session, package, data):
+    def _create_release(self, package, data):
         release = Release(package=package,
                           summary=data.get('summary'),
                           version=data.get('version'),
@@ -125,36 +128,37 @@ class Show(View):
                           docs_url=data.get('docs_url'),
                           )
         if data.get('author'):
-            author = User.by_login(session, data['author'], local=False)
+            author = User.by_login(self.session, data['author'], local=False)
             if not author:
                 author = User(login=data['author'],
                               local=False,
                               email=data.get('author_email'))
-                session.add(author)
+                self.session.add(author)
             release.author = author
-        session.flush()
+        self.session.flush()
         if data.get('maintainer'):
-            maintainer = User.by_login(session, data['maintainer'], local=False)
+            maintainer = User.by_login(self.session, data['maintainer'],
+                                       local=False)
             if not maintainer:
                 maintainer = User(login=data['maintainer'],
                                   local=False,
                                   email=data.get('maintainer_email'))
-                session.add(maintainer)
+                self.session.add(maintainer)
             release.maintainer = maintainer
-        session.flush()
+        self.session.flush()
 
         for name in data.get('classifiers', []):
-            classifier = Classifier.by_name(session, name)
+            classifier = Classifier.by_name(self.session, name)
             if not classifier:
                 classifier = Classifier(name=name)
-                session.add(classifier)
+                self.session.add(classifier)
 
             release.classifiers.append(classifier)
 
-        session.flush()
+        self.session.flush()
         return release
 
-    def _create_release_file(self, session, release, data):
+    def _create_release_file(self, release, data):
         return ReleaseFile(release=release,
                            filename=data['filename'],
                            md5_digest=data['md5_digest'],
@@ -166,11 +170,11 @@ class Show(View):
                            comment_text=data.get('comment_text'),
                            )
 
-    def render(self, request, session):
+    def render(self):
 
         api = pypi.proxy
-        package_name = request.matchdict['package_name']
-        pkg = Package.by_name(session, package_name)
+        package_name = self.request.matchdict['package_name']
+        pkg = Package.by_name(self.session, package_name)
         refresh = True
 
         if pkg:
@@ -206,16 +210,16 @@ class Show(View):
             pkg = Package(name=package_name, local=False)
             roles = api.package_roles(package_name)
             for role, login in roles:
-                user = User.by_login(session, login, local=False)
+                user = User.by_login(self.session, login, local=False)
                 if not user:
                     user = User(login=login, local=False)
-                    session.add(user)
+                    self.session.add(user)
                 if role == 'Owner':
                     pkg.owners.append(user)
                 elif role == 'Maintainer':
                     pkg.maintainers.append(user)
 
-        session.flush()
+        self.session.flush()
 
         refresh = True
         if not pkg.local and refresh:
@@ -223,18 +227,17 @@ class Show(View):
             for version in pypi_versions:
                 if version not in pkg_versions:
                     release_data = api.release_data(package_name, version)
-                    release = self._create_release(session, pkg, release_data)
+                    release = self._create_release(pkg, release_data)
 
                     release_files = api.release_urls(package_name, version)
 
                     for data in release_files:
-                        rf = ReleaseFile.by_filename(session, release,
+                        rf = ReleaseFile.by_filename(self.session, release,
                                                      data['filename'])
                         if not rf:
-                            rf = self._create_release_file(session, release,
-                                                           data)
+                            rf = self._create_release_file(release, data)
 
         pkg.update_at = func.now()
-        session.add(pkg)
+        self.session.add(pkg)
         log.info('package %s mirrored' % package_name)
         return {'package': pkg}

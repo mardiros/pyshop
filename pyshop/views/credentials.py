@@ -17,22 +17,22 @@ log = logging.getLogger(__name__)
 
 class Login(View):
 
-    def render(self, request, session):
+    def render(self):
 
-        login_url = resource_url(request.context, request, 'login')
-        referrer = request.url
+        login_url = resource_url(self.request.context, self.request, 'login')
+        referrer = self.request.url
         # never use the login form itself as came_from
         if referrer == login_url:
             referrer = '/'
-        came_from = request.params.get('came_from', referrer)
+        came_from = self.request.params.get('came_from', referrer)
 
-        login = request.params.get('user.login', '')
-        if 'form.submitted' in request.params:
-            password = request.params.get('user.password', u'')
+        login = self.request.params.get('user.login', '')
+        if 'form.submitted' in self.request.params:
+            password = self.request.params.get('user.password', u'')
             if password and \
-            User.by_credentials(session, login, password) is not None:
+            User.by_credentials(self.session, login, password) is not None:
                 log.info('login %r succeed' % login)
-                headers = remember(request, login)
+                headers = remember(self.request, login)
                 return HTTPFound(location=came_from,
                                  headers=headers)
 
@@ -40,12 +40,13 @@ class Login(View):
                 'user': User(login=login),
                 }
 
+
 class Logout(View):
 
-    def render(self, request, session):
+    def render(self):
 
-        return HTTPFound(location=route_url('index', request),
-                         headers=forget(request))
+        return HTTPFound(location=route_url('index', self.request),
+                         headers=forget(self.request))
 
 
 def authbasic(request):
