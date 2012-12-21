@@ -1,3 +1,5 @@
+import re
+
 import cryptacular.bcrypt
 
 from sqlalchemy import (Table, Column, ForeignKey, Index,
@@ -7,7 +9,7 @@ from sqlalchemy.orm import relationship, backref, synonym
 from sqlalchemy.sql.expression import func, asc, desc, or_, and_
 from sqlalchemy.ext.declarative import declared_attr
 
-from .helpers.sqla import (Database, SessionFactory,
+from .helpers.sqla import (Database, SessionFactory, ModelError,
                            create_engine as create_engine_base,
                            dispose_engine as dispose_engine_base
                            )
@@ -16,6 +18,8 @@ crypt = cryptacular.bcrypt.BCRYPTPasswordManager()
 
 Base = Database.register('pyshop')
 DBSession = lambda: SessionFactory.get('pyshop')()
+
+re_email = re.compile(r'^[^@]+@[a-z0-9]+[-.a-z0-9]+\.[a-z]+$', re.I)
 
 
 def create_engine(settings, prefix='sqlalchemy.', scoped=False):
@@ -104,6 +108,33 @@ class User(Base):
             return None
         if crypt.check(user.password, password):
             return user
+
+    @classmethod
+    def get_locals(cls, session, **kwargs):
+        return cls.find(session, where=(cls.local==True,), order_by=cls.login,
+                        **kwargs)
+
+    def validate(self, session):
+        errors = []
+        if not self.login:
+            errors.append(u'login is required')
+        else:
+            other = User.by_login(session, self.login)
+            if other and other.id != self.id:
+                errors.append(u'duplicate login %s' % self.login)
+        if not self.firstname:
+            errors.append(u'firstname is required')
+        if not self.lastname:
+            errors.append(u'lastname is required')
+        if not self.password:
+            errors.append(u'password is required')
+        if not self.email:
+            errors.append(u'email is required')
+        elif not re_email.match(self.email):
+            errors.append(u'%s is not a valid email' % self.email)
+        if len(errors):
+            raise ModelError(errors)
+        return True
 
 
 class Classifier(Base):

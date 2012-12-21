@@ -11,6 +11,14 @@ from sqlalchemy.orm import scoped_session, sessionmaker, joinedload
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
 
+
+class ModelError(Exception):
+
+    def __init__(self, errors):
+        super(ModelError, self).__init__('\n'.join(errors))
+        self.errors = errors
+
+
 class _Base(object):
 
     @declared_attr
@@ -34,8 +42,8 @@ class _Base(object):
     def find(cls, session, join=None, where=None, order_by=None, limit=None,
              offset=None, count=False):
         qry = cls.build_query(session, join, where, order_by, limit,
-                              offset)
-        return qry.count() if count else qry.all()
+                              offset, count)
+        return qry.scalar() if count else qry.all()
 
     @classmethod
     def first(cls, session, join=None, where=None, order_by=None):
@@ -57,8 +65,12 @@ class _Base(object):
 
     @classmethod
     def build_query(cls, session, join=None, where=None, order_by=None,
-                    limit=None, offset=None):
-        query = session.query(cls)
+                    limit=None, offset=None, count=None):
+
+        if count:
+            query = session.query(func.count('*')).select_from(cls)
+        else:
+            query = session.query(cls)
 
         to_model = lambda m: getattr(cls, m) if isinstance(m, basestring)\
                              else m
@@ -94,6 +106,12 @@ class _Base(object):
         if offset:
             query = query.offset(offset)
         return query
+
+    def validate(self, session):
+        """
+        return True or raise a :class:`ModelError` Exception
+        """
+        return True
 
 
 class Database(object):
