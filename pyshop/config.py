@@ -136,7 +136,7 @@ def includeme(config):
     config.add_route(u'create_user', u'/pyshop/user/new')
     config.add_view(u'pyshop.views.user.Create',
                     route_name=u'create_user',
-                    renderer=u'pyshop/user/edit.html',
+                    renderer=u'pyshop/user/create.html',
                     permission=u'user_view')
 
     config.add_route(u'edit_user', u'/pyshop/user/{user_id}')

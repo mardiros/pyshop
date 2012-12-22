@@ -26,12 +26,6 @@ class UserMixin:
     def update_view(self, model, view):
         view['groups'] = Group.all(self.session, order_by=Group.name)
 
-    def validate(self, model, errors):
-        r = self.request
-        if r.params['user.password'] != r.params['confirm_password']:
-            errors.append(_('password does not match'))
-        return len(errors) == 0
-
     def append_groups(self, user):
         exists = []
         group_ids  = [int(id) for id in self.request.params.getall('groups')]
@@ -55,25 +49,24 @@ class Create(UserMixin, CreateView):
         super(Create, self).update_model(user)
         self.append_groups(user)
 
+    def validate(self, model, errors):
+        r = self.request
+        if r.params['user.password'] != r.params['confirm_password']:
+            errors.append(_('password does not match'))
+        return len(errors) == 0
+
 
 class Edit(UserMixin, EditView):
     """
     Edit user
     """
-    def update_model(self, user):
-        user.login = self.request.params['user.login']
-        if self.request.params['user.password']:
-            user.password = self.request.params['user.password']
-        user.firstname = self.request.params['user.firstname']
-        user.lastname = self.request.params['user.lastname']
-        user.email = self.request.params['user.email']
 
     def save_model(self, user):
-        super(Create, self).update_model(user)
+        super(Edit, self).update_model(user)
         self.append_groups(user)
 
 
 class Delete(UserMixin, DeleteView):
     """
-    Delete sender
+    Delete user
     """
