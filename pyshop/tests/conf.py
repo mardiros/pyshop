@@ -7,5 +7,6 @@ settings = {'jinja2.directories': 'pyshop:templates',
             'sqlalchemy.url': 'sqlite://',
             'sqlalchemy.echo': False,
             'sqlalchemy.pool_size': 1,
-            'pypi.url': 'http://localhost:65432'
+            'pypi.url': 'http://localhost:65432',
+            'repository.root': '/tmp',
             }

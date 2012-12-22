@@ -3,6 +3,7 @@ import unittest
 import transaction
 from webob.multidict import MultiDict
 from pyramid import testing
+from pyramid.httpexceptions import HTTPFound
 from pyramid.authorization import ACLAuthorizationPolicy
 
 from pyshop.models import DBSession
@@ -44,6 +45,7 @@ class UnauthenticatedViewTestCase(unittest.TestCase):
 
     def tearDown(self):
         super(UnauthenticatedViewTestCase, self).tearDown()
+        self.session.flush()
         transaction.commit()
         testing.tearDown()
 
@@ -51,10 +53,24 @@ class UnauthenticatedViewTestCase(unittest.TestCase):
                 headers=None,
                 path='/', cookies=None, post=None, **kw):
         if params and not isinstance(params, MultiDict):
-            params = MultiDict(**params)
+            mparams = MultiDict()
+            for k, v in params.items():
+                if hasattr(v, '__iter__'):
+                    [mparams.add(k, vv) for vv in v]
+                else:
+                    mparams.add(k, v)
+                params = mparams
         rv  = DummyRequest(params, environ, headers, path, cookies,
                 post, matchdict=(matchdict or {}), **kw)
         return rv
 
-    def assertIsRedirect(self, view, *args, **kwargs):
-        self.assertIsInstance(view, HTTPFound, *args, **kwargs)
+    def assertIsRedirect(self, view):
+        self.assertIsInstance(view, HTTPFound)
+
+
+class ViewTestCase(UnauthenticatedViewTestCase):
+
+    def setUp(self):
+        super(ViewTestCase, self).setUp()
+        self.config.testing_securitypolicy(userid=u'admin',
+                                           permissive=True)

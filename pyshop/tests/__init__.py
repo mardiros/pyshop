@@ -12,7 +12,9 @@ def setUp():
     engine = create_engine(settings)
     populate(engine, interactive=False)
 
+
     session = DBSession()
+    admin_user = User.by_login(session, u'admin')
     local_user = User(login=u'local_user', password=u'secret', local=True,
                       firstname=u'Local', lastname=u'User')
     local_user.groups.append(Group.by_name(session, u'user'))
@@ -78,6 +80,7 @@ def setUp():
 
     pack3 = Package(name=u'local_package1', local=True)
     pack3.owners.append(local_user)
+    pack3.owners.append(admin_user)
     session.add(pack3)
 
     release4 = Release(package=pack3, version=u'0.1',

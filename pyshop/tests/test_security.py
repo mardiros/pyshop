@@ -23,7 +23,9 @@ class GroupFinderTestCase(UnauthenticatedViewTestCase):
     def test_admin_groups(self):
         from pyshop.security import groupfinder
         self.assertEqual(sorted(groupfinder(u'admin', self.create_request())),
-                         [u'admin', u'pip', u'user'])
+                         [u'admin'])
+        self.assertEqual(sorted(groupfinder(u'pip', self.create_request())),
+                         [u'pip'])
 
     def test_user_groups(self):
         from pyshop.security import groupfinder
