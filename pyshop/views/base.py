@@ -27,19 +27,18 @@ class ViewBase(object):
 
     def __call__(self):
         try:
-            log.info("dispatch view %s", self.__class__.__name__)
-
+            log.info('dispatch view %s', self.__class__.__name__)
             self.session = DBSession()
             response = self.render()
             self.update_response(response)
             # if isinstance(response, dict):
             #     log.info("rendering template with context %r", dict)
+            self.session.flush()
         except Exception, exc:
             if self.on_error(exc):
-                log.error("Error on view %s" % self.__class__.__name__,
+                log.error('Error on view %s' % self.__class__.__name__,
                           exc_info=True)
                 raise
-
         return response
 
     def render(self):
@@ -84,7 +83,7 @@ class CreateView(RedirectView):
         kwargs = {}
         prefix = self.model.__tablename__
         for k, v in self.request.params.items():
-            if k.startswith(prefix):
+            if v and k.startswith(prefix):
                 kwargs[k.split('.').pop()] = v
         return kwargs
 
@@ -109,8 +108,6 @@ class CreateView(RedirectView):
         return len(errors) == 0
 
     def save_model(self, model):
-        print "*"*80
-        print "*"*80
         log.debug('saving %s' % model.__class__.__name__)
         log.debug('%r' % model.__dict__)
         self.session.add(model)
@@ -169,4 +166,3 @@ class DeleteView(RedirectView):
             return self.redirect()
 
         return {self.model.__tablename__: model}
-
