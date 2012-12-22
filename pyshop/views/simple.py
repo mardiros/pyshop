@@ -48,10 +48,16 @@ class UploadReleaseFile(View):
 
         content = self.request.POST['content']
         input_file = content.file
-        filename = content.filename.split(os.path.sep)[-1]
-        filename = filename.split('.', 1)
-        filename[0] = u'%s-%s' % (params['name'], params['version'])
-        filename = u'.'.join(filename)
+        # rewrite the filename, do not use the posted one for security
+        filename = u'%s-%s.%s' % (params['name'], params['version'],
+                                  {u'sdist': u'tar.gz',
+                                   u'bdist_egg': u'egg',
+                                   u'bdist_msi': u'msi',
+                                   u'bdist_dmg': u'zip', # XXX or gztar ?
+                                   u'bdist_rpm': u'rpm',
+                                   u'bdist_dumb': u'msi',
+                                   u'bdist_wininst': u'exe',
+                                   }[params['filetype']])
         settings = self.request.registry.settings
         dir_ = os.path.join(settings['repository.root'],
                             filename[0].lower())
@@ -64,12 +70,14 @@ class UploadReleaseFile(View):
                      % filepath)
             os.unlink(filepath)
 
+        size = 0
         with open(filepath, 'wb') as output_file:
             input_file.seek(0)
             while True:
                 data = input_file.read(2<<16)
                 if not data:
                     break
+                size += len(data)
                 output_file.write(data)
                 output_file.close()
 
@@ -98,8 +106,9 @@ class UploadReleaseFile(View):
 
         rfile = ReleaseFile(release=release,
                             filename=filename,
+                            size=size,
                             md5_digest=params.get('md5_digest'),
-                            package_type=params.get('filetype'),
+                            package_type=params['filetype'],
                             python_version=params.get('pyversion'),
                             comment_text=params.get('comment'),
                             )
