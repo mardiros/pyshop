@@ -95,7 +95,7 @@ def includeme(config):
     config.add_route(u'upload_releasefile', u'/simple/',
                      request_method=u'POST')
 
-    config.add_view(u'pyshop.views.simple.List',
+    config.add_view(u'pyshop.views.simple.UploadReleaseFile',
                      renderer=u'pyshop/simple/create.html',
                      route_name=u'upload_releasefile',
                      permission=u'upload_releasefile')
@@ -112,7 +112,7 @@ def includeme(config):
                     renderer=u'pyshop/package/list.html',
                     permission=u'user_view')
 
-    config.add_route(u'list_package_page', u'/pyshop/package/{page_no}')
+    config.add_route(u'list_package_page', u'/pyshop/package/p/{page_no}')
     config.add_view(u'pyshop.views.package.List',
                     route_name='list_package_page',
                     renderer=u'pyshop/package/list.html',
