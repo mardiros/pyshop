@@ -203,7 +203,23 @@ class Package(Base):
 
     @property
     def versions(self):
-        return sorted([r.version for r in self.releases], reverse=True)
+        return [r.version for r in self.sorted_releases]
+
+    @property
+    def sorted_releases(self):
+
+        def safeint(string):
+            try:
+                return int(string)
+            except ValueError:
+                return string
+
+        def parseversion(version):
+            return [safeint(v) for v in version.split('.')]
+
+        rv = [(parseversion(r.version), r) for r in self.releases]
+        rv = sorted(rv, reverse=True)
+        return [r[1] for r in rv]
 
     @classmethod
     def by_name(cls, session, name):

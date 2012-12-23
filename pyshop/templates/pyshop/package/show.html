@@ -7,7 +7,7 @@
     <h2>{{package.name}}</h2>
 {% endblock %}
 
-{% set release = package.releases[-1] %}
+{% set release = package.sorted_releases[0] %}
 
 {% block main %}
 <section id="release-download" class="release-download">
@@ -42,7 +42,7 @@
             <th>{% trans %} author {% endtrans %}</th>
             <th>{% trans %} downloads {% endtrans %}</th>
         </tr>
-        {% for release in package.releases|reverse %}
+        {% for release in package.sorted_releases %}
         <tr>
             <td>
                 {% for f in release.files %}
