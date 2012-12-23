@@ -22,7 +22,7 @@
         <th>{% trans %} source {% endtrans %}</th>
     </tr>
 
-    {% for pkg in mirrored_packages %}
+    {% for pkg in packages %}
         <tr>
             <td>
                 <a href="{{ route_url('show_package', package_name=pkg.name) }}">
