@@ -53,7 +53,7 @@ Configuration used by pip
     default-timeout = 60
     timeout = 60
     [install]
-    index-url = http://admin:changeme@localhost:6543/simple/
+    index-url = http://pip:changeme@localhost:6543/simple/
 
 
 ~/.pypirc
@@ -68,7 +68,7 @@ Configuration used by setuptools to upload package
         pyshop
 
     [pyshop]
-    username: admin
+    username: admin # or create an account in pyshop admin interface
     password: changeme
     repository: http://localhost:6543/simple/
 
@@ -79,7 +79,7 @@ setup.cfg
 ::
 
     [easy_install]
-    index-url = http://admin:changeme@localhost:6543/simple/
+    index-url = http://pip:changeme@localhost:6543/simple/
 
 
 Uploading a file to PyShop
