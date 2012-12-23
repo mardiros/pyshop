@@ -29,7 +29,7 @@
                     {{ pkg.name }}
                 </a>
             </td>
-            <td class="num">{{ pkg.releases[-1].version }}</td>
+            <td class="num">{{ pkg.versions[0] }}</td>
             <td class="num">{{ pkg.downloads }}</td>
             <td class="num">
                 {% if pkg.local %}

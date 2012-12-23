@@ -50,5 +50,4 @@ class ReleaseFileRenderer(object):
 
 
 def renderer_factory(info):
-    repository_root = info.settings['repository.root']
-    return ReleaseFileRenderer(repository_root)
+    return ReleaseFileRenderer(info.settings['pyshop.repository'])

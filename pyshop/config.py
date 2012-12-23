@@ -39,8 +39,8 @@ def includeme(config):
     config.add_translation_dirs('locale/')
 
     # PyPI url for XML RPC service consume
-    pypi.set_proxy(config.registry.settings['pypi.url'],
-                   config.registry.settings.get('pypi.transport_proxy'))
+    pypi.set_proxy(config.registry.settings['pyshop.pypi.url'],
+                   config.registry.settings.get('pyshop.pypi.transport_proxy'))
 
     # Javascript + Media
     config.add_static_view('static', 'static', cache_max_age=3600)

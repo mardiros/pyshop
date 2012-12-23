@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 import logging
 import os.path
 from datetime import datetime
@@ -7,6 +8,7 @@ from sqlalchemy.sql.expression import func
 
 from pyramid import httpexceptions as exc
 from pyramid.url import route_url
+from pyramid.settings import asbool
 from pyramid.security import authenticated_userid
 
 from pyshop.models import User, Package, Classifier, Release, ReleaseFile
@@ -27,6 +29,7 @@ class List(View):
 
 class UploadReleaseFile(View):
     def render(self):
+        settings = self.request.registry.settings
         username = authenticated_userid(self.request)
         if not username:
              raise exc.HTTPForbidden()
@@ -58,8 +61,7 @@ class UploadReleaseFile(View):
                                    u'bdist_dumb': u'msi',
                                    u'bdist_wininst': u'exe',
                                    }[params['filetype']])
-        settings = self.request.registry.settings
-        dir_ = os.path.join(settings['repository.root'],
+        dir_ = os.path.join(settings['pypi.repository'],
                             filename[0].lower())
         if not os.path.exists(dir_):
             os.mkdir(dir_, 0750)
@@ -123,6 +125,7 @@ class UploadReleaseFile(View):
 class Show(View):
 
     def _create_release(self, package, data):
+
         release = Release(package=package,
                           summary=data.get('summary'),
                           version=data.get('version'),
@@ -181,7 +184,11 @@ class Show(View):
 
     def render(self):
 
+
         api = pypi.proxy
+        settings = self.request.registry.settings
+        satanize = asbool(settings['pyshop.satanize'])
+
         package_name = self.request.matchdict['package_name']
         pkg = Package.by_name(self.session, package_name)
         refresh = True
@@ -214,6 +221,12 @@ class Show(View):
                 log.info('package %s has no versions' % package_name)
                 return {'package': None,
                         'package_name': package_name}
+
+            if satanize:
+                re_satanize = re.compile(settings['pyshop.satanize.reg'])
+                pypi_versions = [v for v in pypi_versions
+                                 if re_satanize.match(v)]
+
             # mirror the package now
             log.info('mirror package %s now' % package_name)
             pkg = Package(name=package_name, local=False)
