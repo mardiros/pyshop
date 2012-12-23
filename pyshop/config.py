@@ -82,13 +82,13 @@ def includeme(config):
     config.add_view(u'pyshop.views.simple.List',
                     route_name=u'list_simple',
                     renderer=u'pyshop/simple/list.html',
-                    permission=u"download_releasefile")
+                    permission=u'download_releasefile')
 
     config.add_route(u'show_simple', u'/simple/{package_name}/')
     config.add_view(u'pyshop.views.simple.Show',
                     route_name=u'show_simple',
                     renderer=u'pyshop/simple/show.html',
-                    permission=u'user_view')
+                    permission=u'download_releasefile')
 
     # Used by setup.py sdist upload
 
