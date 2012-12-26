@@ -6,7 +6,7 @@ from sqlalchemy import (Table, Column, ForeignKey, Index,
                         Integer, Boolean, Unicode, UnicodeText,
                         DateTime, Enum)
 from sqlalchemy.orm import relationship, backref, synonym
-from sqlalchemy.sql.expression import func, asc, desc, or_, and_
+from sqlalchemy.sql.expression import func, alias, desc, or_, and_
 from sqlalchemy.ext.declarative import declared_attr
 
 from .helpers.sqla import (Database, SessionFactory, ModelError,
@@ -190,6 +190,14 @@ package__maintainer = Table('package__maintainer', Base.metadata,
                             )
 
 
+classifier__package = Table('classifier__package', Base.metadata,
+                            Column('classifier_id',
+                                   Integer, ForeignKey('classifier.id')),
+                            Column('package_id',
+                                   Integer, ForeignKey('package.id'))
+                            )
+
+
 class Package(Base):
 
     update_at = Column(DateTime, default=func.now())
@@ -200,6 +208,9 @@ class Package(Base):
     downloads = Column(Integer, default=0)
     maintainers = relationship(User, secondary=package__maintainer,
                                backref='maintained_packages')
+
+    classifiers = relationship(Classifier, secondary=classifier__package,
+                               lazy='dynamic', backref='packages')
 
     @property
     def versions(self):
@@ -227,8 +238,22 @@ class Package(Base):
 
     @classmethod
     def by_filter(cls, session, opts, **kwargs):
-        return cls.find(session,  # where= TODO
-                        **kwargs)
+        where = []
+
+        if opts.get('local_only'):
+            where.append(cls.local==True)
+
+        if opts.get('classifiers'):
+            ids = [c.id for c in opts.get('classifiers')]
+            cls_pkg = classifier__package
+            qry = session.query(cls_pkg.c.package_id,
+                                func.count('*'))
+            qry = qry.filter(cls_pkg.c.classifier_id.in_(ids))
+            qry = qry.group_by(cls_pkg.c.package_id)
+            qry = qry.having(func.count('*') >= len(ids))
+            where.append(cls.id.in_([r[0] for r in qry.all()]))
+
+        return cls.find(session, where=where, **kwargs)
 
     @classmethod
     def by_owner(cls, session, owner_name):
@@ -253,7 +278,6 @@ class Package(Base):
     def get_mirrored(cls, session):
         return cls.find(session,
                         where=(cls.local == False,))
-
 
 
 classifier__release = Table('classifier__release', Base.metadata,
@@ -290,7 +314,7 @@ class Release(Base):
     bugtrack_url = Column(Unicode(800))
     docs_url = Column(Unicode(800))
     classifiers = relationship(Classifier, secondary=classifier__release,
-                               lazy='dynamic', backref='release')
+                               lazy='dynamic')
     package = relationship(Package, lazy='join', backref='releases')
     author = relationship(User, primaryjoin=author_id == User.id)
     maintainer = relationship(User, primaryjoin=maintainer_id == User.id)

@@ -1,13 +1,36 @@
 {% extends "/pyshop/layout.html" %}
 
 {% block subnav %}
-    <h2>{% trans %}Available Packages{% endtrans %}</h2>
+    <h2>{% trans %}Available Packages ({{package_count}}){% endtrans %}</h2>
 {% endblock %}
 
 
 {% block main %}
 
-<h4>{% trans %}Packages:{% endtrans %} ({{package_count}})</h4>
+<form class="filter" method="GET">
+    <input type="text" id="classifier" class="filter-input"
+           name="classifier.added" value=""/>
+    <button name="form.submitted">
+        {% trans %} filter {% endtrans %}
+    </button>
+    <ul class="selected-classifiers">
+        {% for c in filter.classifiers %}
+            <li>
+                <input type="checkbox" id="classifier_{{loop.index}}"
+                       name="classifiers" checked="checked" value="{{c.id}}"/>
+                <label for="classifier_{{loop.index}}">{{c.name}}</label>
+            </li>
+        {% endfor %}
+        <li>
+            <input type="checkbox" id="source_local" name="local_only" value="1"
+                    {%if filter.local_only%}checked="checked"{% endif %}/>
+            <label for="source_local">
+                {% trans %}locals only{% endtrans %}
+            </label>
+        </li>
+    </ul>
+</form>
+
 <table>
     <colgroup>
         <col class="label">
@@ -42,4 +65,16 @@
     {% endfor %}
 </table>
 
+<script>
+    $(function() {
+        var classifiers = [
+        {% for c in classifiers %}
+            '{{c.name}}',
+        {% endfor %}
+        ];
+        $( "#classifier" ).autocomplete({
+            source: classifiers
+        });
+    });
+</script>
 {% endblock %}

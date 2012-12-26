@@ -2,6 +2,7 @@
 import math
 import logging
 
+from sqlalchemy.sql.expression import func, desc
 from pyramid.httpexceptions import HTTPNotFound
 
 from pyshop.helpers.i18n import trans as _
@@ -16,14 +17,29 @@ log = logging.getLogger(__name__)
 class List(View):
 
     def render(self):
+        req = self.request
         page_no = 1
         page_size = 20
-        if 'page_no' in self.request.matchdict:
-            page_no = int(self.request.matchdict['page_no'])
+        if 'page_no' in req.matchdict:
+            page_no = int(req.matchdict['page_no'])
 
         opts = {}
+        if 'form.submitted' in req.params:
+            opts['local_only'] = req.params.get('local_only', '0') == '1'
+        else:
+            opts['local_only'] = True
+        if 'form.submitted' in req.params or req.params.get('classifier.added'):
+            classifiers = [Classifier.by_id(self.session, id)
+                           for id in set(req.params.getall('classifiers'))]
 
-        package_count = Package.by_filter(self.session, opts, count=True)
+            if req.params.get('classifier.added'):
+                classifiers.append(Classifier.by_name(self.session,
+                                   req.params['classifier.added']))
+            opts['classifiers'] = classifiers
+        else:
+            opts['classifiers'] = [] # TODO: set defaults in settings
+
+        package_count = Package.by_filter(self.session, opts, count='*')
 
         return {u'has_page': package_count > page_size,
                 u'paging': {u'route': u'list_package_page',
@@ -33,7 +49,11 @@ class List(View):
                                         float(package_count) / page_size)),
                             u'no': page_no},
                  u'package_count': package_count,
-                 u'packages': Package.by_filter(self.session, opts),
+                 u'packages': Package.by_filter(self.session, opts,
+                     limit=page_size, offset=page_size * (page_no - 1)
+                     ),
+                 u'filter': opts,
+                 u'classifiers': Classifier.all(self.session)
                 }
 
 

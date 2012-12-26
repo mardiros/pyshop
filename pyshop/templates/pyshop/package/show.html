@@ -22,8 +22,14 @@
     {% endfor %}
 </section>
 
+
 <section id="release-summary" class="release-summary">
     <h5> {{ release.summary }} </h5>
+    <ul class="classifiers">
+        {% for c in release.classifiers %}
+            <li>{{c.name}}</li>
+        {% endfor %}
+    </ul>
     <div> {{ parse_rest(release.description) }} </div>
 </section>
 

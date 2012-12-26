@@ -61,7 +61,7 @@ class UploadReleaseFile(View):
                                    u'bdist_dumb': u'msi',
                                    u'bdist_wininst': u'exe',
                                    }[params['filetype']])
-        dir_ = os.path.join(settings['pypi.repository'],
+        dir_ = os.path.join(settings['pyshop.repository'],
                             filename[0].lower())
         if not os.path.exists(dir_):
             os.mkdir(dir_, 0750)
@@ -104,7 +104,10 @@ class UploadReleaseFile(View):
             classifier = Classifier.by_name(self.session, name)
             while classifier:
                 release.classifiers.append(classifier)
+                if classifier not in package.classifiers:
+                    package.classifiers.append(classifier)
                 classifier = classifier.parent
+
 
         rfile = ReleaseFile(release=release,
                             filename=filename,
@@ -119,7 +122,7 @@ class UploadReleaseFile(View):
         self.session.add(release)
         pkg.update_at = func.now()
         self.session.add(pkg)
-        return {u'release_file': rfile}
+        return {'release_file': rfile}
 
 
 class Show(View):
@@ -161,11 +164,12 @@ class Show(View):
 
         for name in data.get('classifiers', []):
             classifier = Classifier.by_name(self.session, name)
-            if not classifier:
-                classifier = Classifier(name=name)
-                self.session.add(classifier)
 
-            release.classifiers.append(classifier)
+            while classifier:
+                release.classifiers.append(classifier)
+                if classifier not in package.classifiers:
+                    package.classifiers.append(classifier)
+                classifier = classifier.parent
 
         self.session.flush()
         return release
