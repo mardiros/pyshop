@@ -1,2 +1,2 @@
 include *.txt *.ini *.cfg *.rst
-recursive-include waterfall *.ico *.png *.css *.gif *.jpg *.pt *.txt *.mak *.mako *.js *.html *.xml
+recursive-include pyshop *.ico *.png *.css *.scss *.txt *.js *.html *.pot *.po
