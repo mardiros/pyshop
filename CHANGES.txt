@@ -1,8 +1,12 @@
 0.1
 ---
 
--  Initial version.
-vital functionnality:
+Initial version.
+
   - work with pip, setuptools
-  - mirror package
-  - secure access with login password
+  - mirror packages
+  - upload packages
+  - secure access with login/password
+  - create/update accounts
+  - tests for python 2.7 only
+  - compatible with python 2.6

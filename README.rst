@@ -13,29 +13,22 @@ Getting Started
     $ cd pyshop
     (pyshop)$ source bin/activate
     (pyshop)$ pip install git+https://github.com/mardiros/pyshop.git
-    (pyshop)$ pyshop_install development.ini
-    (pyshop)$ pserve development.ini  --log-file=pyshop.log
+    (pyshop)$ cp development.ini pyshop.ini
+    (pyshop)$ pyshop_install pyshop.ini
+    (pyshop)$ pserve pyshop.ini start --log-file=pyshop.log
+
+Visit the wen page http://localhost:6543/
+
+For production usage, you should create accounts with the "developer" group.
+Visit http://localhost:6543/pyshop/user with the admin account to create
+account.
 
 
-For production usage, you should create a user pyshop
-with restriction right.
-
-For editing permission, the web user interface is not ready.
-You can use the pyshop shell.
-
-::
-
-    (pyshop)$ pyshop_shell
-
-
-The upload on PyPI will be done when the project is more advanced.
-
-
-Configuring your environment to use that new PyShop
+Configuring your environment to use that new pyshop
 ---------------------------------------------------
 
-Here is all configuration files by usual python tools you have to
-edit to use PyShop.
+Here is all configuration files for usual python tools you have to
+edit for simplify the usage of pyshop.
 
 
 ~/.pip/pip.conf
@@ -82,7 +75,7 @@ setup.cfg
     index-url = http://pip:changeme@localhost:6543/simple/
 
 
-Uploading a file to PyShop
---------------------------
+Uploading a file to your pyshop
+-------------------------------
 
 python setup.py sdist upload  -v -r pyshop
