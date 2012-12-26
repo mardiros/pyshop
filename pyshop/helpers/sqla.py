@@ -55,7 +55,7 @@ class _Base(object):
         order_by = order_by or cls.id
         while True:
             page = cls.find(session, order_by=order_by,
-                limit=page_size, offset=offset)
+                            limit=page_size, offset=offset)
             for m in page:
                 yield m
             session.flush()
@@ -72,15 +72,12 @@ class _Base(object):
         else:
             query = session.query(cls)
 
-        to_model = lambda m: getattr(cls, m) if isinstance(m, basestring)\
-                             else m
-
         if join:
             if isinstance(join, (list, tuple)):
                 for j in join:
-                    query = query.join(to_model(j))
+                    query = query.join(j)
             else:
-                query = query.join(to_model(join))
+                query = query.join(join)
 
         if where:
             for filter in where:
@@ -88,19 +85,9 @@ class _Base(object):
 
         if order_by is not None:
             if isinstance(order_by, (list, tuple)):
-                fields = []
-                for ob in order_by:
-                    fields.append(ob)
-                query = query.order_by(*fields)
+                query = query.order_by(*order_by)
             else:
-                if isinstance(order_by, basestring):
-                    order_by = order_by.split(' ', 1)
-                    field = getattr(cls, order_by[0])
-                    if len(order_by) > 1 and order_by[1] == 'desc':
-                        field = desc(field)
-                else:
-                    field = order_by
-                query = query.order_by(field)
+                query = query.order_by(order_by)
         if limit:
             query = query.limit(limit)
         if offset:
