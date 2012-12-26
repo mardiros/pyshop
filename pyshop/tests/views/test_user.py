@@ -10,7 +10,7 @@ class UserTestCase(case.ViewTestCase):
         from pyshop.models import User, Group
         self.user_login = unicode(uuid.uuid4())
         u = User(login=self.user_login, password=u'secret')
-        u.groups.append(Group.by_name(self.session, u'user'))
+        u.groups.append(Group.by_name(self.session, u'developer'))
         self.session.add(u)
         self.session.flush()
         self.user_id = u.id

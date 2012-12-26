@@ -37,13 +37,13 @@ def populate(engine, interactive=True):
     admin_group.permissions.append(admin_perm)
     session.add(admin_group)
 
-    user_group = Group(name=u'user')
+    user_group = Group(name=u'developer')
     user_group.permissions.append(user_perm)
     user_group.permissions.append(download_perm)
     user_group.permissions.append(upload_perm)
     session.add(user_group)
 
-    pip_group = Group(name=u'pip')
+    pip_group = Group(name=u'installer')
     pip_group.permissions.append(download_perm)
     session.add(pip_group)
 
@@ -54,8 +54,9 @@ def populate(engine, interactive=True):
                     or 'changeme')
         email = (raw_input('administrator email [root@localhost]')
                  or 'root@localhost')
-        piplogin = (raw_input('pip login [pip]:') or 'pip')
-        pippassword = (raw_input('pip password [changeme]:') or 'changeme')
+        piplogin = (raw_input('installer login [pip]:') or 'pip')
+        pippassword = (raw_input('installer password [changeme]:') or
+                       'changeme')
     else:
         login = 'admin'
         password = 'changeme'

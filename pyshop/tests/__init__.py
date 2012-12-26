@@ -17,7 +17,7 @@ def setUp():
     admin_user = User.by_login(session, u'admin')
     local_user = User(login=u'local_user', password=u'secret', local=True,
                       firstname=u'Local', lastname=u'User')
-    local_user.groups.append(Group.by_name(session, u'user'))
+    local_user.groups.append(Group.by_name(session, u'developer'))
     jdo = User(login=u'johndo', local=False)
     jdoe = User(login=u'janedoe', local=False)
 
