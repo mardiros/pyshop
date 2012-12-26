@@ -1,8 +1,11 @@
 form {
+
     width: 500px;
     max-width: 80%;
     border: 1px solid gray;
+
     li {
+
         list-style: none;
         padding-top: 1em;
 
@@ -11,6 +14,7 @@ form {
             white-space: nowrap;
             display: inline-block;
         }
+
         input {
             width: 50%;
             white-space: nowrap;
@@ -34,11 +38,50 @@ form {
             display: inline-bock;
         }
     }
+
+    &.filter {
+        padding: 0 0 0.5em;
+        border: none;
+        width: 80%;
+        .filter-input {
+            border-radius: 3px 0 0 3px;
+            border-width: 1px 0 1px 1px;
+            display: inline-block;
+            float: left;
+            height: 1.6em;
+            line-height: 1.6em;
+            margin: 0;
+            padding: 0;
+            width: 40em;
+        }
+
+        button {
+            display: inline-block;
+            border: 1px solid $border-color;
+            border-radius: 0 3px 3px 0;
+            line-height: 1.6em;
+            margin: 0;
+            padding: 0 1em;
+        }
+
+        .selected-classifiers {
+            margin: 0;
+            padding: 0;
+            float: right;
+            li {
+                display: inline-block;
+                padding: 0.2em;
+            }
+        }
+    }
+
 }
 
 
 body.login {
+
     form {
+
         position: absolute;
         top: 50%;
         left: 50%;
@@ -48,7 +91,7 @@ body.login {
         margin-top: -150px;
         margin-left: -150px;
         border: 1px solid $border-color;
-        border-radiuse: 5px;
+        border-radius: 5px;
 
         h1 {
             font-size: 2em;

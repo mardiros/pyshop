@@ -1,0 +1,40 @@
+.ui-autocomplete {
+    background: $background-color;
+    position: absolute;
+    padding: 0;
+    z-index: 100;
+    li {
+        list-style: none;
+        width: auto;
+        padding: .5em;
+
+        &:hover {
+            background-color: $color;
+            a {
+                color: $background-color;
+            }
+        }
+
+        a {
+            text-decoration: none;
+            display: block;
+            vertical-align: middle;
+            white-space: nowrap;
+
+            &:hover {
+                color: $background-color;
+            }
+
+        }
+
+    }
+}
+
+.ui-helper-hidden-accessible {
+  display: none;
+  position: absolute;
+  left: 80%;
+  width: 15%;
+  border: 1px solid $border-color;
+  background-color: white;
+}
