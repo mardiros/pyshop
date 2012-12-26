@@ -40,10 +40,10 @@ class _Base(object):
 
     @classmethod
     def find(cls, session, join=None, where=None, order_by=None, limit=None,
-             offset=None, count=False):
+             offset=None, count=None):
         qry = cls.build_query(session, join, where, order_by, limit,
                               offset, count)
-        return qry.scalar() if count else qry.all()
+        return qry.scalar() if count is not None else qry.all()
 
     @classmethod
     def first(cls, session, join=None, where=None, order_by=None):
@@ -67,8 +67,8 @@ class _Base(object):
     def build_query(cls, session, join=None, where=None, order_by=None,
                     limit=None, offset=None, count=None):
 
-        if count:
-            query = session.query(func.count('*')).select_from(cls)
+        if count is not None:
+            query = session.query(func.count(count)).select_from(cls)
         else:
             query = session.query(cls)
 
