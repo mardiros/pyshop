@@ -8,8 +8,6 @@ See: http://wiki.python.org/moin/PyPiXmlRpc
 """
 from pyramid_xmlrpc import XMLRPCView
 
-from pyshop.helpers import pypi
-from pyshop.helpers.i18n import trans as _
 from pyshop.models import DBSession, Package, Release, ReleaseFile
 
 log = logging.getLogger(__name__)
@@ -44,8 +42,8 @@ class PyPI(XMLRPCView):
         """
         session = DBSession()
         package = Package.by_name(session, package_name)
-        owners = [('Owner', o.name) for o in pakage.owners]
-        maintainers  = [('Maintainer', o.name) for o in pakage.maintainers]
+        owners = [('Owner', o.name) for o in package.owners]
+        maintainers  = [('Maintainer', o.name) for o in package.maintainers]
         return owners + maintainers
 
     def user_packages(self, user):
@@ -218,6 +216,6 @@ class PyPI(XMLRPCView):
         The argument is a UTC integer seconds since the epoch. 
         """
         session = DBSession()
-        release = Release.by_classifiers(session, classifier)
+        release = Release.by_classifiers(session, classifiers)
         rv = [(r.package.name, r.version) for r in release]
         return rv
