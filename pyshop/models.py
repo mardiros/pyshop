@@ -5,8 +5,8 @@ import cryptacular.bcrypt
 from sqlalchemy import (Table, Column, ForeignKey, Index,
                         Integer, Boolean, Unicode, UnicodeText,
                         DateTime, Enum)
-from sqlalchemy.orm import relationship, backref, synonym
-from sqlalchemy.sql.expression import func, alias, desc, or_, and_
+from sqlalchemy.orm import relationship, synonym
+from sqlalchemy.sql.expression import func, or_, and_
 from sqlalchemy.ext.declarative import declared_attr
 
 from .helpers.sqla import (Database, SessionFactory, ModelError,
@@ -163,16 +163,16 @@ class Classifier(Base):
             classifiers = [u' :: '.join(splitted_names[:i+1])
                            for i in range(len(splitted_names))]
             parent_id = None
+            category = splitted_names[0]
 
             for c in classifiers:
                 classifier = cls.first(session, where=(cls.name == c,))
                 if not classifier:
                     classifier = Classifier(name=c, parent_id=parent_id,
-                                            category=splitted_names[0])
+                                            category=category)
                     session.add(classifier)
                 session.flush()
                 parent_id = classifier.id
-            category = splitted_names[0]
 
         return classifier
 

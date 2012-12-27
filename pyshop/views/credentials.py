@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from pyramid.httpexceptions import HTTPFound, HTTPForbidden
+from pyramid.httpexceptions import HTTPFound
 from pyramid.url import resource_url, route_url
-from pyramid.security import authenticated_userid, remember, forget
+from pyramid.security import remember, forget
 from pyramid.response import Response
 
 from pyshop.helpers.i18n import trans as _
@@ -59,9 +59,10 @@ def authbasic(request):
         assert scheme.lower() == 'basic'
         username, password = data.decode('base64').split(':', 1)
         if User.by_credentials(DBSession(), username, password):
-            headers = remember(request, username)
             return HTTPFound(location=request.url)
     return Response(status=401,
                     headerlist=[('WWW-Authenticate',
-                                 'Basic realm="pyshop repository access"',)],
+                                 ('Basic realm="%s"' %
+                                 _('pyshop repository access')).encode('utf-8')
+                                 )],
                     )

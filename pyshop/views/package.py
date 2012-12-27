@@ -2,11 +2,9 @@
 import math
 import logging
 
-from sqlalchemy.sql.expression import func, desc
 from pyramid.httpexceptions import HTTPNotFound
 
-from pyshop.helpers.i18n import trans as _
-from pyshop.models import User, Package, Classifier, Release, ReleaseFile
+from pyshop.models import Package, Classifier
 
 from .base import View
 

@@ -1,7 +1,6 @@
 import logging
 from pyramid.security import Allow
 
-from .models import DBSession, Group
 from .models import DBSession, User, Group
 
 log = logging.getLogger(__name__)

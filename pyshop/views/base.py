@@ -5,7 +5,6 @@ from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
 from pyramid.url import route_url
 
-from pyshop.helpers.i18n import trans as _
 from pyshop.helpers.sqla import ModelError
 
 from .. import __version__

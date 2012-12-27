@@ -7,13 +7,11 @@ from datetime import datetime
 from sqlalchemy.sql.expression import func
 
 from pyramid import httpexceptions as exc
-from pyramid.url import route_url
 from pyramid.settings import asbool
 from pyramid.security import authenticated_userid
 
 from pyshop.models import User, Package, Classifier, Release, ReleaseFile
 from pyshop.helpers import pypi
-from pyshop.helpers.i18n import trans as _
 
 from .base import View
 

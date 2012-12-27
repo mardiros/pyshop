@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-import logging
-
 from pyshop.models import DBSession, ReleaseFile
-from pyshop.helpers.i18n import trans as _
-
-log = logging.getLogger(__name__)
 
 
 def get_release_file(root, request):
