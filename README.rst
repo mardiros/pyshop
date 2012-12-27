@@ -17,11 +17,12 @@ Getting Started
     (pyshop)$ pyshop_install pyshop.ini
     (pyshop)$ pserve pyshop.ini start --log-file=pyshop.log
 
-Visit the wen page http://localhost:6543/
+Then, visit the web page http://localhost:6543/
 
 For production usage, you should create accounts with the "developer" group.
 Visit http://localhost:6543/pyshop/user with the admin account to create
-account.
+accounts. You also should use an https reverse proxy. Python packaging
+core use basic authentication: it send user/password in clear.
 
 
 Configuring your environment to use that new pyshop
