@@ -106,15 +106,16 @@ class UploadReleaseFile(View):
                     pkg.classifiers.append(classifier)
                 classifier = classifier.parent
 
-
-        rfile = ReleaseFile(release=release,
-                            filename=filename,
-                            size=size,
-                            md5_digest=params.get('md5_digest'),
-                            package_type=params['filetype'],
-                            python_version=params.get('pyversion'),
-                            comment_text=params.get('comment'),
-                            )
+        rfile = ReleaseFile.by_filename(self.session, release, filename)
+        if not rfile:
+            rfile = ReleaseFile(release=release,
+                                filename=filename,
+                                size=size,
+                                md5_digest=params.get('md5_digest'),
+                                package_type=params['filetype'],
+                                python_version=params.get('pyversion'),
+                                comment_text=params.get('comment'),
+                                )
 
         self.session.add(rfile)
         self.session.add(release)

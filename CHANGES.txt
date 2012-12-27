@@ -1,3 +1,9 @@
+0.4
+---
+
+ - Fix release file upgrade (allow developper to override release file)
+
+
 0.3
 ---
 
