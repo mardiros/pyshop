@@ -61,6 +61,7 @@ class UploadReleaseFile(View):
                                    }[params['filetype']])
         dir_ = os.path.join(settings['pyshop.repository'],
                             filename[0].lower())
+
         if not os.path.exists(dir_):
             os.mkdir(dir_, 0750)
 
@@ -79,7 +80,6 @@ class UploadReleaseFile(View):
                     break
                 size += len(data)
                 output_file.write(data)
-                output_file.close()
 
         release = Release.by_version(self.session, pkg.name,
                                      params['version'])
