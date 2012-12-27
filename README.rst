@@ -1,6 +1,9 @@
 pyshop
 ======
 
+Get your private cheeseshop running.
+
+
 Getting Started
 ---------------
 
@@ -10,11 +13,15 @@ Getting Started
     $ cd pyshop
     (pyshop)$ source bin/activate
     (pyshop)$ pip install pyshop
-    (pyshop)$ cp development.ini pyshop.ini
+    (pyshop)$ cp pyshop.sample.ini pyshop.ini
+    (pyshop)$ vim pyshop.ini  # change the pyshop.cookie_key setting
     (pyshop)$ pyshop_install pyshop.ini
     (pyshop)$ pserve pyshop.ini start --log-file=pyshop.log
 
-Then, visit the web application http://localhost:6543/ to check all is fine.
+You shoud edit the pyshop.ini file in order to configure the pyshop.cookie_key,
+the host:port that host the service, ...
+When the pyshop is running visit the web application,
+http://localhost:6543/ by default, to check all is fine.
 
 For production usage, you should create accounts with the "developer" group.
 Visit http://localhost:6543/pyshop/user with the admin account to create

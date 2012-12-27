@@ -33,7 +33,7 @@ requires = [
 
 if 'VIRTUAL_ENV' in os.environ:
     venv = os.environ['VIRTUAL_ENV']
-    data_files = [(venv, ['development.ini',
+    data_files = [(venv, ['pyshop.sample.ini',
                           ])]
 else:
     data_files = []
