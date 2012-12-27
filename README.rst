@@ -1,9 +1,6 @@
 pyshop
 ======
 
-A cheeseshop clone (PyPI server) written in pyramid
-
-
 Getting Started
 ---------------
 
@@ -12,12 +9,12 @@ Getting Started
     $ virtualenv pyshop
     $ cd pyshop
     (pyshop)$ source bin/activate
-    (pyshop)$ pip install git+https://github.com/mardiros/pyshop.git
+    (pyshop)$ pip install pyshop
     (pyshop)$ cp development.ini pyshop.ini
     (pyshop)$ pyshop_install pyshop.ini
     (pyshop)$ pserve pyshop.ini start --log-file=pyshop.log
 
-Then, visit the web page http://localhost:6543/
+Then, visit the web application http://localhost:6543/ to check all is fine.
 
 For production usage, you should create accounts with the "developer" group.
 Visit http://localhost:6543/pyshop/user with the admin account to create

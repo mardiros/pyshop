@@ -41,7 +41,7 @@ else:
 
 setup(name='pyshop',
       version=version,
-      description='pyshop',
+      description='A cheeseshop clone (PyPI server) written in pyramid',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
       'Programming Language :: Python',
