@@ -1,7 +1,16 @@
+0.3
+---
+
+  - The setting ``pyshop.satanize.reg`` has been renamed
+to ``pyshop.satanize.regex``
+  - The setting ``cookie_key`` has been renamed to ``pyshop.cookie_key``
+
+
 0.2
 ---
 
 Packaging Issue.
+
 
 0.1
 ---

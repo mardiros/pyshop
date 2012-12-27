@@ -227,7 +227,7 @@ class Show(View):
                         'package_name': package_name}
 
             if satanize:
-                re_satanize = re.compile(settings['pyshop.satanize.reg'])
+                re_satanize = re.compile(settings['pyshop.satanize.regex'])
                 pypi_versions = [v for v in pypi_versions
                                  if re_satanize.match(v)]
 

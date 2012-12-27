@@ -1,12 +1,9 @@
-import sys
 from pyramid.config import Configurator
 from pyramid.authorization import ACLAuthorizationPolicy as ACLPolicy
-from pyramid.authentication import AuthTktAuthenticationPolicy as AuthPolicy
 
 from .security import groupfinder, RootFactory
 
-# used by pyramid
-from .config import includeme
+from .config import includeme #  used by pyramid
 from .models import create_engine
 from .helpers.i18n import locale_negotiator
 from .helpers.authentication import RouteSwithchAuthPolicy
@@ -24,7 +21,7 @@ def main(global_config, **settings):
     # after the template has been rendered
     create_engine(settings, scoped=True)
 
-    authn_policy = RouteSwithchAuthPolicy(secret=settings['cookie_key'],
+    authn_policy = RouteSwithchAuthPolicy(secret=settings['pyshop.cookie_key'],
                                           callback=groupfinder)
     authz_policy = ACLPolicy()
 
