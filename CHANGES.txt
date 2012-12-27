@@ -5,6 +5,7 @@
 to ``pyshop.satanize.regex``
   - The setting ``cookie_key`` has been renamed to ``pyshop.cookie_key``
   - Fix bug on package upload. don't close the stream while writing it.
+  - Add basic tests on packages view
 
 0.2
 ---

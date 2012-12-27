@@ -6,7 +6,6 @@ class UserTestCase(case.ViewTestCase):
     def setUp(self):
         super(UserTestCase, self).setUp()
         import uuid
-        import transaction
         from pyshop.models import User, Group
         self.user_login = unicode(uuid.uuid4())
         u = User(login=self.user_login, password=u'secret')
