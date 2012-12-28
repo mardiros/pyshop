@@ -52,7 +52,7 @@ class Create(AccountMixin, CreateView):
     def validate(self, model, errors):
         r = self.request
         if r.params['user.password'] != r.params['confirm_password']:
-            errors.append(_('password does not match'))
+            errors.append(_('passwords do not match'))
         return len(errors) == 0
 
 
