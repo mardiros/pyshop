@@ -5,6 +5,13 @@
 {% endblock %}
 
 
+{% block main %}
+    <a href="{{ route_url('change_password') }}">
+        {% trans %}Change password{% endtrans %}
+    </a>
+    {{ super() }}
+{% endblock %}
+
 {% block password %}
 {% endblock %}
 {% block groups %}

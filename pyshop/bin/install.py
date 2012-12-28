@@ -52,15 +52,15 @@ def populate(engine, interactive=True):
                  or 'admin')
         password = (raw_input('administrator password [changeme]:')
                     or 'changeme')
-        email = (raw_input('administrator email [root@localhost]')
-                 or 'root@localhost')
+        email = (raw_input('administrator email [root@localhost.localdomain]')
+                 or 'root@localhost.localdomain')
         piplogin = (raw_input('installer login [pip]:') or 'pip')
         pippassword = (raw_input('installer password [changeme]:') or
                        'changeme')
     else:
         login = 'admin'
         password = 'changeme'
-        email = 'root@localhost'
+        email = 'root@localhost.localdomain'
 
         piplogin = 'pip'
         pippassword = 'changeme'

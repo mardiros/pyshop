@@ -128,11 +128,12 @@ class CreateView(RedirectView):
 
             self.validate(model, errors)
 
-            try:
-                self.update_model(model)
-                model.validate(self.session)
-            except ModelError, e:
-                errors.extend(e.errors)
+            if not errors:
+                try:
+                    self.update_model(model)
+                    model.validate(self.session)
+                except ModelError, e:
+                    errors.extend(e.errors)
 
             if not errors:
                 self.save_model(model)

@@ -145,6 +145,12 @@ def includeme(config):
                     renderer=u'pyshop/account/edit.html',
                     permission=u'admin_view')
 
+    config.add_route(u'delete_account', u'/pyshop/delete/account/{user_id}')
+    config.add_view(u'pyshop.views.account.Delete',
+                    route_name=u'delete_account',
+                    renderer=u'pyshop/account/delete.html',
+                    permission=u'admin_view')
+
     # Current user can update it's information
     config.add_route(u'edit_user', u'/pyshop/user')
     config.add_view(u'pyshop.views.user.Edit',
@@ -152,11 +158,11 @@ def includeme(config):
                     renderer=u'pyshop/user/edit.html',
                     permission=u'user_view')
 
-    config.add_route(u'delete_account', u'/pyshop/delete/account/{user_id}')
-    config.add_view(u'pyshop.views.account.Delete',
-                    route_name=u'delete_account',
-                    renderer=u'pyshop/account/delete.html',
-                    permission=u'admin_view')
+    config.add_route(u'change_password', u'/pyshop/user/password')
+    config.add_view(u'pyshop.views.user.ChangePassword',
+                    route_name=u'change_password',
+                    renderer=u'pyshop/user/change_password.html',
+                    permission=u'user_view')
 
     # Credentials
     config.add_view('pyshop.views.credentials.authbasic',
