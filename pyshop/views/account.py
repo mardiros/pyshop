@@ -18,36 +18,36 @@ class List(View):
                 }
 
 
-class UserMixin:
+class AccountMixin:
     model = User
     matchdict_key = 'user_id'
-    redirect_route = 'list_user'
+    redirect_route = 'list_account'
 
     def update_view(self, model, view):
         view['groups'] = Group.all(self.session, order_by=Group.name)
 
-    def append_groups(self, user):
+    def append_groups(self, account):
         exists = []
         group_ids  = [int(id) for id in self.request.params.getall('groups')]
 
-        for group in user.groups:
+        for group in account.groups:
             exists.append(group.id)
             if group.id not in group_ids:
-                user.groups.remove(group)
+                account.groups.remove(group)
 
         for group_id in self.request.params.getall('groups'):
             if group_id not in exists:
-                user.groups.append(Group.by_id(self.session, group_id))
+                account.groups.append(Group.by_id(self.session, group_id))
 
 
-class Create(UserMixin, CreateView):
+class Create(AccountMixin, CreateView):
     """
-    Create user
+    Create account
     """
 
-    def save_model(self, user):
-        super(Create, self).update_model(user)
-        self.append_groups(user)
+    def save_model(self, account):
+        super(Create, self).update_model(account)
+        self.append_groups(account)
 
     def validate(self, model, errors):
         r = self.request
@@ -56,17 +56,17 @@ class Create(UserMixin, CreateView):
         return len(errors) == 0
 
 
-class Edit(UserMixin, EditView):
+class Edit(AccountMixin, EditView):
     """
-    Edit user
+    Edit account
     """
 
-    def save_model(self, user):
-        super(Edit, self).update_model(user)
-        self.append_groups(user)
+    def save_model(self, account):
+        super(Edit, self).update_model(account)
+        self.append_groups(account)
 
 
-class Delete(UserMixin, DeleteView):
+class Delete(AccountMixin, DeleteView):
     """
-    Delete user
+    Delete account
     """

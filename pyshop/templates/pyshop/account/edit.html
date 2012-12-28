@@ -1,0 +1,12 @@
+{% extends "/pyshop/account/create.html" %}
+
+{% block subnav %}
+    <a href="{{ route_url('list_account')}}">
+        {% trans %}Account{% endtrans %}
+    </a>
+    <h2>{{user.name}}</h2>
+{% endblock %}
+
+
+{% block password %}
+{% endblock %}

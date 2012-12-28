@@ -19,7 +19,7 @@
         <nav class="mainnav">
             {% block mainnav %}
                 {%if has_permission('admin_view') %}
-                    <a href="{{route_url('list_user')}}">
+                    <a href="{{route_url('list_account')}}">
                         {% trans %}Manage Accounts{% endtrans %}
                     </a>
                 {% endif %}

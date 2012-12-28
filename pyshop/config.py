@@ -127,29 +127,29 @@ def includeme(config):
                     permission=u'user_view')
 
     # Admin  view
-    config.add_route(u'list_user', u'/pyshop/user')
-    config.add_view(u'pyshop.views.user.List',
-                    route_name=u'list_user',
-                    renderer=u'pyshop/user/list.html',
-                    permission=u'user_view')
+    config.add_route(u'list_account', u'/pyshop/account')
+    config.add_view(u'pyshop.views.account.List',
+                    route_name=u'list_account',
+                    renderer=u'pyshop/account/list.html',
+                    permission=u'admin_view')
 
-    config.add_route(u'create_user', u'/pyshop/user/new')
-    config.add_view(u'pyshop.views.user.Create',
-                    route_name=u'create_user',
-                    renderer=u'pyshop/user/create.html',
-                    permission=u'user_view')
+    config.add_route(u'create_account', u'/pyshop/account/new')
+    config.add_view(u'pyshop.views.account.Create',
+                    route_name=u'create_account',
+                    renderer=u'pyshop/account/create.html',
+                    permission=u'admin_view')
 
-    config.add_route(u'edit_user', u'/pyshop/user/{user_id}')
-    config.add_view(u'pyshop.views.user.Edit',
-                    route_name=u'edit_user',
-                    renderer=u'pyshop/user/edit.html',
-                    permission=u'user_view')
+    config.add_route(u'edit_account', u'/pyshop/account/{user_id}')
+    config.add_view(u'pyshop.views.account.Edit',
+                    route_name=u'edit_account',
+                    renderer=u'pyshop/account/edit.html',
+                    permission=u'admin_view')
 
-    config.add_route(u'delete_user', u'/pyshop/delete/user/{user_id}')
-    config.add_view(u'pyshop.views.user.Delete',
-                    route_name=u'delete_user',
-                    renderer=u'pyshop/user/delete.html',
-                    permission=u'user_view')
+    config.add_route(u'delete_account', u'/pyshop/delete/account/{user_id}')
+    config.add_view(u'pyshop.views.account.Delete',
+                    route_name=u'delete_account',
+                    renderer=u'pyshop/account/delete.html',
+                    permission=u'admin_view')
 
     # Credentials
     config.add_view('pyshop.views.credentials.authbasic',
