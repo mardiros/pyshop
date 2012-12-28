@@ -17,6 +17,14 @@ class ViewBase(object):
 
     def __init__(self, request):
         self.request = request
+        self.session = DBSession()
+        login = authenticated_userid(self.request)
+        if login:
+            self.login = login
+            self.user = User.by_login(self.session, login)
+        else:
+           self.login = u'anonymous'
+           self.user = None
 
     def update_response(self, response):
         pass
@@ -27,7 +35,6 @@ class ViewBase(object):
     def __call__(self):
         try:
             log.info('dispatch view %s', self.__class__.__name__)
-            self.session = DBSession()
             response = self.render()
             self.update_response(response)
             # if isinstance(response, dict):
@@ -49,15 +56,13 @@ class View(ViewBase):
     def update_response(self, response):
         # this is a view to render
         if isinstance(response, dict):
-            login = authenticated_userid(self.request) or u'anonymous'
             global_ = {
                 'pyshop': {
                     'version': __version__,
-                    'login':  login,
+                    'login':  self.login,
+                    'user':  self.user,
                     },
                 }
-            if login != u'anonymous':
-                 global_['pyshop']['user'] = User.by_login(self.session, login)
             response.update(global_)
 
 

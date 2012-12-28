@@ -145,6 +145,13 @@ def includeme(config):
                     renderer=u'pyshop/account/edit.html',
                     permission=u'admin_view')
 
+    # Current user can update it's information
+    config.add_route(u'edit_user', u'/pyshop/user')
+    config.add_view(u'pyshop.views.user.Edit',
+                    route_name=u'edit_user',
+                    renderer=u'pyshop/user/edit.html',
+                    permission=u'user_view')
+
     config.add_route(u'delete_account', u'/pyshop/delete/account/{user_id}')
     config.add_view(u'pyshop.views.account.Delete',
                     route_name=u'delete_account',

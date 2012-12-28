@@ -2,6 +2,8 @@
 ---
 
  - Fix release file upgrade (allow developper to override release file)
+ - Rename user views to account
+ - Add view to let the connected user to update his account
 
 
 0.3
