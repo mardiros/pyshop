@@ -1,3 +1,11 @@
+0.5
+---
+
+ - Add Link to display all release versions
+ - Improve navigation
+ - Fix ugly version number sorting
+
+
 0.4
 ---
 
