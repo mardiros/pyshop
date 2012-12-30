@@ -81,7 +81,7 @@ class User(Base):
     @property
     def name(self):
         return u'%s %s' % (self.firstname, self.lastname)\
-            if self.lastname else self.login
+            if self.firstname and self.lastname else self.login
 
     def _get_password(self):
         return self._password
