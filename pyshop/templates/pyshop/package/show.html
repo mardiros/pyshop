@@ -4,10 +4,34 @@
     <a href="{{ route_url('list_package')}}">
         {% trans %}package{% endtrans %}
     </a>
-    <h2>{{package.name}}</h2>
+    <h2>{{package.name}} {{release.version}}</h2>
 {% endblock %}
 
-{% set release = package.sorted_releases[0] %}
+{% block toolbar %}
+        {% set display = 0 %}
+        {% for r in package.sorted_releases %}
+            {% if r.id == release.id %}
+                {% set idx = loop.index0 %}
+                {% set display = 1%}
+                {% if idx > 0 %}
+                    <a href="{{ route_url('show_package_version',
+                        package_name=package.name,
+                        release_version=package.sorted_releases[0].version)}}">
+                        {{package.sorted_releases[0].version}}
+                    </a>
+                    ...
+                {% endif %}
+            {% endif %}
+            {% if display and loop.index <= idx + 10 %}
+                <a href="{{ route_url('show_package_version', package_name=package.name, release_version=r.version)}}">
+                    {{r.version}}
+                </a>
+            {% endif %}
+            {% if loop.last and idx + 10 < loop.index %}
+                ...
+            {% endif %}
+        {% endfor %}
+{% endblock %}
 
 {% block main %}
 <section id="release-download" class="release-download">
