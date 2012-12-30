@@ -10,20 +10,22 @@
 <form class="filter" method="GET">
     <input type="text" id="classifier" class="filter-input"
            name="classifier.added" value=""/>
-    <button name="form.submitted">
+    <button id="submitter" name="form.submitted">
         {% trans %} filter {% endtrans %}
     </button>
     <ul class="selected-classifiers">
         {% for c in filter.classifiers %}
             <li>
                 <input type="checkbox" id="classifier_{{loop.index}}"
+                       onchange="$('#submitter').click()"
                        name="classifiers" checked="checked" value="{{c.id}}"/>
                 <label for="classifier_{{loop.index}}">{{c.name}}</label>
             </li>
         {% endfor %}
         <li>
             <input type="checkbox" id="source_local" name="local_only" value="1"
-                    {%if filter.local_only%}checked="checked"{% endif %}/>
+                   onchange="$('#submitter').click()"
+                   {%if filter.local_only%}checked="checked"{% endif %}/>
             <label for="source_local">
                 {% trans %}locals only{% endtrans %}
             </label>
