@@ -219,17 +219,51 @@ class Package(Base):
     @property
     def sorted_releases(self):
 
-        def safeint(string):
-            try:
-                return int(string)
-            except ValueError:
-                return string
+        def is_int(*args):
+            for s in args:
+                try:
+                    int(s)
+                    return True
+                except ValueError:
+                    pass
+            return False
 
-        def parseversion(version):
-            return [safeint(v) for v in version.split('.')]
+        def cmp_(a, b):
+            va, vb = a[0], b[0]
 
-        rv = [(parseversion(r.version), r) for r in self.releases]
-        rv = sorted(rv, reverse=True)
+            while len(va) < len(vb):
+                va.append('0')
+            while len(vb) < len(va):
+                vb.append('0')
+
+            for idx in range(len(va)):
+
+                if va[idx] == vb[idx]:
+                    continue
+
+                if is_int(va[idx], vb[idx]):
+                    if is_int(va[idx]) and is_int(vb[idx]):
+                        return cmp(va, vb)
+
+                    if is_int(va[idx]):
+                        if int(re.split('[^0-9]',
+                                        vb[idx]).pop(0)) == int(va[idx]):
+                            return 1
+                        return cmp(va, vb)
+                    else:
+                        if int(re.split('[^0-9]',
+                                        va[idx]).pop(0)) == int(vb[idx]):
+                            return -1
+                        return cmp(va, vb)
+
+                    return 0
+                else:
+                    return cmp(va, vb)
+
+            return 0
+
+        rv = [(r.version.split('.'), r) for r in self.releases]
+        rv = sorted(rv, cmp=cmp_, reverse=True)
         return [r[1] for r in rv]
 
     @classmethod
