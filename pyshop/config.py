@@ -121,8 +121,16 @@ def includeme(config):
     config.add_route(u'show_package',
                      u'/pyshop/package/{package_name}')
 
+    config.add_route(u'show_package_version',
+                     u'/pyshop/package/{package_name}/{release_version}')
+
     config.add_view(u'pyshop.views.package.Show',
                     route_name=u'show_package',
+                    renderer=u'pyshop/package/show.html',
+                    permission=u'user_view')
+
+    config.add_view(u'pyshop.views.package.Show',
+                    route_name=u'show_package_version',
                     renderer=u'pyshop/package/show.html',
                     permission=u'user_view')
 

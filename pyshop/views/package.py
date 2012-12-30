@@ -4,7 +4,7 @@ import logging
 
 from pyramid.httpexceptions import HTTPNotFound
 
-from pyshop.models import Package, Classifier
+from pyshop.models import Package, Release, Classifier
 
 from .base import View
 
@@ -63,4 +63,13 @@ class Show(View):
                                   self.request.matchdict['package_name'])
         if not package:
             raise HTTPNotFound()
-        return { u'package': package}
+
+        if 'release_version' in self.request.matchdict:
+            release = Release.by_version(self.session, package.name,
+                self.request.matchdict['release_version'])
+        else:
+            release = package.sorted_releases[0]
+
+        return {u'package': package,
+                u'release': release,
+                }
