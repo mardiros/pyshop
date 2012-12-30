@@ -27,8 +27,11 @@ body {
             a:before {
                 content: "|";
             }
+            a[rel="username"]:before {
+                content: "";
+            }
         }
-        a, a:active, a:visited {
+        a, a:active, a:visited, a:hover {
             color: #40CCFF;
         }
         .mainnav {
@@ -39,6 +42,7 @@ body {
 
         .subnav {
             clear: both;
+            float: left;
             &:before {
                 content: "»";
             }
@@ -54,6 +58,23 @@ body {
                 display: inline-block;
             }
         }
+
+        .toolbar {
+            float: left;
+            padding: 0 2em;
+            font-weight: bold;
+            color: #4AD;
+            a {
+                display: inline-block;
+                font-weight: normal;
+                vertical-align: bottom;
+                background-color: #4AD;
+                color: black;
+                padding: 2px 5px;
+                border-radius: 3px;
+            }
+        }
+
     }
 
     > .main {
@@ -82,7 +103,7 @@ body {
             display: inline-block;
             vertical-align: middle;
 
-            a, a:active, a:visited {
+            a, a:active, a:visited, a:hover {
                 color: #40CCFF;
             }
 

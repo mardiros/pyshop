@@ -8,9 +8,9 @@
         </h1>
          {% if pyshop.user %}
             <figure>
-                {% trans %}Logged as {% endtrans %} {{pyshop.login}}
-                <a href="{{route_url('edit_user')}}">
-                    Update account
+                {% trans %}Logged as {% endtrans %} 
+                <a rel="username" href="{{route_url('edit_user')}}">
+                    {{pyshop.user.name}}
                 </a>
                 <a href="{{route_url('logout')}}">
                   {% trans %}Sign out{% endtrans %}
@@ -29,6 +29,10 @@
         </nav>
         <nav class="subnav">
             {% block subnav %}
+            {% endblock %}
+        </nav>
+        <nav class="toolbar">
+            {% block toolbar %}
             {% endblock %}
         </nav>
     </header>
