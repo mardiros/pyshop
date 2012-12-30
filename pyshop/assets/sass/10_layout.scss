@@ -21,9 +21,10 @@ body {
         }
         figure {
             float: right;
-            padding: 1em;
-            margin: 0;
             white-space: no-wrap;
+
+            @include reset(1em, 1em);
+
             a:before {
                 content: "|";
             }
@@ -53,8 +54,7 @@ body {
                 display: inline-block;
             }
             h2 {
-                margin: 0;
-                padding: 0;
+                @include reset;
                 display: inline-block;
             }
         }
@@ -93,12 +93,10 @@ body {
         position: absolute;
         display:block;
         width: 100%;
-        margin: 0;
-        padding: 0;
         bottom: 0;
         background-color: #111;
         color: #BBB;
-        height: 1.6em;
+        @include reset(1.6em);
         div {
             display: inline-block;
             vertical-align: middle;

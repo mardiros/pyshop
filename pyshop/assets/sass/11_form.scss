@@ -2,7 +2,8 @@ form {
 
     width: 500px;
     max-width: 80%;
-    border: 1px solid gray;
+    border: 1px solid $border-color;
+    @include border-radius(5px, 5px, 5px, 5px);
 
     li {
 
@@ -19,6 +20,7 @@ form {
             width: 50%;
             white-space: nowrap;
             display: inline-block;
+            @include border-radius(2px, 2px, 2px, 2px);
         }
 
         input.long {
@@ -44,21 +46,17 @@ form {
         border: none;
         width: 80%;
         .filter-input {
-            border-radius: 3px 0 0 3px;
             border-width: 1px 0 1px 1px;
             display: inline-block;
-            float: left;
-            height: 1.6em;
-            line-height: 1.6em;
-            margin: 0;
-            padding: 0;
             width: 40em;
+            @include reset(1.6em);
+            @include border-radius(3px, 0, 0, 3px);
         }
 
         button {
             display: inline-block;
             border: 1px solid $border-color;
-            border-radius: 0 3px 3px 0;
+            @include border-radius(0, 3px, 3px, 0);
             line-height: 1.6em;
             margin: 0;
             padding: 0 1em;
@@ -91,7 +89,7 @@ body.login {
         margin-top: -150px;
         margin-left: -150px;
         border: 1px solid $border-color;
-        border-radius: 5px;
+        @include border-radius(5px, 5px, 5px, 5px);
 
         h1 {
             font-size: 2em;

@@ -107,15 +107,15 @@ textarea {
 }
 
 input[type=text],
-input[type=password]
-textarea:focus {
-    transition: border 0.5s linear 0s, box-shadow 0.5s linear 0s
+input[type=password],
+textarea {
+    transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s
 }
 
 input[type=text]:focus,
 input[type=password]:focus,
 textarea:focus,
 button:hover {
-  border-color: #3264db;
-  box-shadow: 0px 0px 6px #3264db;
+    border-color: $hilight-color;
+    box-shadow: 0px 0px 6px $hilight-color;
 }

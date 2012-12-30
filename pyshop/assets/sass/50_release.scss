@@ -5,8 +5,9 @@
     }
     a {
         display: inline-block;
+        vertical-align: bottom;
         &.anchor {
-            color: #083;
+            color: $alt-color;
             font-weight: bold;
             font-size: 2em;
             &:hover {
@@ -15,27 +16,33 @@
         }
         &.download {
             border-radius: 3px;
-            background-color: #0C3;
+            background-color: $alt-background-color;
             color: white;
-            padding: 0.6em;
+            padding: 0.4em;
         }
     }
 }
 
 .release-summary {
     > h5 {
+        @include reset;
         font-size: 2.5em;
-        margin: 0;
-        padding: 0;
         border: 0 solid $border-color;
         border-width: 0 0 1px 0;
     }
+
+    .document {
+        h1 {
+            @include reset(1em, .2em);
+            font-size: 1.6em;
+        }
+    }
+
 }
 
 .release-files {
     > h5 {
+        @include reset;
         font-size: 1.8em;
-        margin: 0;
-        padding: 0;
     }
 }

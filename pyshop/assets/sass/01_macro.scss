@@ -1,9 +1,15 @@
+@mixin reset($height: 1em, $padding: 0, $margin: 0) {
+    height: $height;
+    line-height: $height;
+    padding: $padding;
+    margin: $margin;
+}
 
 
-@mixin border-radius($radius: 10px) {
-  border-radius: $radius;
-  -moz-border-radius: $radius;
-  -webkit-border-radius: $radius;
+@mixin border-radius($tl, $tr, $br, $bl) {
+  border-radius: $tl $tr $br $bl;
+  -moz-border-radius: $tl $tr $br $bl;
+  -webkit-border-radius: $tl $tr $br $bl;
 }
 
 @mixin transition($property: background-color, $duration: .3s, $time-fun: ease-in) {
