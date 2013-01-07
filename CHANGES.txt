@@ -1,3 +1,10 @@
+0.6
+---
+
+ - Fix first connection of the web application
+ - Fix the usage of http proxy (forcing request version)
+
+
 0.5
 ---
 
