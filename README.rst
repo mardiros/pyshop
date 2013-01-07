@@ -21,7 +21,7 @@ Getting Started
 You shoud edit the pyshop.ini file in order to configure the pyshop.cookie_key,
 the host:port that host the service, ...
 When the pyshop is running visit the web application,
-http://localhost:6543/ by default, to check all is fine.
+http://localhost:8000/ by default, to check all is fine.
 
 For production usage, you should create accounts with the "developer" group.
 Visit http://localhost:6543/pyshop/user with the admin account to create
