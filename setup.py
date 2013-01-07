@@ -24,7 +24,7 @@ requires = [
     'zope.sqlalchemy',
 
     'cryptacular',
-    'requests',
+    'requests < 1.0.0',
     'docutils',
 
     'IPython',
