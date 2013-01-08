@@ -1,4 +1,5 @@
 import re
+import logging
 
 import cryptacular.bcrypt
 
@@ -14,6 +15,7 @@ from .helpers.sqla import (Database, SessionFactory, ModelError,
                            dispose_engine as dispose_engine_base
                            )
 
+log = logging.getLogger(__file__)
 crypt = cryptacular.bcrypt.BCRYPTPasswordManager()
 
 Base = Database.register('pyshop')
@@ -236,29 +238,34 @@ class Package(Base):
             while len(vb) < len(va):
                 vb.append('0')
 
-            for idx in range(len(va)):
+            try:
+                for idx in range(len(va)):
 
-                if va[idx] == vb[idx]:
-                    continue
+                    if va[idx] == vb[idx]:
+                        continue
 
-                if is_int(va[idx], vb[idx]):
-                    if is_int(va[idx]) and is_int(vb[idx]):
-                        return cmp(va, vb)
+                    if is_int(va[idx], vb[idx]):
+                        if is_int(va[idx]) and is_int(vb[idx]):
+                            return cmp(va, vb)
 
-                    if is_int(va[idx]):
-                        if int(re.split('[^0-9]',
-                                        vb[idx]).pop(0)) == int(va[idx]):
-                            return 1
-                        return cmp(va, vb)
+                        if is_int(va[idx]):
+                            if int(re.split('[^0-9]',
+                                            vb[idx]).pop(0)) == int(va[idx]):
+                                return 1
+                            return cmp(va, vb)
+                        else:
+                            if int(re.split('[^0-9]',
+                                            va[idx]).pop(0)) == int(vb[idx]):
+                                return -1
+                            return cmp(va, vb)
+
+                        return 0
                     else:
-                        if int(re.split('[^0-9]',
-                                        va[idx]).pop(0)) == int(vb[idx]):
-                            return -1
                         return cmp(va, vb)
 
-                    return 0
-                else:
-                    return cmp(va, vb)
+            except Exception:
+                log.error("Error while comparing %s and %s" % (va, vb),
+                          exc_info=True)
 
             return 0
 
