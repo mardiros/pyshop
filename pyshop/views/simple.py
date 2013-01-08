@@ -36,7 +36,15 @@ class UploadReleaseFile(View):
         if not remote_user:
             raise exc.HTTPForbidden()
 
+
         params = self.request.params
+
+        if (asbool(settings['pyshop.upload.satanize'])
+            and not re.match(settings['pyshop.upload.satanize.regex'],
+                            params['version']
+                            )):
+            raise exc.HTTPForbidden()
+
         pkg = Package.by_name(self.session, params['name'])
         if pkg:
             auth = [user for user in pkg.owners + pkg.maintainers
@@ -80,6 +88,7 @@ class UploadReleaseFile(View):
                     break
                 size += len(data)
                 output_file.write(data)
+
 
         release = Release.by_version(self.session, pkg.name,
                                      params['version'])
@@ -190,7 +199,7 @@ class Show(View):
 
         api = pypi.proxy
         settings = self.request.registry.settings
-        satanize = asbool(settings['pyshop.satanize'])
+        satanize = asbool(settings['pyshop.mirror.satanize'])
 
         package_name = self.request.matchdict['package_name']
         pkg = Package.by_name(self.session, package_name)
@@ -226,7 +235,8 @@ class Show(View):
                         'package_name': package_name}
 
             if satanize:
-                re_satanize = re.compile(settings['pyshop.satanize.regex'])
+                re_satanize = re.compile(settings['pyshop.mirror.'
+                                                  'satanize.regex'])
                 pypi_versions = [v for v in pypi_versions
                                  if re_satanize.match(v)]
 
