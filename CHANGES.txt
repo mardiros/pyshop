@@ -1,3 +1,14 @@
+
+0.7
+---
+
+ - Satanize version number on upload.
+   This is configurable with settings ``pyshop.upload.satanize``
+   and ``pyshop.upload.satanize.regex``
+ - Settings ``pyshop.satanize`` and ``pyshop.satanize.regex`` have been renamed
+   to ``pyshop.mirror.satanize`` and  ``pyshop.mirror.satanize.regex``
+
+
 0.6
 ---
 
