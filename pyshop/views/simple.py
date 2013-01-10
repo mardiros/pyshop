@@ -110,7 +110,8 @@ class UploadReleaseFile(View):
         for name in classifiers:
             classifier = Classifier.by_name(self.session, name)
             while classifier:
-                release.classifiers.append(classifier)
+                if classifier not in release.classifiers:
+                    release.classifiers.append(classifier)
                 if classifier not in pkg.classifiers:
                     pkg.classifiers.append(classifier)
                 classifier = classifier.parent
