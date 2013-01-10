@@ -48,10 +48,12 @@ class List(View):
                             u'no': page_no},
                  u'package_count': package_count,
                  u'packages': Package.by_filter(self.session, opts,
-                     limit=page_size, offset=page_size * (page_no - 1)
+                     limit=page_size, offset=page_size * (page_no - 1),
+                     order_by=Package.name
                      ),
                  u'filter': opts,
-                 u'classifiers': Classifier.all(self.session)
+                 u'classifiers': Classifier.all(self.session,
+                             order_by=Classifier.name)
                 }
 
 
