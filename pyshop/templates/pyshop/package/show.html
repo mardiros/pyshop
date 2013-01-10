@@ -74,16 +74,14 @@
             <th>{% trans %} author {% endtrans %}</th>
             <th>{% trans %} downloads {% endtrans %}</th>
         </tr>
-        {% for release in package.sorted_releases %}
+        {% for file in release.files %}
         <tr>
             <td>
-                {% for f in release.files %}
-                    <a class="download"
-                       href="{{ route_url('repository', file_id=f.id,
-                                filename=f.filename)
-                               }}#{{ f.md5_digest }}">{{f.filename}}
-                    </a>
-                {% endfor %}
+                <a class="download"
+                   href="{{ route_url('repository', file_id=file.id,
+                            filename=file.filename)
+                           }}#{{ file.md5_digest }}">{{file.filename}}
+                </a>
             </td>
             <td class="num">
                 v{{ release.version }}
@@ -91,7 +89,7 @@
             <td>
                 {{ release.author.login }}
             </td>
-            <td class="num">{{ release.downloads }}</td>
+            <td class="num">{{ file.downloads }}</td>
         </tr>
         {% endfor %}
     </table>
