@@ -6,7 +6,7 @@ import cryptacular.bcrypt
 from sqlalchemy import (Table, Column, ForeignKey, Index,
                         Integer, Boolean, Unicode, UnicodeText,
                         DateTime, Enum)
-from sqlalchemy.orm import relationship, synonym
+from sqlalchemy.orm import relationship, synonym, backref
 from sqlalchemy.sql.expression import func, or_, and_
 from sqlalchemy.ext.declarative import declared_attr
 
@@ -355,8 +355,10 @@ class Release(Base):
     bugtrack_url = Column(Unicode(800))
     docs_url = Column(Unicode(800))
     classifiers = relationship(Classifier, secondary=classifier__release,
-                               lazy='dynamic')
-    package = relationship(Package, lazy='join', backref='releases')
+                               lazy='dynamic', cascade='all, delete')
+    package = relationship(Package, lazy='join', 
+                           backref=backref('releases',
+                                           cascade='all, delete-orphan'))
     author = relationship(User, primaryjoin=author_id == User.id)
     maintainer = relationship(User, primaryjoin=maintainer_id == User.id)
 
@@ -429,7 +431,9 @@ class ReleaseFile(Base):
     has_sig = Column(Boolean, default=False)
     comment_text = Column(UnicodeText())
 
-    release = relationship(Release, backref='files', lazy='join')
+    release = relationship(Release, lazy='join',
+                           backref=backref('files',
+                                           cascade='all, delete-orphan'))
 
     @classmethod
     def by_release(cls, session, package_name, version):
