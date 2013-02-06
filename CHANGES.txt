@@ -1,4 +1,8 @@
 
+0.7.2
+-----
+ - Remove unused certificates for pypi validation
+
 0.7.1
 -----
  - Securize download from pypi by forcing https and validate certificate
