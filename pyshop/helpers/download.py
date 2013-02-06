@@ -33,7 +33,12 @@ class ReleaseFileRenderer(object):
                 if not os.path.exists(dir_):
                     os.makedirs(dir_, 0750)
 
-                resp = requests.get(value['url'])
+                if value['url'].startswith('https://pypi.python.org'):
+                    verify = os.path.join(os.path.dirname(__file__), 'pypi.pem')
+                else:
+                    verify = value['url'].startswith('https:')
+
+                resp = requests.get(value['url'], verify=verify)
                 with open(f, 'wb') as rf:
                     rf.write(resp.content)
                 return resp.content
