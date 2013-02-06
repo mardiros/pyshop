@@ -1,4 +1,11 @@
 
+0.7.1
+-----
+ - Securize download from pypi by forcing https and validate certificate
+   pypi.python.org certificate chain is embed in the pyshop package
+ - Fix package order on web page
+
+
 0.7
 ---
 
