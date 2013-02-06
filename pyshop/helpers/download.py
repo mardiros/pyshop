@@ -1,11 +1,13 @@
 import os
 import os.path
 import mimetypes
+import logging
 
 import requests
 from zope.interface import implements
 from pyramid.interfaces import ITemplateRenderer
 
+log = logging.getLogger(__name__)
 
 class ReleaseFileRenderer(object):
     implements(ITemplateRenderer)
@@ -35,9 +37,11 @@ class ReleaseFileRenderer(object):
 
                 if value['url'].startswith('https://pypi.python.org'):
                     verify = os.path.join(os.path.dirname(__file__), 'pypi.pem')
+                    log.info('use pypi certificates')
                 else:
                     verify = value['url'].startswith('https:')
 
+                log.info('downloading %s', value['url'])
                 resp = requests.get(value['url'], verify=verify)
                 with open(f, 'wb') as rf:
                     rf.write(resp.content)
