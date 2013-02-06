@@ -2,6 +2,7 @@
 import math
 import logging
 
+from sqlalchemy.sql.expression import func
 from pyramid.httpexceptions import HTTPNotFound
 
 from pyshop.models import Package, Release, Classifier
@@ -49,7 +50,7 @@ class List(View):
                  u'package_count': package_count,
                  u'packages': Package.by_filter(self.session, opts,
                      limit=page_size, offset=page_size * (page_no - 1),
-                     order_by=Package.name
+                     order_by=func.lower(Package.name)
                      ),
                  u'filter': opts,
                  u'classifiers': Classifier.all(self.session,
