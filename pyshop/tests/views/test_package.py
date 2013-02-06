@@ -25,6 +25,6 @@ class PackageTestCase(case.ViewTestCase):
         from pyshop.views.package import Show
         view = Show(self.create_request(
             matchdict={'package_name': u'local_package1'}))()
-        self.assertEqual(set(view.keys()), {'pyshop', 'package'})
+        self.assertEqual(set(view.keys()), {'pyshop', 'release', 'package'})
         self.assertIsInstance(view['package'], Package)
         self.assertEqual(view['package'].name, u'local_package1')
