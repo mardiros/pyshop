@@ -2,11 +2,29 @@
 pyshop
 ======
 
-Get your private cheeseshop running.
-
-
 Getting Started
 ---------------
+
+Pyshop is a private packaging repository for python.
+
+The aim is to split private projets in distinct private package and keep a
+setup.py clean and working, by declaring all dependancies, exactly has
+public package from PyPI.
+
+Pyshop also mirror package from PyPI safety (using ssl and checking
+certificate).
+
+Pyshop use clear and simple ACL to manage privilleges.
+
+An installer group that can only download release file.
+A developer group that can download/upload release file and browse the website.
+An admin group that have developer privilleges and accounts management.
+
+So, every users, including "pip" must authenticated by login and password.
+
+
+Installation
+------------
 
 ::
 
@@ -40,7 +58,8 @@ edit for simplify the usage of pyshop.
 ~/.pip/pip.conf
 ~~~~~~~~~~~~~~~
 
-Configuration used by pip
+Configuration used by pip.
+This is a user file, you can set a developper or the pip generic account.
 
 ::
 
@@ -55,10 +74,30 @@ Configuration used by pip
     index-url = http://pip:changeme@localhost:6543/simple/
 
 
+setup.cfg
+~~~~~~~~~
+
+A setup.cfg file is used by the "python setup.py develop" to install
+dependancies. You should use a generic account with have installer privilleges
+only, shared by every developper.
+
+This file is a "per project file" at the root of the package.
+
+::
+
+    [easy_install]
+    index-url = http://pip:changeme@localhost:6543/simple/
+
+This should work now::
+
+    python setup.py develop
+
+
 ~/.pypirc
 ~~~~~~~~~
 
-Configuration used by setuptools to upload package
+Configuration used by setuptools to upload package.
+Every developper should have it's own account to upload package.
 
 ::
 
@@ -72,16 +111,30 @@ Configuration used by setuptools to upload package
     repository: http://localhost:6543/simple/
 
 
-setup.cfg
-~~~~~~~~~
+
+This should work now::
+
+    python setup.py sdist upload  -v -r pyshop
+/pypi/pypiserver
+
+
+Feature Missing
+---------------
+
+Developper can't add other account to give them upload right to their project.
+This can be done in the database or in the pyshop shell by an administrator.
 
 ::
+    pyshop_shell pyshop.ini
+    In [1]: pkg = Package.by_name(session, u'pyshop')
+    In [2]: pkg.owners.append(User.by_login(session, u'admin'))
+    In [3]: session.commit()
 
-    [easy_install]
-    index-url = http://pip:changeme@localhost:6543/simple/
 
+Known Alternatives
+------------------
 
-Uploading a file to your pyshop
--------------------------------
-
-python setup.py sdist upload  -v -r pyshop
+ - djangopypi: http://pypi.python.org/pypi/djangopypi
+ - djangopypi2: http://pypi.python.org/pypi/djangopypi2
+ - localshop: http://pypi.python.org/pypi/localshop
+ - pypiserver: http://pypi.python.org
