@@ -1,4 +1,3 @@
-
 pyshop
 ======
 
@@ -8,20 +7,20 @@ Getting Started
 Pyshop is a private packaging repository for python.
 
 The aim is to split private projets in distinct private package and keep a
-setup.py clean and working, by declaring all dependancies, exactly has
-public package from PyPI.
+setup.py clean and working, by declaring all dependancies, exactly has public
+package from PyPI.
 
 Pyshop also mirror package from PyPI safety (using ssl and checking
 certificate).
 
-Pyshop use clear and simple ACL to manage privilleges.
+Pyshop use clear and simple ACL to manage privilleges:
 
-An installer group that can only download release file.
-A developer group that can download/upload release file and browse the website.
-An admin group that have developer privilleges and accounts management.
+-   an installer group that can only download release file
+-   a developer group that can download/upload release file and browse the
+    website and
+-   an admin group that have developer privilleges and accounts management.
 
 So, every users, including "pip" must authenticated by login and password.
-
 
 Installation
 ------------
@@ -38,28 +37,25 @@ Installation
     (pyshop)$ pserve pyshop.ini start --log-file=pyshop.log
 
 You shoud edit the pyshop.ini file in order to configure the pyshop.cookie_key,
-the host:port that host the service, ...
-When the pyshop is running visit the web application,
-http://localhost:8000/ by default, to check all is fine.
+the host:port that host the service.  When the pyshop is running visit the web
+application, http://localhost:8000/ by default, to check all is fine.
 
 For production usage, you should create accounts with the "developer" group.
 Visit http://localhost:6543/pyshop/user with the admin account to create
-accounts. You also should use an https reverse proxy. Python packaging
-core use basic authentication: it send user/password in clear.
-
+accounts. You also should use an https reverse proxy. Python packaging core use
+basic authentication: it send user/password in clear.
 
 Configuring your environment to use that new pyshop
 ---------------------------------------------------
 
-Here is all configuration files for usual python tools you have to
-edit for simplify the usage of pyshop.
-
+Here is all configuration files for usual python tools you have to edit for
+simplify the usage of pyshop.
 
 ~/.pip/pip.conf
 ~~~~~~~~~~~~~~~
 
-Configuration used by pip.
-This is a user file, you can set a developper or the pip generic account.
+Configuration used by pip.  This is a user file, you can set a developper or
+the pip generic account.
 
 ::
 
@@ -72,7 +68,6 @@ This is a user file, you can set a developper or the pip generic account.
     timeout = 60
     [install]
     index-url = http://pip:changeme@localhost:6543/simple/
-
 
 setup.cfg
 ~~~~~~~~~
@@ -111,12 +106,9 @@ Every developper should have it's own account to upload package.
     repository: http://localhost:6543/simple/
 
 
-
 This should work now::
 
-    python setup.py sdist upload  -v -r pyshop
-/pypi/pypiserver
-
+    python setup.py sdist upload -v -r pyshop /pypi/pypiserver
 
 Feature Missing
 ---------------
