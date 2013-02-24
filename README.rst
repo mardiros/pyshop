@@ -130,4 +130,4 @@ Known Alternatives
  - djangopypi: http://pypi.python.org/pypi/djangopypi
  - djangopypi2: http://pypi.python.org/pypi/djangopypi2
  - localshop: http://pypi.python.org/pypi/localshop
- - pypiserver: http://pypi.python.org
+ - pypiserver: https://pypi.python.org/pypi/pypiserver
