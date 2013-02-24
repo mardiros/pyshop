@@ -15,8 +15,13 @@ requires = [
     'pyramid',
     'waitress',
     'SQLAlchemy',
-#    'pyramid_debugtoolbar',
-    'pyramid_scss',
+#    'pyramid_debugtoolbar', # install for developement usage only
+
+    'pyScss==1.1.4',         # pyramid-scss version does't support pyScss 1.1.5
+    'pyramid-scss==0.2.1',   # freeze pyramid-scss too until it support next
+                             # pyScss release.
+                             # maybe >0.2.1 should not support pyScss < 1.1.5
+
     'pyramid_jinja2',
     'pyramid_xmlrpc',
 
@@ -24,7 +29,7 @@ requires = [
     'zope.sqlalchemy',
 
     'cryptacular',
-    'requests < 1.0.0',
+    'requests < 1.0.0',      # must validate usage of proxy before use 1.1.0
     'docutils',
 
     'IPython',
