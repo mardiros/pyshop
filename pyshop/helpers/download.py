@@ -9,6 +9,7 @@ from pyramid.interfaces import ITemplateRenderer
 
 log = logging.getLogger(__name__)
 
+
 class ReleaseFileRenderer(object):
     implements(ITemplateRenderer)
 
@@ -35,11 +36,7 @@ class ReleaseFileRenderer(object):
                 if not os.path.exists(dir_):
                     os.makedirs(dir_, 0750)
 
-                if value['url'].startswith('https://pypi.python.org'):
-                    verify = os.path.join(os.path.dirname(__file__), 'pypi.pem')
-                    log.info('use pypi certificates')
-                else:
-                    verify = value['url'].startswith('https:')
+                verify = value['url'].startswith('https:')
 
                 log.info('downloading %s', value['url'])
                 resp = requests.get(value['url'], verify=verify)
@@ -51,7 +48,7 @@ class ReleaseFileRenderer(object):
                 with open(f, 'rb') as rf:
                     data = ''
                     while True:
-                        content = rf.read(2<<16)
+                        content = rf.read(2 << 16)
                         if not content:
                             break
                         data += content
