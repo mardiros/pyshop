@@ -36,10 +36,15 @@ class RootFactory(object):
     _acl = None
 
     def __init__(self, request):
-        log.info(u'[%s] %s %s' % (request.client_addr,
-                                  request.method,
-                                  request.current_route_url()
-                                  ))
+
+        ca = request.client_addr
+        rm = request.method
+        try:
+            cru = request.current_route_url()
+        except ValueError, e:
+            cru = e.message
+
+        log.info(u'[%s] %s %s' % (ca, rm, cru))
         self.__acl__ = self.get_acl(request)
 
     def get_acl(self, request):
