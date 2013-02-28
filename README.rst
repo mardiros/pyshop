@@ -124,10 +124,10 @@ This can be done in the database or in the pyshop shell by an administrator.
     In [3]: session.commit()
 
 
-Known Alternatives
-------------------
+Alternatives
+------------
 
- - djangopypi: http://pypi.python.org/pypi/djangopypi
- - djangopypi2: http://pypi.python.org/pypi/djangopypi2
- - localshop: http://pypi.python.org/pypi/localshop
  - pypiserver: https://pypi.python.org/pypi/pypiserver
+ - localshop: http://pypi.python.org/pypi/localshop
+ - djangopypi: http://pypi.python.org/pypi/djangopypi
+ - chishop: http://pypi.python.org/pypi/chishop
