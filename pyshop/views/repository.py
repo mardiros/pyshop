@@ -6,8 +6,9 @@ def get_release_file(root, request):
     session = DBSession()
 
     f = ReleaseFile.by_id(session, int(request.matchdict['file_id']))
+
     url = f.url
-    if url.startswith('http://pypi.python.org'):
+    if url and url.startswith('http://pypi.python.org'):
         url = 'https' + url[4:]
 
     rv = {'id': f.id,
