@@ -1,6 +1,11 @@
 Changelist
 ==========
 
+0.7.4
+-----
+
+ - Fix local package usage (broken since 0.7.1) [fizyk]
+
 0.7.3
 -----
 
