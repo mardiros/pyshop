@@ -6,7 +6,7 @@ Getting Started
 
 Pyshop is a private packaging repository for python.
 
-The aim is to split private projets in distinct private package and keep a
+The aim is to split private projects in distinct private package and keep a
 setup.py clean and working, by declaring all dependancies, exactly as public
 package from PyPI.
 
