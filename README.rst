@@ -7,10 +7,10 @@ Getting Started
 Pyshop is a private packaging repository for python.
 
 The aim is to split private projets in distinct private package and keep a
-setup.py clean and working, by declaring all dependancies, exactly has public
+setup.py clean and working, by declaring all dependancies, exactly as public
 package from PyPI.
 
-Pyshop also mirror package from PyPI safety (using ssl and checking
+Pyshop also mirror packages from PyPI safety (using ssl by checking
 certificate).
 
 Pyshop use clear and simple ACL to manage privilleges:
@@ -20,7 +20,7 @@ Pyshop use clear and simple ACL to manage privilleges:
     website and
 -   an admin group that have developer privilleges and accounts management.
 
-So, every users, including "pip" must authenticated by login and password.
+So, every users, including "pip", must be authenticated by login and password.
 
 Installation
 ------------
@@ -101,19 +101,19 @@ Every developper should have it's own account to upload package.
         pyshop
 
     [pyshop]
-    username: admin # or create an account in pyshop admin interface
+    username: admin  # or create an account in pyshop admin interface
     password: changeme
     repository: http://localhost:6543/simple/
 
 
-This should work now::
+This should works now::
 
     python setup.py sdist upload -v -r pyshop /pypi/pypiserver
 
 Feature Missing
 ---------------
 
-Developper can't add other account to give them upload right to their project.
+Developper can't add other accounts to give them upload right to their project.
 This can be done in the database or in the pyshop shell by an administrator.
 
 ::
