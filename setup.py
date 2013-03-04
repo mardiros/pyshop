@@ -18,7 +18,7 @@ requires = [
 #    'pyramid_debugtoolbar', # install for developement usage only
 
     'pyScss==1.1.4',         # pyramid-scss version does't support pyScss 1.1.5
-    'pyramid-scss==0.2.1',   # freeze pyramid-scss too until it support next
+    'pyramid_scss==0.2.1',   # freeze pyramid-scss too until it support next
                              # pyScss release.
                              # maybe >0.2.1 should not support pyScss < 1.1.5
 
