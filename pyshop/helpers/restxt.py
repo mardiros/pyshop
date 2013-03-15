@@ -11,4 +11,4 @@ def parse_rest(rest):
             settings_overrides={'output_encoding': 'unicode'})
         return Markup(html[html.find('<body>') + 6:html.find('</body>')].strip())
     except SystemMessage:
-        return rest
+        return Markup('<pre>' + rest + '</pre>')
