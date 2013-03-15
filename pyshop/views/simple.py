@@ -30,21 +30,21 @@ class UploadReleaseFile(View):
         settings = self.request.registry.settings
         username = authenticated_userid(self.request)
         if not username:
-             raise exc.HTTPForbidden()
+            raise exc.HTTPForbidden()
 
         remote_user = User.by_login(self.session, username)
         if not remote_user:
             raise exc.HTTPForbidden()
 
-
         params = self.request.params
 
         if (asbool(settings['pyshop.upload.satanize'])
             and not re.match(settings['pyshop.upload.satanize.regex'],
-                            params['version']
-                            )):
+                             params['version']
+                             )):
             raise exc.HTTPForbidden()
 
+        print type(params['name'])
         pkg = Package.by_name(self.session, params['name'])
         if pkg:
             auth = [user for user in pkg.owners + pkg.maintainers
@@ -62,7 +62,7 @@ class UploadReleaseFile(View):
                                   {u'sdist': u'tar.gz',
                                    u'bdist_egg': u'egg',
                                    u'bdist_msi': u'msi',
-                                   u'bdist_dmg': u'zip', # XXX or gztar ?
+                                   u'bdist_dmg': u'zip',  # XXX or gztar ?
                                    u'bdist_rpm': u'rpm',
                                    u'bdist_dumb': u'msi',
                                    u'bdist_wininst': u'exe',
@@ -83,12 +83,11 @@ class UploadReleaseFile(View):
         with open(filepath, 'wb') as output_file:
             input_file.seek(0)
             while True:
-                data = input_file.read(2<<16)
+                data = input_file.read(2 << 16)
                 if not data:
                     break
                 size += len(data)
                 output_file.write(data)
-
 
         release = Release.by_version(self.session, pkg.name,
                                      params['version'])
@@ -196,7 +195,6 @@ class Show(View):
                            )
 
     def render(self):
-
 
         api = pypi.proxy
         settings = self.request.registry.settings
