@@ -31,6 +31,7 @@ requires = [
     'cryptacular',
     'requests < 1.0.0',      # must validate usage of proxy before use 1.1.0
     'docutils',
+    'setuptools',            # compare package version
 
     'IPython',
 ]

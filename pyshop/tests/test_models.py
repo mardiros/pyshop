@@ -141,6 +141,12 @@ class ReleaseTestCase(ModelTestCase):
         releases = [(r.package.name, r.version) for r in releases]
         self.assertEqual(releases, [(u'mirrored_package1', u'0.1')])
 
+    def test_sorted_releases(self):
+        from pyshop.models import Package
+        pkg = Package.by_name(self.session, u'mirrored_package1')
+        self.assertEqual([release.version for release in pkg.sorted_releases],
+                         ['0.2', '0.1'])
+
 
 class ReleaseFileTestCase(ModelTestCase):
 
