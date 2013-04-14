@@ -45,6 +45,7 @@ Visit http://localhost:6543/pyshop/user with the admin account to create
 accounts. You also should use an https reverse proxy. Python packaging core use
 basic authentication: it send user/password in clear.
 
+
 Configuring your environment to use that new pyshop
 ---------------------------------------------------
 
@@ -64,10 +65,16 @@ the pip generic account.
     # pyshop retrieve informations from PyPI and
     # store them in its DB.
     # Be patient, it is not so long.
-    default-timeout = 60
-    timeout = 60
+    default-timeout = 120
+    timeout = 120
     [install]
     index-url = http://pip:changeme@localhost:6543/simple/
+
+
+Note:
+If you are using a WSGI server that kill requests in a timeout, like uWSGI,
+set an appropriate timout for this service too.
+
 
 setup.cfg
 ~~~~~~~~~
