@@ -210,7 +210,9 @@ class Show(View):
             else:
                 if pkg.update_at:
                     td = datetime.now() - pkg.update_at
-                    refresh = td.days > 0 or td.seconds > 10800
+                    # refresh if the package has not been update today
+                    # XXX should be configurable
+                    refresh = td.days > 0
 
         if refresh:
             pypi_versions = api.package_releases(package_name, True)
