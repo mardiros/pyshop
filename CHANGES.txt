@@ -1,10 +1,21 @@
 Changelist
 ==========
 
-0.7.5~dev
----------
+0.7.5
+-----
 
  - Fix package version comparison
+ - Handle bdist_wheel format
+
+To handle the wheel format, (some package like Twisted 13 use it),
+for previous install, you must run a migration script like this.
+
+::
+
+    $ pyshop_migrate development.ini 0.7.5
+
+The sqlite database file will be altered, YOU MAY backup it before run the
+script.
 
 
 0.7.4
