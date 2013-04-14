@@ -79,6 +79,7 @@ setup(name='pyshop',
       [console_scripts]
       pyshop_install = pyshop.bin.install:main
       pyshop_shell = pyshop.bin.shell:main
+      pyshop_migrate = pyshop.bin.migrate:main
       """,
       paster_plugins=['pyramid'],
       data_files=data_files,
