@@ -228,7 +228,9 @@ class Package(Base):
 
     @classmethod
     def by_name(cls, session, name):
-        return cls.first(session, where=(cls.name == name,))
+        # XXX the field "name" should be created with a
+        # case insensitive collation.
+        return cls.first(session, where=(cls.name.like(name),))
 
     @classmethod
     def by_filter(cls, session, opts, **kwargs):
