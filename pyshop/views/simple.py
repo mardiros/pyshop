@@ -26,6 +26,7 @@ class List(View):
 
 
 class UploadReleaseFile(View):
+
     def render(self):
         settings = self.request.registry.settings
         username = authenticated_userid(self.request)
@@ -219,10 +220,13 @@ class Show(View):
             # XXX package_releases is case sensitive
             # but dependancies declaration not...
             if not pypi_versions:
-                package_name = package_name.lower()
                 search_result = api.search({'name': package_name}, True)
-                search_result = [p for p in search_result
-                                 if p['name'].lower() == package_name]
+                search_count = len(search_result)
+                search_result = [p for p in l
+                                 if p['name'].lower() == package_name
+                                 or p['name'].lower().replace('-', '_') == package_name]
+                log.debug('Found {sc}, matched {mc}'.format(sc=search_count, mc=len(search_result)))
+
                 if search_result:
                     package_name = search_result[0]['name']
                     pypi_versions = api.package_releases(package_name, True)
