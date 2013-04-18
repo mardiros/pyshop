@@ -222,7 +222,7 @@ class Show(View):
             if not pypi_versions:
                 search_result = api.search({'name': package_name}, True)
                 search_count = len(search_result)
-                search_result = [p for p in l
+                search_result = [p for p in search_result
                                  if p['name'].lower() == package_name
                                  or p['name'].lower().replace('-', '_') == package_name]
                 log.debug('Found {sc}, matched {mc}'.format(sc=search_count, mc=len(search_result)))
