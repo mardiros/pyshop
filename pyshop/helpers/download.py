@@ -2,6 +2,7 @@ import os
 import os.path
 import mimetypes
 import logging
+
 import requests
 from zope.interface import implements
 from pyramid.interfaces import ITemplateRenderer
