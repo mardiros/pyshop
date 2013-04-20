@@ -8,6 +8,8 @@ from zope.interface import implements
 from pyramid.interfaces import ITemplateRenderer
 
 log = logging.getLogger(__name__)
+# registering mimetype for egg files
+mimetypes.add_type('x-application/egg', '.egg')
 
 
 class ReleaseFileRenderer(object):
@@ -22,6 +24,7 @@ class ReleaseFileRenderer(object):
             request = system['request']
 
             mime, encoding = mimetypes.guess_type(value['filename'])
+
             request.response_content_type = mime
             if encoding:
                 request.response_encoding = encoding
@@ -32,9 +35,9 @@ class ReleaseFileRenderer(object):
 
             if not os.path.exists(f):
                 dir_ = os.path.join(self.repository_root,
-                             value['filename'][0].lower())
+                                    value['filename'][0].lower())
                 if not os.path.exists(dir_):
-                    os.makedirs(dir_, 0750)
+                    os.makedirs(dir_, 0o750)
 
                 verify = value['url'].startswith('https:')
 
