@@ -1,4 +1,5 @@
 from .case import UnauthenticatedViewTestCase
+from . import setUpModule, tearDownModule
 
 
 class RootFactoryTestCase(UnauthenticatedViewTestCase):

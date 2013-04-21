@@ -7,7 +7,7 @@ from pyshop.bin.install import populate
 from .conf import settings
 
 
-def setUp():
+def setUpModule():
 
     engine = create_engine(settings)
     populate(engine, interactive=False)
@@ -94,5 +94,5 @@ def setUp():
     session.commit()
 
 
-def tearDown():
+def tearDownModule():
     dispose_engine()

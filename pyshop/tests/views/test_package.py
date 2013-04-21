@@ -1,4 +1,5 @@
 from pyshop.tests import case
+from pyshop.tests import setUpModule, tearDownModule
 
 
 class PackageTestCase(case.ViewTestCase):

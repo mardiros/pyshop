@@ -1,4 +1,5 @@
 from .case import ModelTestCase
+from . import setUpModule, tearDownModule
 
 
 class GroupTestCase(ModelTestCase):
