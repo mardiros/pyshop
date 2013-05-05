@@ -29,12 +29,7 @@ class UploadReleaseFile(View):
 
     def render(self):
         settings = self.request.registry.settings
-        username = authenticated_userid(self.request)
-        if not username:
-            raise exc.HTTPForbidden()
-
-        remote_user = User.by_login(self.session, username)
-        if not remote_user:
+        if not self.user:
             raise exc.HTTPForbidden()
 
         params = self.request.params
@@ -49,12 +44,12 @@ class UploadReleaseFile(View):
         pkg = Package.by_name(self.session, params['name'])
         if pkg:
             auth = [user for user in pkg.owners + pkg.maintainers
-                    if user == remote_user]
+                    if user == self.user]
             if not auth:
                 raise exc.HTTPForbidden()
         else:
             pkg = Package(name=params['name'], local=True)
-            pkg.owners.append(remote_user)
+            pkg.owners.append(self.user)
 
         content = self.request.POST['content']
         input_file = content.file
@@ -72,7 +67,7 @@ class UploadReleaseFile(View):
                             filename[0].lower())
 
         if not os.path.exists(dir_):
-            os.mkdir(dir_, 0750)
+            os.mkdir(dir_, 0o750)
 
         filepath = os.path.join(dir_, filename)
         while os.path.exists(filepath):
@@ -96,7 +91,7 @@ class UploadReleaseFile(View):
             release = Release(package=pkg,
                               version=params['version'],
                               summary=params.get('summary'),
-                              author=remote_user,
+                              author=self.user,
                               home_page=params.get('home_page'),
                               license=params.get('license'),
                               description=params.get('description'),
