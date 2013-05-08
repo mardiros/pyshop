@@ -6,6 +6,7 @@ import logging
 import requests
 from zope.interface import implements
 from pyramid.interfaces import ITemplateRenderer
+from pyramid.exceptions import NotFound
 
 log = logging.getLogger(__name__)
 # registering mimetype for egg files
@@ -22,20 +23,20 @@ class ReleaseFileRenderer(object):
 
         if 'request' in system:
             request = system['request']
+            filename = value['filename']
 
-            mime, encoding = mimetypes.guess_type(value['filename'])
+            mime, encoding = mimetypes.guess_type(filename)
 
             request.response_content_type = mime
             if encoding:
                 request.response_encoding = encoding
 
-            f = os.path.join(self.repository_root,
-                             value['filename'][0].lower(),
-                             value['filename'])
+            localpath = os.path.join(self.repository_root, filename[0].lower(),
+                                     filename)
 
-            if not os.path.exists(f):
+            if not os.path.exists(localpath):
                 dir_ = os.path.join(self.repository_root,
-                                    value['filename'][0].lower())
+                                    filename[0].lower())
                 if not os.path.exists(dir_):
                     os.makedirs(dir_, 0o750)
 
@@ -43,15 +44,18 @@ class ReleaseFileRenderer(object):
 
                 log.info('downloading %s', value['url'])
                 resp = requests.get(value['url'], verify=verify)
-                with open(f, 'wb') as rf:
-                    rf.write(resp.content)
+                if resp.status_code == 404:
+                    raise NotFound('Resource {} not found'.format(filename))
+                resp.raise_for_status()
+                with open(localpath, 'wb') as file:
+                    file.write(resp.content)
                 return resp.content
             else:
                 data = ''
-                with open(f, 'rb') as rf:
+                with open(localpath, 'rb') as file:
                     data = ''
                     while True:
-                        content = rf.read(2 << 16)
+                        content = file.read(2 << 16)
                         if not content:
                             break
                         data += content
