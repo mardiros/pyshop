@@ -192,7 +192,7 @@ class User(Base):
         :return: local users
         :rtype: generator of :class:`pyshop.models.User`
         """
-        return cls.find(session, where=(cls.local==True,), order_by=cls.login,
+        return cls.find(session, where=(cls.local == True,), order_by=cls.login,
                         **kwargs)
 
     def validate(self, session):
@@ -270,7 +270,7 @@ class Classifier(Base):
 
         if not classifier:
             splitted_names = [n.strip() for n in name.split(u'::')]
-            classifiers = [u' :: '.join(splitted_names[:i+1])
+            classifiers = [u' :: '.join(splitted_names[:i + 1])
                            for i in range(len(splitted_names))]
             parent_id = None
             category = splitted_names[0]
@@ -338,8 +338,8 @@ class Package(Base):
         Releases sorted by version.
         """
         return sorted(self.releases,
-                      cmp= lambda a, b: cmp(parse_version(a.version),
-                                            parse_version(b.version)),
+                      cmp=lambda a, b: cmp(parse_version(a.version),
+                                           parse_version(b.version)),
                       reverse=True)
 
     @classmethod
@@ -377,7 +377,7 @@ class Package(Base):
         where = []
 
         if opts.get('local_only'):
-            where.append(cls.local==True)
+            where.append(cls.local == True)
 
         if opts.get('classifiers'):
             ids = [c.id for c in opts.get('classifiers')]
@@ -496,7 +496,7 @@ class Release(Base):
     docs_url = Column(Unicode(800))
     classifiers = relationship(Classifier, secondary=classifier__release,
                                lazy='dynamic', cascade='all, delete')
-    package = relationship(Package, lazy='join', 
+    package = relationship(Package, lazy='join',
                            backref=backref('releases',
                                            cascade='all, delete-orphan'))
     author = relationship(User, primaryjoin=author_id == User.id)
@@ -569,7 +569,7 @@ class Release(Base):
         :rtype: generator of :class:`pyshop.models.Release`
         """
         available = {'name': Package.name,
-                     'version' : cls.version,
+                     'version': cls.version,
                      'author': User.login,
                      'author_email': User.email,
                      'maintainer': User.login,

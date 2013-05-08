@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import sys
+
 from zope.interface import implements
 
 from pyramid.interfaces import IAuthenticationPolicy
@@ -20,19 +22,22 @@ class AuthBasicAuthenticationPolicy(CallbackAuthenticationPolicy):
         auth = request.environ.get('HTTP_AUTHORIZATION')
         try:
             authmeth, auth = auth.split(' ', 1)
-        except AttributeError, ValueError: # not enough values to unpack
+        except AttributeError as ValueError:  # not enough values to unpack
             return None
 
         if authmeth.lower() != 'basic':
             return None
 
         try:
-           auth = auth.strip().decode('base64')
-        except binascii.Error: # can't decode
+            # Python 3's string is already unicode
+            auth = auth.strip().decode('base64')
+            if sys.version_info[0] == 2:
+                auth = unicode(auth)
+        except binascii.Error:  # can't decode
             return None
         try:
             login, password = auth.split(':', 1)
-        except ValueError: # not enough values to unpack
+        except ValueError:  # not enough values to unpack
             return None
 
         if User.by_credentials(DBSession(), login, password):
@@ -59,9 +64,9 @@ class RouteSwithchAuthPolicy(CallbackAuthenticationPolicy):
                                                        callback=callback,
                                                        hashalg='sha512')
                      }
-        self.callback=callback
+        self.callback = callback
 
-    def get_impl(self,request):
+    def get_impl(self, request):
         if request.matched_route and request.matched_route.name in (
         'list_simple','show_simple',
         'show_release_file','show_external_release_file',

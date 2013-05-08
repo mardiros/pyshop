@@ -12,7 +12,7 @@ with open(os.path.join(here, 'pyshop', '__init__.py')) as v_file:
                          re.S).match(v_file.read()).group(1)
 
 requires = [
-    'pyramid',
+    'pyramid >= 1.2',
     'waitress',
     'SQLAlchemy',
 #    'pyramid_debugtoolbar', # install for developement usage only
