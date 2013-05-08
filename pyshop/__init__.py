@@ -1,3 +1,7 @@
+"""
+PyShop Web Application.
+"""
+
 from pyramid.config import Configurator
 from pyramid.authorization import ACLAuthorizationPolicy as ACLPolicy
 

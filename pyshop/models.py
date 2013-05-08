@@ -1,3 +1,10 @@
+#-*- coding: utf-8 -*-
+"""
+PyShop models
+
+Describe the sql schema of PyShop using SQLAlchemy.
+PyShop uses with SQLAlchemy with the sqlite backend.
+"""
 import re
 import logging
 
@@ -26,15 +33,31 @@ re_email = re.compile(r'^[^@]+@[a-z0-9]+[-.a-z0-9]+\.[a-z]+$', re.I)
 
 
 def create_engine(settings, prefix='sqlalchemy.', scoped=False):
+    """
+    Create the SQLAlchemy engine from the paste settings.
+
+    :param settings: WSGI Paste parameters from the ini file.
+    :type settings: dict
+
+    :param prefix: SQLAlchemy engine configuration key prefix
+    :type prefix: unicode
+
+    :param scoped: True if the created engine configure a scoped session.
+    :type scoped: bool
+
+    :return: SQLAlchemy created engine
+    :rtype: :class:`sqlalchemy.Engine`
+    """
     return create_engine_base('pyshop', settings, prefix, scoped)
 
 
 def dispose_engine():
+    """Dispose the pyshop SQLAlchemy engine"""
     dispose_engine_base('pyshop')
 
 
 class Permission(Base):
-
+    """Describe a user permission"""
     name = Column(Unicode(255), nullable=False, unique=True)
 
 
@@ -46,13 +69,27 @@ group__permission = Table('group__permission', Base.metadata,
 
 
 class Group(Base):
-
+    """
+    Describe user's groups.
+    """
     name = Column(Unicode(255), nullable=False, unique=True)
     permissions = relationship(Permission, secondary=group__permission,
                                lazy='select')
 
     @classmethod
     def by_name(cls, session, name):
+        """
+        Get a package from a given name.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param name: name of the group
+        :type name: `unicode
+
+        :return: package instance
+        :rtype: :class:`pyshop.models.Group`
+        """
         return cls.first(session, where=(cls.name == name,))
 
 
@@ -63,6 +100,11 @@ user__group = Table('user__group', Base.metadata,
 
 
 class User(Base):
+    """
+    Describe a user.
+
+    This model handle `local` users granted to access pyshop and
+    mirrored users from PyPI."""
 
     @declared_attr
     def __table_args__(cls):
@@ -97,6 +139,18 @@ class User(Base):
 
     @classmethod
     def by_login(cls, session, login, local=True):
+        """
+        Get a user from a given login.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param login: the user login
+        :type login: unicode
+
+        :return: the associated user
+        :rtype: :class:`pyshop.models.User`
+        """
         user = cls.first(session,
                          where=((cls.login == login),
                                 (cls.local == local),)
@@ -106,6 +160,21 @@ class User(Base):
 
     @classmethod
     def by_credentials(cls, session, login, password):
+        """
+        Get a user from given credentials
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param login: username
+        :type login: unicode
+
+        :param password: user password
+        :type password: unicode
+
+        :return: associated user
+        :rtype: :class:`pyshop.models.User`
+        """
         user = cls.by_login(session, login, local=True)
         if not user:
             return None
@@ -114,10 +183,31 @@ class User(Base):
 
     @classmethod
     def get_locals(cls, session, **kwargs):
+        """
+        Get all local users.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :return: local users
+        :rtype: generator of :class:`pyshop.models.User`
+        """
         return cls.find(session, where=(cls.local==True,), order_by=cls.login,
                         **kwargs)
 
     def validate(self, session):
+        """
+        Validate that the current user can be saved.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :return: ``True``
+        :rtype: bool
+
+        :raise: :class:`pyshop.helpers.sqla.ModelError` if user is not valid
+        """
+
         errors = []
         if not self.login:
             errors.append(u'login is required')
@@ -138,6 +228,9 @@ class User(Base):
 
 
 class Classifier(Base):
+    """
+    Describe a Python Package Classifier.
+    """
 
     @declared_attr
     def __table_args__(cls):
@@ -154,11 +247,25 @@ class Classifier(Base):
 
     @property
     def shortname(self):
+        """
+        Last part of the classifier.
+        """
         return self.name.rsplit(u'::', 1)[-1].strip()
 
     @classmethod
     def by_name(cls, session, name):
+        """
+        Get a classifier from a given name.
 
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param name: name of the classifier
+        :type name: `unicode
+
+        :return: classifier instance
+        :rtype: :class:`pyshop.models.Classifier`
+        """
         classifier = cls.first(session, where=(cls.name == name,))
 
         if not classifier:
@@ -202,6 +309,9 @@ classifier__package = Table('classifier__package', Base.metadata,
 
 
 class Package(Base):
+    """
+    Describe a Python Package.
+    """
 
     update_at = Column(DateTime, default=func.now())
     name = Column(Unicode(200), unique=True)
@@ -217,10 +327,16 @@ class Package(Base):
 
     @property
     def versions(self):
+        """
+        Available versions.
+        """
         return [r.version for r in self.sorted_releases]
 
     @property
     def sorted_releases(self):
+        """
+        Releases sorted by version.
+        """
         return sorted(self.releases,
                       cmp= lambda a, b: cmp(parse_version(a.version),
                                             parse_version(b.version)),
@@ -228,12 +344,36 @@ class Package(Base):
 
     @classmethod
     def by_name(cls, session, name):
+        """
+        Get a package from a given name.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param name: name of the package
+        :type name: `unicode
+
+        :return: package instance
+        :rtype: :class:`pyshop.models.Package`
+        """
         # XXX the field "name" should be created with a
         # case insensitive collation.
         return cls.first(session, where=(cls.name.like(name),))
 
     @classmethod
     def by_filter(cls, session, opts, **kwargs):
+        """
+        Get packages from given filters.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param opts: filtering options
+        :type opts: `dict
+
+        :return: package instances
+        :rtype: generator of :class:`pyshop.models.Package`
+        """
         where = []
 
         if opts.get('local_only'):
@@ -253,6 +393,18 @@ class Package(Base):
 
     @classmethod
     def by_owner(cls, session, owner_name):
+        """
+        Get packages from a given owner username.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param owner_name: owner username
+        :type owner_name: unicode
+
+        :return: package instances
+        :rtype: generator of :class:`pyshop.models.Package`
+        """
         return cls.find(session,
                         join=(cls.owners),
                         where=(User.login == owner_name,),
@@ -260,6 +412,18 @@ class Package(Base):
 
     @classmethod
     def by_maintainer(cls, session, maintainer_name):
+        """
+        Get package from a given maintainer name.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param maintainer_name: maintainer username
+        :type maintainer_name: unicode
+
+        :return: package instances
+        :rtype: generator of :class:`pyshop.models.Package`
+        """
         return cls.find(session,
                         join=(cls.maintainers),
                         where=(User.login == maintainer_name,),
@@ -267,11 +431,29 @@ class Package(Base):
 
     @classmethod
     def get_locals(cls, session):
+        """
+        Get all local packages.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :return: package instances
+        :rtype: generator of :class:`pyshop.models.Package`
+        """
         return cls.find(session,
                         where=(cls.local == True,))
 
     @classmethod
     def get_mirrored(cls, session):
+        """
+        Get all mirrored packages.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :return: package instances
+        :rtype: generator of :class:`pyshop.models.Package`
+        """
         return cls.find(session,
                         where=(cls.local == False,))
 
@@ -285,6 +467,9 @@ classifier__release = Table('classifier__release', Base.metadata,
 
 
 class Release(Base):
+    """
+    Describe Python Package Release.
+    """
 
     @declared_attr
     def __table_args__(cls):
@@ -319,6 +504,21 @@ class Release(Base):
 
     @classmethod
     def by_version(cls, session, package_name, version):
+        """
+        Get release for a given version.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param package_name: package name
+        :type package_name: unicode
+
+        :param version: version
+        :type version: unicode
+
+        :return: release instance
+        :rtype: :class:`pyshop.models.Release`
+        """
         return cls.first(session,
                          join=(Package,),
                          where=((Package.name == package_name),
@@ -326,6 +526,18 @@ class Release(Base):
 
     @classmethod
     def by_classifiers(cls, session, classifiers):
+        """
+        Get releases for given classifiers.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param classifiers: classifiers
+        :type classifiers: unicode
+
+        :return: release instances
+        :rtype: generator of :class:`pyshop.models.Release`
+        """
         return cls.find(session,
                         join=(cls.classifiers,),
                         where=(Classifier.name.in_(classifiers),),
@@ -333,6 +545,21 @@ class Release(Base):
 
     @classmethod
     def search(cls, session, opts, operator):
+        """
+        Get releases for given filters.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param opts: filtering options
+        :type opts: dict
+
+        :param operator: filtering options joining operator (`and` or `or`)
+        :type operator: basestring
+
+        :return: release instances
+        :rtype: generator of :class:`pyshop.models.Release`
+        """
         available = {'name': Package.name,
                      'version' : cls.version,
                      'author': User.login,
@@ -370,6 +597,9 @@ class Release(Base):
 
 
 class ReleaseFile(Base):
+    """
+    Describe a release file.
+    """
 
     release_id = Column(Integer, ForeignKey(Release.id),
                         nullable=False)
@@ -393,6 +623,22 @@ class ReleaseFile(Base):
 
     @classmethod
     def by_release(cls, session, package_name, version):
+        """
+        Get release files for a given package
+        name and for a given version.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param package_name: package name
+        :type package_name: unicode
+
+        :param version: version
+        :type version: unicode
+
+        :return: release files
+        :rtype: generator of :class:`pyshop.models.ReleaseFile`
+        """
         return cls.find(session,
                         join=(Release, Package),
                         where=(Package.name == package_name,
@@ -401,6 +647,21 @@ class ReleaseFile(Base):
 
     @classmethod
     def by_filename(cls, session, release, filename):
+        """
+        Get a release file for a given realease and a given filename.
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param release: release
+        :type release: :class:`pyshop.models.Release`
+
+        :param filename: filename of the release file
+        :type filename: unicode
+
+        :return: release file
+        :rtype: :class:`pyshop.models.ReleaseFile`
+        """
         return cls.first(session,
                          where=(ReleaseFile.release_id == release.id,
                                 ReleaseFile.filename == filename,

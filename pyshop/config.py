@@ -25,6 +25,9 @@ def add_urlhelpers(event):
 
 
 def includeme(config):
+    """
+    Pyramid includeme file for the :class:`pyramid.config.Configurator`
+    """
 
     # config.add_renderer('json', JSONP())
     # release file download
