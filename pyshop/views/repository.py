@@ -1,8 +1,19 @@
 # -*- coding: utf-8 -*-
+"""
+PyShop Release File Download View.
+"""
 from pyshop.models import DBSession, ReleaseFile
 
 
 def get_release_file(root, request):
+    """
+    Download a release file.
+    Must be used with :func:`pyshop.helpers.download.renderer_factory`
+    to download the release file.
+
+    :return: download informations
+    :rtype: dict
+    """
     session = DBSession()
 
     f = ReleaseFile.by_id(session, int(request.matchdict['file_id']))

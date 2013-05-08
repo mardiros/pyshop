@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+PyShop User Management Views.
+
+Used by the connected user to edit its account.
+"""
 from pyshop.models import User
 from pyshop.helpers.i18n import trans as _
 

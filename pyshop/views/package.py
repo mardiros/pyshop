@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+PyShop Package Management Views.
+"""
 import math
 import logging
 

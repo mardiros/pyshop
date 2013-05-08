@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+PyShop Credentials Views.
+"""
 import logging
 
 from pyramid.httpexceptions import HTTPFound

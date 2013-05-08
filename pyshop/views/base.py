@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+PyShop Views baseclass.
+"""
 import logging
 
 from pyramid.security import authenticated_userid
@@ -14,6 +17,9 @@ from ..models import DBSession, User
 log = logging.getLogger(__name__)
 
 class ViewBase(object):
+    """
+    PyShop view base class.
+    """
 
     def __init__(self, request):
         self.request = request
@@ -52,6 +58,9 @@ class ViewBase(object):
 
 
 class View(ViewBase):
+    """
+    Base class of every views.
+    """
 
     def update_response(self, response):
         # this is a view to render
@@ -67,6 +76,9 @@ class View(ViewBase):
 
 
 class RedirectView(View):
+    """
+    Base class of every view that redirect after post.
+    """
     redirect_route = None
     redirect_kwargs = {}
 
@@ -79,6 +91,9 @@ class RedirectView(View):
 
 
 class CreateView(RedirectView):
+    """
+    Base class of every create view.
+    """
 
     model = None
     matchdict_key = None
@@ -146,6 +161,9 @@ class CreateView(RedirectView):
 
 
 class EditView(CreateView):
+    """
+    Base class of every edit view.
+    """
 
     def get_model(self):
         return self.model.by_id(self.session,
@@ -153,6 +171,9 @@ class EditView(CreateView):
 
 
 class DeleteView(RedirectView):
+    """
+    Base class of every delete view.
+    """
     model = None
     matchdict_key = None
     redirect_route = None

@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+PyShop Simple View.
+
+simple view are html views scrapped by pip in order to download
+release files.
+"""
 import re
 import logging
 import os.path

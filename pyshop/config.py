@@ -1,4 +1,8 @@
 #-*- coding: utf-8 -*-
+"""
+PyShop Pyramid configuration helpers.
+"""
+
 from pyramid.interfaces import IBeforeRender
 from pyramid.security import has_permission
 from pyramid.url import static_path, route_path

@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
-import logging
-
 """
-Implement PyPiXmlRpc.
+Implement PyPiXmlRpc Service.
+
 See: http://wiki.python.org/moin/PyPiXmlRpc
 
 """
+import logging
 from pyramid_xmlrpc import XMLRPCView
 
 from pyshop.models import DBSession, Package, Release, ReleaseFile
 
 log = logging.getLogger(__name__)
 
+# XXX not tested.
 
 class PyPI(XMLRPCView):
 

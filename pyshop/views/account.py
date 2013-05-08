@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+PyShop Account Management Views.
+
+Used by administrator to manage user account.
+"""
 import logging
 
 from .base import View, CreateView, EditView, DeleteView
@@ -10,7 +16,9 @@ log = logging.getLogger(__name__)
 
 
 class List(View):
-
+    """
+    List All user accounts
+    """
     def render(self):
 
         return {u'user_count': User.get_locals(self.session, count=True),

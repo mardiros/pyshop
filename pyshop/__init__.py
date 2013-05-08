@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 PyShop Web Application.
 """
@@ -16,7 +17,8 @@ __version__ = '0.7.6~dev'
 
 
 def main(global_config, **settings):
-    """Get a PyShop WSGI application configured with settings.
+    """
+    Get a PyShop WSGI application configured with settings.
     """
 
     settings = dict(settings)
