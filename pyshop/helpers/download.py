@@ -25,9 +25,9 @@ class ReleaseFileRenderer(object):
 
             mime, encoding = mimetypes.guess_type(value['filename'])
 
-            request.response_content_type = mime
+            request.response.content_type = mime
             if encoding:
-                request.response_encoding = encoding
+                request.response.encoding = encoding
 
             f = os.path.join(self.repository_root,
                              value['filename'][0].lower(),
