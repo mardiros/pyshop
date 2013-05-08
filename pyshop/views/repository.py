@@ -2,10 +2,10 @@
 """
 PyShop Release File Download View.
 """
-from pyshop.models import DBSession, ReleaseFile
+from pyshop.models import DBSession, Release, ReleaseFile
 
 
-def get_release_file(root, request):
+def show_release_file(root, request):
     """
     Download a release file.
     Must be used with :func:`pyshop.helpers.download.renderer_factory`
@@ -22,8 +22,7 @@ def get_release_file(root, request):
     if url and url.startswith('http://pypi.python.org'):
         url = 'https' + url[4:]
 
-    rv = {'id': f.id,
-          'url': url,
+    rv = {'url': url,
           'filename': f.filename,
           }
     f.downloads += 1
@@ -32,4 +31,28 @@ def get_release_file(root, request):
     session.add(f.release.package)
     session.add(f.release)
     session.add(f)
+    return rv
+
+
+def show_external_release_file(root, request):
+    """
+    Download a release from a download url from its package information.
+    Must be used with :func:`pyshop.helpers.download.renderer_factory`
+    to download the release file.
+
+    :return: download informations
+    :rtype: dict
+    """
+    session = DBSession()
+
+    release = Release.by_id(session, int(request.matchdict['release_id']))
+
+    rv = {'url': release.download_url,
+          'filename': release.download_url_file,
+          }
+
+    release.downloads += 1
+    release.package.downloads += 1
+    session.add(release.package)
+    session.add(release)
     return rv

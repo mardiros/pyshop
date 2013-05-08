@@ -75,11 +75,19 @@ def includeme(config):
                     permission=u'user_view')
 
     # Archive downloads
-    config.add_route(u'repository',
+    config.add_route(u'show_external_release_file',
+                     u'/repository/ext/{release_id}/{filename:.*}',
+                     request_method=u'GET')
+    config.add_view(u'pyshop.views.repository.show_external_release_file',
+                    route_name=u'show_external_release_file',
+                    renderer=u'repository',
+                    permission=u'download_releasefile')
+
+    config.add_route(u'show_release_file',
                      u'/repository/{file_id}/{filename:.*}',
                      request_method=u'GET')
-    config.add_view(u'pyshop.views.repository.get_release_file',
-                    route_name=u'repository',
+    config.add_view(u'pyshop.views.repository.show_release_file',
+                    route_name=u'show_release_file',
                     renderer=u'repository',
                     permission=u'download_releasefile')
 
@@ -180,25 +188,13 @@ def includeme(config):
                     permission=u'user_view')
 
     # Credentials
-    config.add_view('pyshop.views.credentials.authbasic',
-                    route_name='list_simple',
-                    context='pyramid.exceptions.Forbidden'
-                    )
-
-    config.add_view('pyshop.views.credentials.authbasic',
-                    route_name='show_simple',
-                    context='pyramid.exceptions.Forbidden'
-                    )
-
-    config.add_view('pyshop.views.credentials.authbasic',
-                    route_name='repository',
-                    context='pyramid.exceptions.Forbidden'
-                    )
-
-    config.add_view('pyshop.views.credentials.authbasic',
-                    route_name='upload_releasefile',
-                    context='pyramid.exceptions.Forbidden'
-                    )
+    for route in ('list_simple', 'show_simple',
+                  'show_release_file', 'show_external_release_file',
+                  'upload_releasefile'):
+        config.add_view('pyshop.views.credentials.authbasic',
+                        route_name=route,
+                        context='pyramid.exceptions.Forbidden'
+                        )
 
     config.add_view('pyshop.views.credentials.Login',
                     renderer=u'shared/login.html',

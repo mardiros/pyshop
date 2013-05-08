@@ -502,6 +502,14 @@ class Release(Base):
     author = relationship(User, primaryjoin=author_id == User.id)
     maintainer = relationship(User, primaryjoin=maintainer_id == User.id)
 
+    @property
+    def download_url_file(self):
+        """
+        Filename of the download_url if any.
+        """
+        url = self.download_url
+        return url.rsplit('/', 1).pop() if url else None
+
     @classmethod
     def by_version(cls, session, package_name, version):
         """
