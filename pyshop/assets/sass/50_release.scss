@@ -24,11 +24,35 @@
 }
 
 .release-summary {
+
     > h5 {
         @include reset;
         font-size: 2.5em;
         border: 0 solid $border-color;
         border-width: 0 0 1px 0;
+    }
+
+    dl {
+        float: right;
+        overflow: auto;
+        border: 1px solid #aaa;
+        background-color: #ccc;
+        min-width: 400px;
+        margin: 2em 0 1em 1em;
+        padding: 1.2em;
+        color: #222;
+        line-height: 1.5em;
+        dt {
+            float: left;
+            min-width: 25%;
+            font-weight: bold;
+        }
+        dd {
+            display: block;
+            ul {
+                clear: both;
+            }
+        }
     }
 
     .document {

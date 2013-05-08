@@ -49,14 +49,40 @@
 
 <section id="release-summary" class="release-summary">
     <h5> {{ release.summary }} </h5>
-    <ul class="classifiers">
-        {% for c in release.classifiers %}
-            {% if not c.childs %}
-                <li>{{c.name}}</li>
+    <dl>
+        <dt>{% trans %}Type:{% endtrans %}</dt>
+        <dd>{% if release.package.local %}
+                {% trans %}local{% endtrans %}
+            {% else %}
+                {% trans %}mirrored{% endtrans %}
             {% endif %}
-        {% endfor %}
-    </ul>
-    <div> {{ parse_rest(release.description) }} </div>
+        </dd>
+        {% if not release.package.local %}
+            <dt>PyPI</dt>
+            <dd><a href="https://pypi.python.org/pypi/{{release.package.name}}">
+                    https://pypi.python.org/pypi/{{release.package.name}}
+                </a></dd>
+        {% endif %}
+        <dt>{% trans %}Home page:{% endtrans %}</dt>
+        <dd><a href="{{release.home_page}}">{{release.home_page}}</a></dd>
+        <dt>{% trans %}Author:{% endtrans %}</dt>
+        <dd>{{release.author.name}}</dd>
+        <dt>{% trans %}Classifiers:{% endtrans %}</dt>
+        <dd>
+            <ul class="classifiers">
+                {% for c in release.classifiers %}
+                    {% if not c.childs %}
+                        <li>{{c.name}}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </dd>
+        {% if release.keywords %}
+            <dt>{% trans %}Keywords:{% endtrans %}</dt>
+            <dd>{{release.keywords}}</dd>
+        {% endif %}
+    </dl>
+    <div class="description">{{ parse_rest(release.description) }}</div>
 </section>
 
 <section id="release-files" class="release-files">
