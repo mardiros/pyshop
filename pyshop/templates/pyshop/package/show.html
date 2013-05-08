@@ -40,7 +40,7 @@
     {% for f in release.files %}
         {% if f.package_type == 'sdist' %}
             <a class="download"
-               href="{{ route_url('repository', file_id=f.id, filename=f.filename)
+               href="{{ route_url('show_release_file', file_id=f.id, filename=f.filename)
                        }}#{{ f.md5_digest }}">{{f.filename}}</a>
         {% endif %}
     {% endfor %}
@@ -78,7 +78,7 @@
         <tr>
             <td>
                 <a class="download"
-                   href="{{ route_url('repository', file_id=file.id,
+                   href="{{ route_url('show_release_file', file_id=file.id,
                             filename=file.filename)
                            }}#{{ file.md5_digest }}">{{file.filename}}
                 </a>
