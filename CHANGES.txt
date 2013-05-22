@@ -1,6 +1,14 @@
 Changelist
 ==========
 
+0.7.6
+-----
+
+ - Mirror the download_url of the release file
+ - Handle hiphen and underscore [fizyk]
+ - Enhance mimetime handling [fizyk]
+ - Bugfixes and deprecate warning removed
+
 0.7.5
 -----
 
@@ -16,7 +24,6 @@ for previous install, you must run a migration script like this.
 
 The sqlite database file will be altered, YOU MAY backup it before run the
 script.
-
 
 0.7.4
 -----

@@ -13,7 +13,7 @@ from .models import create_engine
 from .helpers.i18n import locale_negotiator
 from .helpers.authentication import RouteSwithchAuthPolicy
 
-__version__ = '0.7.6~dev'
+__version__ = '0.7.6'
 
 
 def main(global_config, **settings):
