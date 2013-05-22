@@ -29,7 +29,7 @@ requires = [
     'zope.sqlalchemy',
 
     'cryptacular',
-    'requests < 1.0.0',      # must validate usage of proxy before use 1.1.0
+    'requests >=1.2, <1.0',  # version excluded bugs in case a proxy is used
     'docutils',
     'setuptools',            # compare package version
 
