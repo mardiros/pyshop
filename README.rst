@@ -4,11 +4,11 @@ pyshop
 Getting Started
 ---------------
 
-Pyshop is a private packaging repository for python.
+Pyshop is a private repository for python packages.
 
-The aim is to split private projects in distinct private package and keep a
+The aim is to split private projects in distinct private packages and keep a
 setup.py clean and working, by declaring all dependancies, exactly as public
-package from PyPI.
+packages on PyPI.
 
 Pyshop also mirror packages from PyPI safety (using ssl by checking
 certificate).
@@ -41,7 +41,7 @@ the host:port that host the service.  When the pyshop is running visit the web
 application, http://localhost:8000/ by default, to check all is fine.
 
 For production usage, you should create accounts with the "developer" group.
-Visit http://localhost:6543/pyshop/user with the admin account to create
+Visit http://localhost:8000/pyshop/user with the admin account to create
 accounts. You also should use an https reverse proxy. Python packaging core use
 basic authentication: it send user/password in clear.
 
@@ -68,7 +68,7 @@ the pip generic account.
     default-timeout = 120
     timeout = 120
     [install]
-    index-url = http://pip:changeme@localhost:6543/simple/
+    index-url = http://pip:changeme@localhost:8000/simple/
 
 
 Note:
@@ -88,7 +88,7 @@ This file is a "per project file" at the root of the package.
 ::
 
     [easy_install]
-    index-url = http://pip:changeme@localhost:6543/simple/
+    index-url = http://pip:changeme@localhost:8000/simple/
 
 This should work now::
 
@@ -110,7 +110,7 @@ Every developper should have it's own account to upload package.
     [pyshop]
     username: admin  # or create an account in pyshop admin interface
     password: changeme
-    repository: http://localhost:6543/simple/
+    repository: http://localhost:8000/simple/
 
 
 This should works now::
@@ -129,7 +129,6 @@ This can be done in the database or in the pyshop shell by an administrator.
     In [1]: pkg = Package.by_name(session, u'pyshop')
     In [2]: pkg.owners.append(User.by_login(session, u'admin'))
     In [3]: session.commit()
-
 
 Alternatives
 ------------
