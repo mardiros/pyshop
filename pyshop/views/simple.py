@@ -46,7 +46,6 @@ class UploadReleaseFile(View):
                              )):
             raise exc.HTTPForbidden()
 
-        print type(params['name'])
         pkg = Package.by_name(self.session, params['name'])
         if pkg:
             auth = [user for user in pkg.owners + pkg.maintainers
