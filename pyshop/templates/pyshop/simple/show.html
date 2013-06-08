@@ -3,7 +3,7 @@
     {% for f in r.files %}<a href="{{ route_url('show_release_file', file_id=f.id, filename=f.filename)
                                    }}#{{ f.md5_digest }}">{{f.filename}}</a><br/>
     {% endfor %}
-    {% if r.download_url and r.download_url != 'UNKNOWN'  %}
+    {% if r.download_url_file and r.download_url_file != 'UNKNOWN'  %}
 <a href="{{ route_url('show_external_release_file', release_id=r.id, filename=r.download_url_file)
          }}" rel="download">{{ r.download_url_file }} </a><br/>
     {% endif %}
