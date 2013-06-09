@@ -22,9 +22,9 @@ requires = [
                              # pyScss release.
                              # maybe >0.2.1 should not support pyScss < 1.1.5
 
+    'pyramid_filterwarnings',
     'pyramid_jinja2',
     'pyramid_xmlrpc',
-
     'pyramid_tm',
     'zope.sqlalchemy',
 
