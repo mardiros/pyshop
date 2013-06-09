@@ -20,33 +20,75 @@ paste ini file.
 
 """
 
-import httplib
-from xmlrpclib import ServerProxy, Transport
+try:
+    import xmlrpc.client as xmlrpc
+except ImportError:
+    import xmlrpclib as xmlrpc
+
+import requests
+
 
 proxy = None
 
 
-class ProxiedTransport(Transport):
+class RequestsTransport(xmlrpc.Transport):
+    """
+    Drop in Transport for xmlrpclib that uses Requests instead of httplib
+    # https://gist.github.com/chrisguitarguy/2354951
+    """
+    # change our user agent to reflect Requests
+    user_agent = "PyShop"
 
-  user_agent = 'pyshop'
+    # override this if you'd like to https
+    use_https = False
 
-  def __init__(self, proxy):
-    self.proxy = proxy
-    self._use_datetime = False
+    def request(self, host, handler, request_body, verbose):
+        """
+        Make an xmlrpc request.
+        """
+        headers = {'User-Agent': self.user_agent,
+                   #Proxy-Connection': 'Keep-Alive',
+                   #'Content-Range': 'bytes oxy1.0/-1',
+                   'Accept': 'text/xml',
+                   'Content-Type': 'text/xml' }
+        url = self._build_url(host, handler)
+        try:
+            resp = requests.post(url, data=request_body, headers=headers)
+        except ValueError:
+            raise
+        except Exception:
+            raise # something went wrong
+        else:
+            try:
+                resp.raise_for_status()
+            except requests.RequestException as e:
+                raise xmlrpc.ProtocolError(url, resp.status_code,
+                                                        str(e), resp.headers)
+            else:
+                return self.parse_response(resp)
 
-  def make_connection(self, host):
-    self.realhost = host
-    return httplib.HTTP(self.proxy)
+    def parse_response(self, resp):
+        """
+        Parse the xmlrpc response.
+        """
+        p, u = self.getparser()
+        p.feed(resp.content)
+        p.close()
+        return u.close()
 
-  def send_request(self, connection, handler, request_body):
-    connection.putrequest('POST', 'http://%s%s' % (self.realhost, handler))
+    def _build_url(self, host, handler):
+        """
+        Build a url for our request based on the host, handler and use_http
+        property
+        """
+        scheme = 'https' if self.use_https else 'http'
+        return '%s://%s%s' % (scheme, host, handler)
 
-  def send_host(self, connection, host):
-    connection.putheader('Host', self.realhost)
 
 
 def set_proxy(proxy_url, transport_proxy=None):
     """Create the proxy to PyPI XML-RPC Server"""
     global proxy
-    transport = ProxiedTransport(transport_proxy) if transport_proxy else None
-    proxy = ServerProxy(proxy_url, transport=transport, allow_none=True)
+    proxy = xmlrpc.ServerProxy(proxy_url,
+                               transport=RequestsTransport(),
+                               allow_none=True)
