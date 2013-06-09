@@ -136,8 +136,13 @@ class UploadReleaseFile(View):
 
 class Show(View):
 
-    def _create_release(self, package, data):
+    def _to_unicode(self, data):
+        # xmlrpc use utf8 encoded string
+        return dict([(key, val.decode('utf-8') if isinstance(val, str) else val)
+                     for key, val in data.items()])
 
+    def _create_release(self, package, data):
+        data = self._to_unicode(data)
         release = Release(package=package,
                           summary=data.get('summary'),
                           version=data.get('version'),
@@ -172,7 +177,7 @@ class Show(View):
         self.session.flush()
 
         for name in data.get('classifiers', []):
-            classifier = Classifier.by_name(self.session, name)
+            classifier = Classifier.by_name(self.session, name.decode('utf-8'))
 
             while classifier:
                 release.classifiers.append(classifier)
@@ -184,6 +189,7 @@ class Show(View):
         return release
 
     def _create_release_file(self, release, data):
+        data = self._to_unicode(data)
         return ReleaseFile(release=release,
                            filename=data['filename'],
                            md5_digest=data['md5_digest'],
@@ -250,6 +256,7 @@ class Show(View):
             pkg = Package(name=package_name, local=False)
             roles = api.package_roles(package_name)
             for role, login in roles:
+                login = login.decode('utf-8')  # XMLRPC should return utf-8
                 user = User.by_login(self.session, login, local=False)
                 if not user:
                     user = User(login=login, local=False)
@@ -272,8 +279,9 @@ class Show(View):
                     release_files = api.release_urls(package_name, version)
 
                     for data in release_files:
+                        filename = data['filename'].decode('utf-8')
                         rf = ReleaseFile.by_filename(self.session, release,
-                                                     data['filename'])
+                                                     filename)
                         if not rf:
                             rf = self._create_release_file(release, data)
 
