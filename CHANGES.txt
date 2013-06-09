@@ -1,13 +1,22 @@
 Changelist
 ==========
 
+0.8
+---
+
+ - Use requests for xmlrpc queries too.
+    - validate certificate if https is used
+    - unified proxies configuration (use environment vars)
+ - SAWarning/DeprecationWarning removed
+ - Fix mirroring link for external files
+
 0.7.6
 -----
 
  - Mirror the download_url of the release file
  - Handle hiphen and underscore [fizyk]
  - Enhance mimetime handling [fizyk]
- - Bugfixes and deprecate warning removed
+ - Bugfixes and DeprecationWarning removed
 
 0.7.5
 -----
