@@ -58,16 +58,19 @@ class UploadReleaseFile(View):
 
         content = self.request.POST['content']
         input_file = content.file
-        # rewrite the filename, do not use the posted one for security
-        filename = u'%s-%s.%s' % (params['name'], params['version'],
-                                  {u'sdist': u'tar.gz',
-                                   u'bdist_egg': u'egg',
-                                   u'bdist_msi': u'msi',
-                                   u'bdist_dmg': u'zip',  # XXX or gztar ?
-                                   u'bdist_rpm': u'rpm',
-                                   u'bdist_dumb': u'msi',
-                                   u'bdist_wininst': u'exe',
-                                   }[params['filetype']])
+        try:
+            # rewrite the filename, do not use the posted one for security
+            filename = u'%s-%s.%s' % (params['name'], params['version'],
+                                      {u'sdist': u'tar.gz',
+                                       u'bdist_egg': u'egg',
+                                       u'bdist_msi': u'msi',
+                                       u'bdist_rpm': u'rpm',
+                                       u'bdist_wheel': u'whl',
+                                       u'bdist_wininst': u'exe',
+                                       }[params['filetype']])
+        except KeyError:
+            raise exc.HTTPBadRequest()
+
         dir_ = os.path.join(settings['pyshop.repository'],
                             filename[0].lower())
 
