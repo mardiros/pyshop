@@ -20,7 +20,7 @@ Pyshop uses clear and simple ACLs to manage privileges:
     website,
 -   an admin group that has developer privileges and accounts management.
 
-Since pyshop is intended to host private packages, every user, including "pip",
+Since pyshop is intended to host private packages, every user, including *pip*,
 must be authenticated by login and password.
 
 Installation
@@ -37,11 +37,12 @@ Installation
     (pyshop)$ pyshop_install pyshop.ini
     (pyshop)$ pserve pyshop.ini start --log-file=pyshop.log
 
-You should edit the pyshop.ini file in order to configure the pyshop.cookie_key
-and the host:port that hosts the service. When the server is running visit the
-website, http://localhost:8000/ by default, to check everything is fine.
+You should edit the pyshop.ini file in order to configure the
+``pyshop.cookie_key`` and the host:port that hosts the service. When the server
+is running visit the website, http://localhost:8000/ by default, to check
+everything is fine.
 
-For production usage, you should create accounts with the "developer" group.
+For production usage, you should create accounts with the *developer* group.
 Visit http://localhost:8000/pyshop/user with the admin account to create
 accounts.
 
@@ -79,11 +80,11 @@ uWSGI or gunicorn, set an appropriate timeout for this service too.
 setup.cfg and pydistutils.cfg
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-setup.cfg and pydistutils.cfg are used when running "python setup.py develop"
-to install your package or when using "easy_install". You should use a generic
+setup.cfg and pydistutils.cfg are used when running *python setup.py develop*
+to install your package or when using *easy_install*. You should use a generic
 account with installer privileges only, shared by all developers.
 
-This setting can be set per project or in user $HOME (see
+This setting can be set per project or in user ``$HOME`` (see
 `setuptools documentation`_ for details)
 
 .. _`setuptools documentation`:  https://pythonhosted.org/setuptools/easy_install.html#configuration-files
@@ -101,7 +102,7 @@ This should work now::
 ~~~~~~~~~
 
 Configuration used by setuptools to upload files.
-All developers should have this configuration in their $HOME to upload
+All developers should have this configuration in their ``$HOME`` to upload
 packages.
 
 ::
@@ -114,7 +115,6 @@ packages.
     username: admin  # or create an account in pyshop admin interface
     password: changeme
     repository: http://localhost:8000/simple/
-
 
 This should work now::
 
@@ -136,7 +136,7 @@ This can be done in the database or in the pyshop shell by an administrator.
 Alternatives
 ------------
 
- - pypiserver: https://pypi.python.org/pypi/pypiserver
- - localshop: http://pypi.python.org/pypi/localshop
- - djangopypi: http://pypi.python.org/pypi/djangopypi
- - chishop: http://pypi.python.org/pypi/chishop
+- pypiserver: https://pypi.python.org/pypi/pypiserver
+- localshop: http://pypi.python.org/pypi/localshop
+- djangopypi: http://pypi.python.org/pypi/djangopypi
+- chishop: http://pypi.python.org/pypi/chishop
