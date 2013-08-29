@@ -7,20 +7,21 @@ Getting Started
 Pyshop is a private repository for python packages.
 
 The aim is to split private projects in distinct private packages and keep a
-setup.py clean and working, by declaring all dependancies, exactly as public
+setup.py clean and working, by declaring all dependencies, exactly as public
 packages on PyPI.
 
-Pyshop also mirror packages from PyPI safety (using ssl by checking
-certificate).
+Pyshop also mirrors packages from PyPI safely (using SSL and checking
+server certificate).
 
-Pyshop use clear and simple ACL to manage privilleges:
+Pyshop uses clear and simple ACLs to manage privileges:
 
--   an installer group that can only download release file
--   a developer group that can download/upload release file and browse the
-    website and
--   an admin group that have developer privilleges and accounts management.
+-   an installer group that can only download release files,
+-   a developer group that can download and upload release files and browse the
+    website,
+-   an admin group that has developer privileges and accounts management.
 
-So, every users, including "pip", must be authenticated by login and password.
+Since pyshop is intended to host private packages, every user, including "pip",
+must be authenticated by login and password.
 
 Installation
 ------------
@@ -36,54 +37,56 @@ Installation
     (pyshop)$ pyshop_install pyshop.ini
     (pyshop)$ pserve pyshop.ini start --log-file=pyshop.log
 
-You shoud edit the pyshop.ini file in order to configure the pyshop.cookie_key,
-the host:port that host the service.  When the pyshop is running visit the web
-application, http://localhost:8000/ by default, to check all is fine.
+You should edit the pyshop.ini file in order to configure the pyshop.cookie_key
+and the host:port that hosts the service. When the server is running visit the
+website, http://localhost:8000/ by default, to check everything is fine.
 
 For production usage, you should create accounts with the "developer" group.
 Visit http://localhost:8000/pyshop/user with the admin account to create
-accounts. You also should use an https reverse proxy. Python packaging core use
-basic authentication: it send user/password in clear.
+accounts.
 
+You also should also use an https reverse proxy. Python packaging core uses
+HTTP basic authentication: it sends user/password in clear.
 
-Configuring your environment to use that new pyshop
----------------------------------------------------
+Configuring your environment
+----------------------------
 
-Here is all configuration files for usual python tools you have to edit for
-simplify the usage of pyshop.
+Here are all configuration files you will need to modify for usual python tools
+to use your newly deployed private mirror.
 
 ~/.pip/pip.conf
 ~~~~~~~~~~~~~~~
 
-Configuration used by pip.  This is a user file, you can set a developper or
-the pip generic account.
+Configuration used by pip.  This is a user file, you can set a developer or
+the generic pip account.
 
 ::
 
     [global]
-    # when mirroring a package,
-    # pyshop retrieve informations from PyPI and
-    # store them in its DB.
-    # Be patient, it is not so long.
+    # when mirroring a package, pyshop retrieves information from PyPI and
+    # stores it in its database. Be patient, it is not so long.
     default-timeout = 120
     timeout = 120
+
     [install]
     index-url = http://pip:changeme@localhost:8000/simple/
 
 
 Note:
-If you are using a WSGI server that kill requests in a timeout, like uWSGI,
-set an appropriate timout for this service too.
+If you are using a WSGI server that kills requests if it is too long, like
+uWSGI or gunicorn, set an appropriate timeout for this service too.
 
+setup.cfg and pydistutils.cfg
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-setup.cfg
-~~~~~~~~~
+setup.cfg and pydistutils.cfg are used when running "python setup.py develop"
+to install your package or when using "easy_install". You should use a generic
+account with installer privileges only, shared by all developers.
 
-A setup.cfg file is used by the "python setup.py develop" to install
-dependancies. You should use a generic account with have installer privilleges
-only, shared by every developper.
+This setting can be set per project or in user $HOME (see
+`setuptools documentation`_ for details)
 
-This file is a "per project file" at the root of the package.
+.. _`setuptools documentation`:  https://pythonhosted.org/setuptools/easy_install.html#configuration-files
 
 ::
 
@@ -94,12 +97,12 @@ This should work now::
 
     python setup.py develop
 
-
 ~/.pypirc
 ~~~~~~~~~
 
-Configuration used by setuptools to upload package.
-Every developper should have it's own account to upload package.
+Configuration used by setuptools to upload files.
+All developers should have this configuration in their $HOME to upload
+packages.
 
 ::
 
@@ -113,14 +116,14 @@ Every developper should have it's own account to upload package.
     repository: http://localhost:8000/simple/
 
 
-This should works now::
+This should work now::
 
-    python setup.py sdist upload -v -r pyshop /pypi/pypiserver
+    python setup.py sdist upload -v -r pyshop
 
-Feature Missing
----------------
+Missing Features
+----------------
 
-Developper can't add other accounts to give them upload right to their project.
+Developer cannot add other accounts to give them upload right to their project.
 This can be done in the database or in the pyshop shell by an administrator.
 
 ::
