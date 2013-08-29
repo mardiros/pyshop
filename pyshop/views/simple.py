@@ -40,8 +40,8 @@ class UploadReleaseFile(View):
 
         params = self.request.params
 
-        if (asbool(settings['pyshop.upload.satanize'])
-            and not re.match(settings['pyshop.upload.satanize.regex'],
+        if (asbool(settings['pyshop.upload.sanitize'])
+            and not re.match(settings['pyshop.upload.sanitize.regex'],
                              params['version']
                              )):
             raise exc.HTTPForbidden()
@@ -205,7 +205,7 @@ class Show(View):
 
         api = pypi.proxy
         settings = self.request.registry.settings
-        satanize = asbool(settings['pyshop.mirror.satanize'])
+        sanitize = asbool(settings['pyshop.mirror.sanitize'])
 
         package_name = self.request.matchdict['package_name']
         pkg = Package.by_name(self.session, package_name)
@@ -245,11 +245,11 @@ class Show(View):
                 return {'package': None,
                         'package_name': package_name}
 
-            if satanize:
-                re_satanize = re.compile(settings['pyshop.mirror.'
-                                                  'satanize.regex'])
+            if sanitize:
+                re_sanitize = re.compile(settings['pyshop.mirror.'
+                                                  'sanitize.regex'])
                 pypi_versions = [v for v in pypi_versions
-                                 if re_satanize.match(v)]
+                                 if re_sanitize.match(v)]
 
             # mirror the package now
             log.info('mirror package %s now' % package_name)

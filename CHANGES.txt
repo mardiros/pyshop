@@ -1,6 +1,11 @@
 Changelist
 ==========
 
+0.8.1
+-----
+
+ - change "satanize" to "sanitize" keys in config file.
+
 0.8
 ---
 
@@ -59,7 +64,7 @@ script.
 0.7
 ---
 
- - Satanize version number on upload.
+ - Sanitize version number on upload.
    This is configurable with settings ``pyshop.upload.satanize``
    and ``pyshop.upload.satanize.regex``
  - Settings ``pyshop.satanize`` and ``pyshop.satanize.regex`` have been renamed
