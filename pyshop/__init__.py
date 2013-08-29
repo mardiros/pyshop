@@ -8,7 +8,7 @@ from pyramid.authorization import ACLAuthorizationPolicy as ACLPolicy
 
 from .security import groupfinder, RootFactory
 
-from .config import includeme #  used by pyramid
+from .config import includeme  # used by pyramid
 from .models import create_engine
 from .helpers.i18n import locale_negotiator
 from .helpers.authentication import RouteSwithchAuthPolicy
