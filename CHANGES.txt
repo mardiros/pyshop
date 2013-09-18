@@ -1,9 +1,12 @@
 Changelist
 ==========
 
-0.8.1
------
+0.9
+---
 
+ - add key "pyshop.mirror.cache.ttl" in config file.
+ - add key "pyshop.upload.rewrite_filename" in config file.
+ - add a button in the web interface to force the refresh of mirrored package.
  - change "satanize" to "sanitize" keys in config file.
 
 0.8
