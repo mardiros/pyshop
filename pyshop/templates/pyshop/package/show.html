@@ -62,6 +62,18 @@
             <dd><a href="https://pypi.python.org/pypi/{{release.package.name}}">
                     https://pypi.python.org/pypi/{{release.package.name}}
                 </a></dd>
+            <dt>Last Update</dt>
+            <dd>{% if release.package.update_at %}
+                    {{release.package.update_at}}
+                    <form action="{{route_url('show_package', package_name=release.package.name)}}" method="post">
+                        <button name="form.refresh_package">
+                            {% trans %}refresh{% endtrans %}
+                        </button>
+                    </form>
+                {% else %}
+                    {% trans %}refreshing during next install{% endtrans %}
+                {% endif %}
+            </dd>
         {% endif %}
         <dt>{% trans %}Home page:{% endtrans %}</dt>
         <dd><a href="{{release.home_page}}">{{release.home_page}}</a></dd>

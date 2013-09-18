@@ -53,6 +53,18 @@
                 clear: both;
             }
         }
+
+        form {
+            border: none;
+            display: inline;
+        }
+        button {
+            background: $button-color;
+            display: inline;
+            border: 1px solid $button-border-color;
+            border-radius: 3px;
+        }
+
     }
 
     .document {

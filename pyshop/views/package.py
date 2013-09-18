@@ -70,6 +70,10 @@ class Show(View):
         if not package:
             raise HTTPNotFound()
 
+        if 'form.refresh_package' in self.request.params:
+            package.update_at = None
+            self.session.add(package)
+
         if 'release_version' in self.request.matchdict:
             release = Release.by_version(self.session, package.name,
                 self.request.matchdict['release_version'])
@@ -79,3 +83,11 @@ class Show(View):
         return {u'package': package,
                 u'release': release,
                 }
+
+
+class Refresh(View):
+
+    def render(self):
+
+        package = Package.by_name(self.session,
+                                  self.request.matchdict['package_name'])
