@@ -8,7 +8,7 @@ release files.
 import re
 import logging
 import os.path
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from sqlalchemy.sql.expression import func
 
@@ -233,12 +233,16 @@ class Show(View):
                 refresh = False
             else:
                 if pkg.update_at:
-                    td = datetime.now() - pkg.update_at
-                    # refresh if the package has not been update today
-                    # XXX should be configurable
-                    refresh = td.days > 0
+                    current_td = datetime.now() - pkg.update_at
+                    max_td = timedelta(hours=int(settings.get('pyshop.mirror.cache.ttl',
+                                                              '24')))
+                    refresh = current_td > max_td
+                    log.debug('"{cdt}" > "{max}": {refr}'.format(cdt=current_td,
+                                                                 max=max_td,
+                                                                 refr=refresh))
 
         if refresh:
+            log.info('refresh package {pkg}'.format(pkg=package_name))
             pypi_versions = api.package_releases(package_name, True)
             # XXX package_releases is case sensitive
             # but dependancies declaration not...
