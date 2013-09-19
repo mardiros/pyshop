@@ -2,6 +2,8 @@
 """
 PyShop Release File Download View.
 """
+from pyramid.settings import asbool
+
 from pyshop.models import DBSession, Release, ReleaseFile
 
 
@@ -14,16 +16,22 @@ def show_release_file(root, request):
     :return: download informations
     :rtype: dict
     """
+    settings = request.registry.settings
+    whlify = asbool(settings.get('pyshop.mirror.wheelify', '0'))
     session = DBSession()
 
     f = ReleaseFile.by_id(session, int(request.matchdict['file_id']))
+    whlify = whlify and f.package_type == 'sdist'
 
+    filename = f.filename_whlified if whlify else f.filename
     url = f.url
     if url and url.startswith('http://pypi.python.org'):
         url = 'https' + url[4:]
 
     rv = {'url': url,
-          'filename': f.filename,
+          'filename': filename,
+          'original': f.filename,
+          'whlify': whlify
           }
     f.downloads += 1
     f.release.downloads += 1

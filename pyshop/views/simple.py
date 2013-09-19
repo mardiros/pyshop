@@ -33,6 +33,34 @@ class List(View):
 
 class UploadReleaseFile(View):
 
+    def _guess_filename(self, params, original):
+        try:
+            if params['filetype'] == 'sdist':
+                if original[-7:] == u'.tar.gz':
+                    ext = u'tar.gz'
+                elif original[-8:] == u'.tar.bz2':
+                    ext = u'tar.bz2'
+            else:
+                ext = {u'bdist_egg': u'egg',
+                       u'bdist_msi': u'msi',
+                       u'bdist_rpm': u'rpm',
+                       u'bdist_wheel': u'whl',
+                       u'bdist_wininst': u'exe',
+                       }[params['filetype']]
+        except KeyError:
+            raise exc.HTTPBadRequest()
+
+        if params['filetype'] == 'sdist':
+            filename = u'%s-%s.%s' % (params['name'], params['version'], ext)
+        else:
+            filename = u'%s-%s-py%s-%s.%s' % (params['name'],
+                                              params['version'],
+                                              params['pyversion'],
+                                              params['platform'].lower(),
+                                              ext)
+
+        return filename
+
     def render(self):
         settings = self.request.registry.settings
         if not self.user:
@@ -60,28 +88,8 @@ class UploadReleaseFile(View):
         input_file = content.file
 
         if asbool(settings.get('pyshop.upload.rewrite_filename', '1')):
-
-            try:
-                ext = {u'sdist': u'tar.gz',
-                       u'bdist_egg': u'egg',
-                       u'bdist_msi': u'msi',
-                       u'bdist_rpm': u'rpm',
-                       u'bdist_wheel': u'whl',
-                       u'bdist_wininst': u'exe',
-                       }[params['filetype']]
-            except KeyError:
-                raise exc.HTTPBadRequest()
-
-            if exc == u'tar.gz':
-                # rewrite the filename, do not use the posted one for security
-                filename = u'%s-%s.%s' % (params['name'], params['version'], ext)
-            else:
-                # rewrite the filename, do not use the posted one for security
-                filename = u'%s-%s-py%s-%s.%s' % (params['name'],
-                                                  params['version'],
-                                                  params['pyversion'],
-                                                  params['platform'].lower(),
-                                                  ext)
+            # rewrite the filename, do not use the posted one for security
+            filename = self._guess_filename(params, content.filename)
         else:
             filename = content.filename
 
@@ -309,4 +317,5 @@ class Show(View):
         pkg.update_at = func.now()
         self.session.add(pkg)
         log.info('package %s mirrored' % package_name)
-        return {'package': pkg}
+        return {'package': pkg,
+                'whlify': asbool(settings.get('pyshop.mirror.wheelify', '0'))}

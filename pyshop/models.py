@@ -6,7 +6,9 @@ Describe the sql schema of PyShop using SQLAlchemy.
 PyShop uses with SQLAlchemy with the sqlite backend.
 """
 import re
+import sys
 import logging
+# from distutils.util import get_platform
 
 import cryptacular.bcrypt
 from pkg_resources import parse_version
@@ -30,6 +32,25 @@ Base = Database.register('pyshop')
 DBSession = lambda: SessionFactory.get('pyshop')()
 
 re_email = re.compile(r'^[^@]+@[a-z0-9]+[-.a-z0-9]+\.[a-z]+$', re.I)
+
+
+def _whlify(filename):
+
+    if filename.endswith('.tar.gz'):
+        pkg = filename[:-7]
+    elif filename.endswith('.tar.bz2'):
+        pkg = filename[:-8]
+    elif filename.endswith('.zip'):
+        pkg = filename[:-4]
+    else:
+        raise NotImplementedError('filename %s not supported' % filename)
+
+    return u'{pkg}-py{pyvermax}{pyvermin}-none-{platform}'\
+            '.whl'.format(pkg=pkg,
+                          platform='any',  # XXX should works ! get_platform()
+                          pyvermax=sys.version_info[0],
+                          pyvermin=sys.version_info[1],
+                          )
 
 
 def create_engine(settings, prefix='sqlalchemy.', scoped=False):
@@ -510,6 +531,10 @@ class Release(Base):
         url = self.download_url
         return url.rsplit('/', 1).pop() if url else None
 
+    @property
+    def whlify_download_url_file(self):
+        return _whlify(self.download_url_file)
+
     @classmethod
     def by_version(cls, session, package_name, version):
         """
@@ -628,6 +653,11 @@ class ReleaseFile(Base):
     release = relationship(Release, lazy='join',
                            backref=backref('files',
                                            cascade='all, delete-orphan'))
+
+    @property
+    def filename_whlified(self):
+        assert self.package_type == 'sdist'
+        return _whlify(self.filename)
 
     @classmethod
     def by_release(cls, session, package_name, version):

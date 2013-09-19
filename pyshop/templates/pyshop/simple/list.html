@@ -1,4 +1,5 @@
 <html><head><title>Simple Index</title></head><body>
-{% for package in packages %}<a href="{{ route_url('show_simple', package_name=package.name) }}">{{ package.name }}</a><br />
+{% for package in packages -%}
+    <a href="{{ route_url('show_simple', package_name=package.name) }}">{{ package.name }}</a><br />
 {% endfor %}
 </body></html>
