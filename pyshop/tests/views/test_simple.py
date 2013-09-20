@@ -16,7 +16,7 @@ class SimpleTestCase(case.ViewTestCase):
         view = Show(self.create_request(matchdict={
             'package_name': u'mirrored_package1'
             }))()
-        self.assertEqual(set(view.keys()), {'pyshop', 'package'})
+        self.assertEqual(set(view.keys()), {'pyshop', 'package', 'whlify'})
         self.assertEqual(view['package'].name, u'mirrored_package1')
 
     def test_post_uploadreleasefile_existing_pkg_ko_403(self):
@@ -38,7 +38,7 @@ class SimpleTestCase(case.ViewTestCase):
         from pyshop.models import Package, Release, ReleaseFile
 
         class Content(object):
-            filename = u'whatever'
+            filename = u'whatever.tar.gz'
             file = StringIO()
 
         view = UploadReleaseFile(self.create_request({

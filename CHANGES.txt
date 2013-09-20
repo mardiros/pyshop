@@ -1,6 +1,11 @@
 Changelist
 ==========
 
+0.9.1
+-----
+
+ - Fix unit tests
+
 0.9
 ---
 
