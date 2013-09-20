@@ -37,10 +37,17 @@ def build_whl(source, dest):
         # FIXME: .zip is not supported yet
         if source.endswith('.zip'):
             with zipfile.ZipFile(source, 'r') as arch:
-                arch.extractall(tempdir)  # XXX do not trust ! .. inside !!!
+                if [file for file in arch.namelist() if '..' in file]:
+                    raise RuntimeError('Archive is not safe')
+                arch.extractall(tempdir)
         else:
             arch = tarfile.open(source)
-            arch.extractall(tempdir)  # XXX do not trust ! .. inside !!!
+            try:
+                if [file for file in arch.getnames() if '..' in file]:
+                    raise RuntimeError('Archive is not safe')
+                arch.extractall(tempdir)
+            finally:
+                arch.close()
 
         os.chdir(os.path.join(tempdir, os.listdir(tempdir)[0]))
         os.system('python setup.py bdist_wheel')
