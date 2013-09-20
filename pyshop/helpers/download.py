@@ -14,6 +14,7 @@ import mimetypes
 import logging
 import tempfile
 import tarfile
+import zipfile
 import shutil
 
 import requests
@@ -34,16 +35,22 @@ def build_whl(source, dest):
     try:
         tempdir = tempfile.mkdtemp(prefix='pyshop')
         # FIXME: .zip is not supported yet
-        arch = tarfile.open(source)
-        arch.extractall(tempdir)  # XXX do not trust ! .. inside !!!
+        if source.endswith('.zip'):
+            with zipfile.ZipFile(source, 'r') as arch:
+                arch.extractall(tempdir)  # XXX do not trust ! .. inside !!!
+        else:
+            arch = tarfile.open(source)
+            arch.extractall(tempdir)  # XXX do not trust ! .. inside !!!
+
         os.chdir(os.path.join(tempdir, os.listdir(tempdir)[0]))
         os.system('python setup.py bdist_wheel')
         distdir = os.path.join(tempdir, os.listdir(tempdir)[0], 'dist')
         wheel = os.path.join(distdir, os.listdir(distdir)[0])
-        # XXX Ugly
-        # has we already have serve a filename, we must respect it
-        # if the archive is intended for build for a specific platform
-        # it will be renamed to "any" and it's wrong
+        # XXX
+        # As we already have serve a filename, we must respect it
+        # if the archive is intended for build for a specific platform,
+        # like Linux-x86_64 it will be renamed to "any" but only works
+        # for  Linux-x86_64.
         shutil.move(wheel, dest)
     finally:
         os.chdir(olddir)
