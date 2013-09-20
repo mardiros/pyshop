@@ -30,7 +30,7 @@ requires = [
     'requests >=1.2, <1.0',  # version excluded bugs in case a proxy is used
     'docutils',
     'setuptools',            # compare package version
-
+    'wheel',                 # build wheels from source on the proxy
     'IPython',
 ]
 

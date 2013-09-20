@@ -5,9 +5,22 @@ Changelist
 ---
 
  - add key "pyshop.mirror.cache.ttl" in config file.
- - add key "pyshop.upload.rewrite_filename" in config file.
+     This settings allow to set the cache time of a package
+     before refresh it on pypi.
  - add a button in the web interface to force the refresh of mirrored package.
+     This permit to force reset the ttl of a package on the web interface.
+
+ - add key "pyshop.upload.rewrite_filename" in config file.
+     This settings disable the rename of package file uploaded on the server.
+
  - change "satanize" to "sanitize" keys in config file.
+     Modify this settings in your config file after a migration.
+
+ - add key "pyshop.mirror.wheelify" in config file.
+     This settings require users to use recent version of pip and setuptools
+     virtualenv 1.10.1 is OK. This is experimental.
+     User and Proxy Server must run the same OS on the same architecture to
+     use that feature.
 
 0.8
 ---
