@@ -29,7 +29,7 @@ mimetypes.add_type('x-application/whl', '.whl')
 
 
 def build_whl(source, dest):
-    tempdir = tempdir2 = None
+    tempdir = None
     olddir = os.path.abspath(os.curdir)
     try:
         tempdir = tempfile.mkdtemp(prefix='pyshop')
@@ -37,22 +37,18 @@ def build_whl(source, dest):
         arch = tarfile.open(source)
         arch.extractall(tempdir)  # XXX do not trust ! .. inside !!!
         os.chdir(os.path.join(tempdir, os.listdir(tempdir)[0]))
-        os.system('python setup.py bdist_egg')
+        os.system('python setup.py bdist_wheel')
         distdir = os.path.join(tempdir, os.listdir(tempdir)[0], 'dist')
-        egg = os.path.join(distdir, os.listdir(distdir)[0])
+        wheel = os.path.join(distdir, os.listdir(distdir)[0])
         # XXX Ugly
         # has we already have serve a filename, we must respect it
         # if the archive is intended for build for a specific platform
         # it will be renamed to "any" and it's wrong
-        tempdir2 = tempfile.mkdtemp(prefix='pyshop')
-        egg2wheel(egg, tempdir2)
-        shutil.move(os.path.join(tempdir2, os.listdir(tempdir2)[0]), dest)
+        shutil.move(wheel, dest)
     finally:
         os.chdir(olddir)
         if tempdir:
             shutil.rmtree(tempdir)
-        if tempdir2:
-            shutil.rmtree(tempdir2)
 
 
 class ReleaseFileRenderer(object):
