@@ -53,10 +53,14 @@ def show_external_release_file(root, request):
     """
     session = DBSession()
 
+    settings = request.registry.settings
+    whlify = asbool(settings.get('pyshop.mirror.wheelify', '0'))
     release = Release.by_id(session, int(request.matchdict['release_id']))
 
     rv = {'url': release.download_url,
-          'filename': release.download_url_file,
+          'filename': release.whlify_download_url_file,
+          'original': release.download_url_file,
+          'whlify': whlify
           }
 
     release.downloads += 1

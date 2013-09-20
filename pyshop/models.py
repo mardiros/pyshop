@@ -532,6 +532,13 @@ class Release(Base):
         return url.rsplit('/', 1).pop() if url else None
 
     @property
+    def can_download_url_whl(self):
+
+        return (self.download_url_file.endswith('.tar.gz') or
+                self.download_url_file.endswith('.tar.bz2') or
+                self.download_url_file.endswith('.zip'))
+
+    @property
     def whlify_download_url_file(self):
         return _whlify(self.download_url_file)
 

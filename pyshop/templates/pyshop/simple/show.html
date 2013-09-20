@@ -13,11 +13,9 @@
     {% endfor -%}
     {% if r.download_url_file and r.download_url_file != 'UNKNOWN'  %}
 
-        {% if whlify -%}
-            {% if r.download_url_file.endswith('.tar.gz') -%}
+        {% if whlify and r.can_download_url_whl -%}
 <a href="{{ route_url('show_external_release_file', release_id=r.id, filename=r.whlify_download_url_file)
          }}" rel="download">{{ r.whlify_download_url_file }} </a><br/>
-            {%- endif -%}
         {%- else -%}
 <a href="{{ route_url('show_external_release_file', release_id=r.id, filename=r.download_url_file)
          }}" rel="download">{{ r.download_url_file }} </a><br/>
