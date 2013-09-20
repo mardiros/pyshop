@@ -533,14 +533,14 @@ class Release(Base):
 
     @property
     def can_download_url_whl(self):
-
-        return (self.download_url_file.endswith('.tar.gz') or
-                self.download_url_file.endswith('.tar.bz2') or
-                self.download_url_file.endswith('.zip'))
+        filename = self.download_url_file.split('#').pop(0)
+        return (self.filename.endswith('.tar.gz') or
+                self.filename.endswith('.tar.bz2') or
+                self.filename.endswith('.zip'))
 
     @property
     def whlify_download_url_file(self):
-        return _whlify(self.download_url_file)
+        return _whlify(self.download_url_file.split('#').pop(0))
 
     @classmethod
     def by_version(cls, session, package_name, version):
