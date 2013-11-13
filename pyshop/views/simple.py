@@ -226,6 +226,25 @@ class Show(View):
                            comment_text=data.get('comment_text'),
                            )
 
+    def _search_package(self, package_name):
+        api = pypi.proxy
+
+        search_result = api.search({'name': package_name}, True)
+        search_count = len(search_result)
+        if not search_count:
+            return None
+
+        search_result = [p for p in search_result
+                         if p['name'].lower() == package_name
+                         or p['name'].lower().replace('-', '_') == package_name]
+        log.debug('Found {sc}, matched {mc}'.format(sc=search_count, mc=len(search_result)))
+
+        if search_result:
+            package_name = search_result[0]['name']
+            pypi_versions = api.package_releases(package_name, True)
+
+        return package_name.decode('utf-8'), pypi_versions
+
     def render(self):
 
         api = pypi.proxy
@@ -255,16 +274,17 @@ class Show(View):
             # XXX package_releases is case sensitive
             # but dependancies declaration not...
             if not pypi_versions:
-                search_result = api.search({'name': package_name}, True)
-                search_count = len(search_result)
-                search_result = [p for p in search_result
-                                 if p['name'].lower() == package_name
-                                 or p['name'].lower().replace('-', '_') == package_name]
-                log.debug('Found {sc}, matched {mc}'.format(sc=search_count, mc=len(search_result)))
+                pkg_info = self._search_package(package_name)
+                if not pkg_info and '-' in package_name:
+                    tmp_name = package_name.replace('-', '_')
+                    pkg_info = self._search_package(tmp_name)
 
-                if search_result:
-                    package_name = search_result[0]['name']
-                    pypi_versions = api.package_releases(package_name, True)
+                if not pkg_info and '_' in package_name:
+                    tmp_name = package_name.replace('_', '-')
+                    pkg_info = self._search_package(tmp_name)
+
+                if pkg_info:
+                    package_name, pypi_versions = pkg_info
         else:
             pypi_versions = []
 
@@ -282,7 +302,11 @@ class Show(View):
 
             # mirror the package now
             log.info('mirror package %s now' % package_name)
-            pkg = Package(name=package_name, local=False)
+            pkg = Package.by_name(self.session, package_name)
+            if not pkg:
+                pkg = Package(name=package_name, local=False)
+                self.session.add(pkg)
+                self.session.flush()
             roles = api.package_roles(package_name)
             for role, login in roles:
                 login = login.decode('utf-8')  # XMLRPC should return utf-8
