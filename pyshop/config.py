@@ -6,6 +6,7 @@ PyShop Pyramid configuration helpers.
 from pyramid.interfaces import IBeforeRender
 from pyramid.security import has_permission
 from pyramid.url import static_path, route_path
+from pyramid.httpexceptions import HTTPNotFound
 # from pyramid.renderers import JSONP
 
 from pyramid_jinja2 import renderer_factory
@@ -13,6 +14,10 @@ from pyramid_jinja2 import renderer_factory
 from pyshop.helpers import pypi
 from pyshop.helpers.restxt import parse_rest
 from pyshop.helpers.download import renderer_factory as dl_renderer_factory
+
+
+def notfound(request):
+    return HTTPNotFound('Not found.')
 
 
 def add_urlhelpers(event):
@@ -104,6 +109,10 @@ def includeme(config):
                     route_name=u'show_simple',
                     renderer=u'pyshop/simple/show.html',
                     permission=u'download_releasefile')
+
+
+    config.add_notfound_view(notfound, append_slash=True)
+
 
     # Used by setup.py sdist upload
 
