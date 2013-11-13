@@ -379,7 +379,15 @@ class Package(Base):
         """
         # XXX the field "name" should be created with a
         # case insensitive collation.
-        return cls.first(session, where=(cls.name.like(name),))
+        pkg = cls.first(session, where=(cls.name.like(name),))
+        if not pkg:
+            name = name.replace(u'-', u'_').upper()
+            pkg = cls.first(session,
+                            where=(cls.name.like(name),))
+            # XXX _ is a like operator
+            if pkg.name.upper().replace(u'-', u'_') != name:
+                pkg = None
+        return pkg
 
     @classmethod
     def by_filter(cls, session, opts, **kwargs):
