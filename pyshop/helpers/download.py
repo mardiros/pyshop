@@ -21,7 +21,7 @@ import requests
 from zope.interface import implements
 from pyramid.interfaces import ITemplateRenderer
 from pyramid.exceptions import NotFound
-from wheel.egg2wheel import egg2wheel
+
 
 log = logging.getLogger(__name__)
 # registering mimetype for egg files
