@@ -7,7 +7,8 @@ class SimpleTestCase(case.ViewTestCase):
     def test_get_list_ok(self):
         from pyshop.views.simple import List
         view = List(self.create_request())()
-        self.assertEqual(set(view.keys()), {'pyshop', 'packages'})
+        self.assertEqual(set(view.keys()),
+                         set(['pyshop', 'packages']))
         packages = [p for p in view['packages']]
         self.assertEqual(len(packages), 3)
 
@@ -16,7 +17,8 @@ class SimpleTestCase(case.ViewTestCase):
         view = Show(self.create_request(matchdict={
             'package_name': u'mirrored_package1'
             }))()
-        self.assertEqual(set(view.keys()), {'pyshop', 'package', 'whlify'})
+        self.assertEqual(set(view.keys()),
+                         set(['pyshop', 'package', 'whlify']))
         self.assertEqual(view['package'].name, u'mirrored_package1')
 
     def test_post_uploadreleasefile_existing_pkg_ko_403(self):
@@ -49,7 +51,8 @@ class SimpleTestCase(case.ViewTestCase):
             'md5_digest': u'x' * 40,
             'home_page': u'http://local_package1'
             }))()
-        self.assertEquals(set(view.keys()), {'pyshop', 'release_file'})
+        self.assertEquals(set(view.keys()),
+                          set(['pyshop', 'release_file']))
         self.assertEquals(view['release_file'].filename,
                           u'local_package1-0.2.tar.gz')
         self.assertEquals(view['release_file'].release.home_page,

@@ -8,10 +8,9 @@ class PackageTestCase(case.ViewTestCase):
         from pyshop.models import Package, Classifier
         from pyshop.views.package import List
         view = List(self.create_request())()
-        self.assertEqual(set(view.keys()), {'pyshop',
-                                            'has_page', 'paging', 'filter',
-                                            'package_count', 'packages',
-                                            'classifiers'})
+        self.assertEqual(set(view.keys()),
+                         set(['pyshop', 'has_page', 'paging', 'filter',
+                              'package_count', 'packages', 'classifiers']))
         # by default, list filter local packages
         self.assertEqual(view['package_count'], 1)
         self.assertEqual(len(view['packages']), 1)
@@ -26,6 +25,7 @@ class PackageTestCase(case.ViewTestCase):
         from pyshop.views.package import Show
         view = Show(self.create_request(
             matchdict={'package_name': u'local_package1'}))()
-        self.assertEqual(set(view.keys()), {'pyshop', 'release', 'package'})
+        self.assertEqual(set(view.keys()),
+                         set(['pyshop', 'release', 'package']))
         self.assertIsInstance(view['package'], Package)
         self.assertEqual(view['package'].name, u'local_package1')

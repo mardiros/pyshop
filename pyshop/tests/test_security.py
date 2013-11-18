@@ -8,20 +8,21 @@ class RootFactoryTestCase(UnauthenticatedViewTestCase):
         from pyshop.security import RootFactory
         root = RootFactory(self.create_request())
         self.assertEqual(set(root.__acl__),
-                         {# all rights
-                          (u'Allow', u'admin', u'admin_view'),
-                          (u'Allow', u'admin', u'download_releasefile'),
-                          (u'Allow', u'admin', u'upload_releasefile'),
-                          (u'Allow', u'admin', u'user_view'),
-                          # installer can download packages
-                          (u'Allow', u'installer', u'download_releasefile'),
+                         set([# all rights
+                              (u'Allow', u'admin', u'admin_view'),
+                              (u'Allow', u'admin', u'download_releasefile'),
+                              (u'Allow', u'admin', u'upload_releasefile'),
+                              (u'Allow', u'admin', u'user_view'),
 
-                          # installer can download/upload packages, and browse
-                          # the packages
-                          (u'Allow', u'developer', u'download_releasefile'),
-                          (u'Allow', u'developer', u'upload_releasefile'),
-                          (u'Allow', u'developer', u'user_view'),
-                          })
+                              # installer can download packages
+                              (u'Allow', u'installer', u'download_releasefile'),
+
+                              # installer can download/upload packages,
+                              # and browse packages
+                              (u'Allow', u'developer', u'download_releasefile'),
+                              (u'Allow', u'developer', u'upload_releasefile'),
+                              (u'Allow', u'developer', u'user_view'),
+                              ]))
 
 
 class GroupFinderTestCase(UnauthenticatedViewTestCase):
@@ -29,14 +30,15 @@ class GroupFinderTestCase(UnauthenticatedViewTestCase):
     def test_admin_groups(self):
         from pyshop.security import groupfinder
         self.assertEqual(set(groupfinder(u'admin', self.create_request())),
-                         {u'admin'})
+                         set([u'admin']))
 
     def test_installer_groups(self):
         from pyshop.security import groupfinder
         self.assertEqual(set(groupfinder(u'pip', self.create_request())),
-                         {u'installer'})
+                         set([u'installer']))
 
     def test_dev_groups(self):
         from pyshop.security import groupfinder
         self.assertEqual(set(groupfinder(u'local_user', self.create_request())),
-                         {u'developer'})
+                         set([u'developer']))
+

@@ -1,4 +1,10 @@
-import unittest
+
+
+try:
+    from unittest2 import TestCase  # Python2.6
+except ImportError:
+    from unittest import TestCase
+
 
 import transaction
 from webob.multidict import MultiDict
@@ -9,7 +15,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from pyshop.models import DBSession
 
 
-class ModelTestCase(unittest.TestCase):
+class ModelTestCase(TestCase):
 
     def setUp(self):
         transaction.begin()
@@ -30,7 +36,7 @@ class DummyRequest(testing.DummyRequest):
     matched_route = DummyRoute
 
 
-class UnauthenticatedViewTestCase(unittest.TestCase):
+class UnauthenticatedViewTestCase(TestCase):
 
     def setUp(self):
         from pyshop.config import includeme

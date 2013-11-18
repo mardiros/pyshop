@@ -27,8 +27,8 @@ class AccountTestCase(case.ViewTestCase):
         from pyshop.models import User
         from pyshop.views.account import List
         view = List(self.create_request())()
-        self.assertEqual(set(view.keys()), {'pyshop', 'user_count',
-                                            'users'})
+        self.assertEqual(set(view.keys()),
+                         set(['pyshop', 'user_count', 'users']))
         self.assertEqual(view['user_count'], 4)
         self.assertEqual(len(view['users']), 4)
         self.assertIsInstance(view['users'][0], User)
@@ -37,8 +37,9 @@ class AccountTestCase(case.ViewTestCase):
         from pyshop.views.account import Create
         from pyshop.models import User, Group
         view = Create(self.create_request())()
-        self.assertEqual(set(view.keys()), {'errors', 'groups', 'pyshop',
-                                            'user'})
+        self.assertEqual(set(view.keys()),
+                         set(['errors', 'groups', 'pyshop', 'user']))
+
         self.assertEqual(view['errors'], [])
         groups = [g for g in view['groups']]
         self.assertEqual(len(groups), 3)
@@ -68,8 +69,8 @@ class AccountTestCase(case.ViewTestCase):
         from pyshop.models import User, Group
         view = Edit(self.create_request(matchdict={'user_id': self.account_id
                                                    }))()
-        self.assertEqual(set(view.keys()), {'errors', 'groups', 'pyshop',
-                                            'user'})
+        self.assertEqual(set(view.keys()),
+                         set(['errors', 'groups', 'pyshop', 'user']))
         self.assertEqual(view['errors'], [])
         groups = [g for g in view['groups']]
         self.assertEqual(len(groups), 3)
@@ -101,7 +102,8 @@ class AccountTestCase(case.ViewTestCase):
         from pyshop.models import User
         view = Delete(self.create_request(matchdict={'user_id': self.account_id
                                                      }))()
-        self.assertEqual(set(view.keys()), {'pyshop', 'user'})
+        self.assertEqual(set(view.keys()),
+                         set(['pyshop', 'user']))
         self.assertIsInstance(view['user'], User)
         self.assertEqual(view['user'].id, self.account_id)
         self.assertEqual(view['user'].login, self.account_login)

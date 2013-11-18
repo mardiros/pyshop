@@ -7,14 +7,16 @@ class AccountTestCase(case.ViewTestCase):
     def test_update_get(self):
         from pyshop.views.user import Edit
         view = Edit(self.create_request())()
-        self.assertEqual(set(view.keys()), {'pyshop', 'user', 'errors'})
+        self.assertEqual(set(view.keys()),
+                         set(['pyshop', 'user', 'errors']))
         self.assertEqual(view['user'].login, u'admin')
 
     def test_update_get(self):
         from pyshop.views.user import Edit
         from pyshop.views.user import ChangePassword as ChangePwd
         view = ChangePwd(self.create_request())()
-        self.assertEqual(set(view.keys()), {'pyshop', 'user', 'errors'})
+        self.assertEqual(set(view.keys()),
+                         set(['pyshop', 'user', 'errors']))
         self.assertEqual(view['user'].login, u'admin')
 
     def test_update_post_ok(self):
