@@ -75,7 +75,7 @@ setup(name='pyshop',
       [paste.app_factory]
       main = pyshop:main
       [console_scripts]
-      pyshop_install = pyshop.bin.install:main
+      pyshop_setup = pyshop.bin.install:main
       pyshop_shell = pyshop.bin.shell:main
       pyshop_migrate = pyshop.bin.migrate:main
       """,

@@ -34,7 +34,7 @@ Installation
     (pyshop)$ pip install pyshop
     (pyshop)$ cp pyshop.sample.ini pyshop.ini
     (pyshop)$ vim pyshop.ini  # change the pyshop.cookie_key setting
-    (pyshop)$ pyshop_install pyshop.ini
+    (pyshop)$ pyshop_setup pyshop.ini
     (pyshop)$ pserve pyshop.ini start --log-file=pyshop.log
 
 You should edit the pyshop.ini file in order to configure the
