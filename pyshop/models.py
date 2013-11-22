@@ -385,7 +385,7 @@ class Package(Base):
             pkg = cls.first(session,
                             where=(cls.name.like(name),))
             # XXX _ is a like operator
-            if pkg.name.upper().replace(u'-', u'_') != name:
+            if pkg and pkg.name.upper().replace(u'-', u'_') != name:
                 pkg = None
         return pkg
 
