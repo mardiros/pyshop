@@ -59,10 +59,16 @@ class RouteSwithchAuthPolicy(CallbackAuthenticationPolicy):
     implements(IAuthenticationPolicy)
 
     def __init__(self, secret='key',callback=None):
+        try:
+            authtk = AuthTktAuthenticationPolicy(secret,
+                                                 callback=callback,
+                                                  hashalg='sha512')
+        except TypeError:
+            # pyramid < 1.4
+            authtk = AuthTktAuthenticationPolicy(secret, callback=callback)
+
         self.impl = {'basic': AuthBasicAuthenticationPolicy(callback=callback),
-                     'tk': AuthTktAuthenticationPolicy(secret,
-                                                       callback=callback,
-                                                       hashalg='sha512')
+                     'tk': authtk
                      }
         self.callback = callback
 

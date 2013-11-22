@@ -111,7 +111,11 @@ def includeme(config):
                     permission=u'download_releasefile')
 
 
-    config.add_notfound_view(notfound, append_slash=True)
+    try:
+        config.add_notfound_view(notfound, append_slash=True)
+    except AttributeError:
+        # Pyramid < 1.4
+        pass
 
 
     # Used by setup.py sdist upload
