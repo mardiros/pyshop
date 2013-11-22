@@ -1,7 +1,16 @@
 import os
 import sys
 
-from pyramid.paster import get_appsettings, setup_logging
+try:
+    from pyramid.paster import get_appsettings, setup_logging
+except ImportError:
+     from paste.deploy.loadwsgi import appconfig
+     def get_appsettings(name):
+         return  appconfig('config:{0}'.format(name), 'main',
+                           relative_to=os.getcwd())
+     def setup_logging(config_uri):
+         return None
+
 from sqlalchemy import engine_from_config
 
 from pyshop.helpers.sqla import create_engine, dispose_engine
