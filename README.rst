@@ -10,8 +10,8 @@ The aim is to split private projects in distinct private packages and keep a
 setup.py clean and working, by declaring all dependencies, exactly as public
 packages on PyPI.
 
-Pyshop also mirrors packages from PyPI safely (using SSL and checking
-server certificate).
+Pyshop also proxies and caches packages from PyPI safely using SSL and checking server
+certificate.
 
 Pyshop uses clear and simple ACLs to manage privileges:
 
@@ -53,12 +53,12 @@ Configuring your environment
 ----------------------------
 
 Here are all configuration files you will need to modify for usual python tools
-to use your newly deployed private mirror.
+to use your newly deployed private repository.
 
 ~/.pip/pip.conf
 ~~~~~~~~~~~~~~~
 
-Configuration used by pip.  This is a user file, you can set a developer or
+Configuration used by pip. This is a user file, you can set a developer or
 the generic pip account.
 
 ::
@@ -140,3 +140,4 @@ Alternatives
 - localshop: http://pypi.python.org/pypi/localshop
 - djangopypi: http://pypi.python.org/pypi/djangopypi
 - chishop: http://pypi.python.org/pypi/chishop
+
