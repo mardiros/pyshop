@@ -7,6 +7,8 @@ Changelist
 - Fix tests for python 2.6 (unittest2 required and be installed manually)
 - Fix pyramid 1.2 compatibility
 - Rename command pyshop_install to python_setup
+- Give the possibility to use the prefix_route via the settings 'pyshop.prefix_route'
+- Give the possibility to disable xmlrpc servive via 'pyshop.enable_xmlrpc'
 
 
 0.9.2
