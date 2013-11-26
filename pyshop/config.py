@@ -3,6 +3,7 @@
 PyShop Pyramid configuration helpers.
 """
 
+from pyramid.settings import asbool
 from pyramid.interfaces import IBeforeRender
 from pyramid.security import has_permission
 from pyramid.url import static_path, route_path
@@ -130,7 +131,8 @@ def includeme(config):
 
     # Web Services
 
-    config.add_view('pyshop.views.xmlrpc.PyPI', name='pypi')
+    if asbool(config.registry.settings.get('pyshop.enable_xmlrpc', 'true')):
+        config.add_view('pyshop.views.xmlrpc.PyPI', name='pypi')
 
     # Backoffice Views
 
