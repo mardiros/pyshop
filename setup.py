@@ -4,8 +4,12 @@ import re
 from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, 'README.rst')).read()
-CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
+name = os.path.basename(here)
+
+with open(os.path.join(here, 'README.rst')) as f:
+    README = f.read()
+with open(os.path.join(here, 'CHANGES.rst')) as f:
+    CHANGES = f.read()
 
 with open(os.path.join(here, 'pyshop', '__init__.py')) as v_file:
     version = re.compile(r".*__version__ = '(.*?)'",
@@ -43,7 +47,7 @@ else:
     data_files = []
 
 
-setup(name='pyshop',
+setup(name=name,
       version=version,
       description='A cheeseshop clone (PyPI server) written in pyramid',
       long_description=README + '\n\n' + CHANGES,
@@ -69,7 +73,7 @@ setup(name='pyshop',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
-      test_suite='pyshop',
+      test_suite=name,
       install_requires=requires,
       entry_points="""\
       [paste.app_factory]

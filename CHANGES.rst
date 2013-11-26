@@ -1,8 +1,8 @@
 Changelist
 ==========
 
-0.9.3~dev
----------
+0.9.3
+-----
 
 - Fix tests for python 2.6 (unittest2 required and be installed manually)
 - Fix pyramid 1.2 compatibility
