@@ -30,9 +30,11 @@ def main(global_config, **settings):
     authn_policy = RouteSwithchAuthPolicy(secret=settings['pyshop.cookie_key'],
                                           callback=groupfinder)
     authz_policy = ACLPolicy()
+    route_prefix = settings.get('pyshop.route_prefix')
 
     config = Configurator(settings=settings,
                           root_factory=RootFactory,
+                          route_prefix = route_prefix,
                           locale_negotiator=locale_negotiator,
                           authentication_policy=authn_policy,
                           authorization_policy=authz_policy)
