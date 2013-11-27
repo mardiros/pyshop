@@ -1,6 +1,11 @@
 Changelist
 ==========
 
+0.9.4
+-----
+
+- Fix packaging
+
 0.9.3
 -----
 
