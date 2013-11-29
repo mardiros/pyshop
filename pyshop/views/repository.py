@@ -57,8 +57,11 @@ def show_external_release_file(root, request):
     whlify = asbool(settings.get('pyshop.mirror.wheelify', '0'))
     release = Release.by_id(session, int(request.matchdict['release_id']))
 
+    filename = (release.whlify_download_url_file if whlify else
+                release.download_url_file)
+
     rv = {'url': release.download_url,
-          'filename': release.whlify_download_url_file,
+          'filename': filename,
           'original': release.download_url_file,
           'whlify': whlify
           }
