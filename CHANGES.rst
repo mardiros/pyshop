@@ -1,8 +1,8 @@
 Changelist
 ==========
 
-0.9.5~dev
----------
+0.9.5
+-----
 
 - Fix mirroring of external links browsed (in case it's not a package)
 
