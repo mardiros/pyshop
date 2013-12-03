@@ -1,6 +1,12 @@
 Changelist
 ==========
 
+0.9.6
+-----
+
+- Fix mirroring of package when the case and underscore are not "correct"
+
+
 0.9.5
 -----
 
