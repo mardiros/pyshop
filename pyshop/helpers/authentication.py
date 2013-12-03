@@ -55,7 +55,7 @@ class AuthBasicAuthenticationPolicy(CallbackAuthenticationPolicy):
         return []
 
 
-class RouteSwithchAuthPolicy(CallbackAuthenticationPolicy):
+class RouteSwitchAuthPolicy(CallbackAuthenticationPolicy):
     implements(IAuthenticationPolicy)
 
     def __init__(self, secret='key',callback=None):
