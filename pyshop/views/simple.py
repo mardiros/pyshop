@@ -239,10 +239,11 @@ class Show(View):
                          or p['name'].lower().replace('-', '_') == package_name]
         log.debug('Found {sc}, matched {mc}'.format(sc=search_count, mc=len(search_result)))
 
-        if search_result:
-            package_name = search_result[0]['name']
-            pypi_versions = api.package_releases(package_name, True)
+        if not search_result:
+            return None
 
+        package_name = search_result[0]['name']
+        pypi_versions = api.package_releases(package_name, True)
         return package_name.decode('utf-8'), pypi_versions
 
     def render(self):
