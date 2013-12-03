@@ -234,6 +234,7 @@ class Show(View):
         if not search_count:
             return None
 
+        package_name = package_name.lower().replace('-', '_')
         search_result = [p for p in search_result
                          if p['name'].lower() == package_name
                          or p['name'].lower().replace('-', '_') == package_name]
