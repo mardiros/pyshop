@@ -1,6 +1,14 @@
 Changelist
 ==========
 
+0.9.7
+-----
+
+- Remove some links in the simple route.
+  - Don't display home pages
+  - Don't display download links in case there is archive available.
+    (That fix some install for south for exemple)
+
 0.9.6
 -----
 
