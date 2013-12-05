@@ -657,7 +657,9 @@ class ReleaseFile(Base):
     package_type = Column(Enum(u'sdist', u'bdist_egg', u'bdist_msi',
                                u'bdist_dmg', u'bdist_rpm', u'bdist_dumb',
                                u'bdist_wininst',
-                               u'bdist_wheel'), nullable=False)
+                               u'bdist_wheel',
+                               name='enum_release_file_package_type'),
+                          nullable=False)
 
     python_version = Column(Unicode(25))
     url = Column(Unicode(1024))

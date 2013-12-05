@@ -1,6 +1,12 @@
 Changelist
 ==========
 
+0.9.8
+-----
+
+- Add support for posgresql
+
+
 0.9.7
 -----
 
