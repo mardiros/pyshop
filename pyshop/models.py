@@ -521,7 +521,7 @@ class Release(Base):
     license = Column(UnicodeText())
     description = Column(UnicodeText())
     keywords = Column(Unicode(255))
-    platform = Column(Unicode(24))
+    platform = Column(Unicode(80))
     download_url = Column(Unicode(800))
     bugtrack_url = Column(Unicode(800))
     docs_url = Column(Unicode(800))
