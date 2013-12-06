@@ -213,7 +213,9 @@ class User(Base):
         :return: local users
         :rtype: generator of :class:`pyshop.models.User`
         """
-        return cls.find(session, where=(cls.local == True,), order_by=cls.login,
+        return cls.find(session,
+                        where=(cls.local == True,),
+                        order_by=cls.login,
                         **kwargs)
 
     def validate(self, session):

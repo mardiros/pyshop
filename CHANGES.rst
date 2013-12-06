@@ -1,6 +1,11 @@
 Changelist
 ==========
 
+0.9.10
+------
+
+- Fix postgresql admin account pages
+
 0.9.8
 -----
 
