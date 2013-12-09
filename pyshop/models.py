@@ -508,7 +508,7 @@ class Release(Base):
                       'package_id', 'version', unique=True),
                 )
 
-    version = Column(Unicode(16), nullable=False)
+    version = Column(Unicode(60), nullable=False)
     summary = Column(Unicode(255))
     downloads = Column(Integer, default=0)
 
@@ -516,7 +516,7 @@ class Release(Base):
                         nullable=False)
     author_id = Column(Integer, ForeignKey(User.id))
     maintainer_id = Column(Integer, ForeignKey(User.id))
-    stable_version = Column(Unicode(16))
+    stable_version = Column(Unicode(60))
     home_page = Column(Unicode(255))
     license = Column(UnicodeText())
     description = Column(UnicodeText())
