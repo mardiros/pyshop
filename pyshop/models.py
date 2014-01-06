@@ -527,7 +527,7 @@ class Release(Base):
     docs_url = Column(Unicode(800))
     classifiers = relationship(Classifier, secondary=classifier__release,
                                lazy='dynamic', cascade='all, delete')
-    package = relationship(Package, lazy='join',
+    package = relationship(Package, lazy='joined',
                            backref=backref('releases',
                                            cascade='all, delete-orphan'))
     author = relationship(User, primaryjoin=author_id == User.id)
@@ -669,7 +669,7 @@ class ReleaseFile(Base):
     has_sig = Column(Boolean, default=False)
     comment_text = Column(UnicodeText())
 
-    release = relationship(Release, lazy='join',
+    release = relationship(Release, lazy='joined',
                            backref=backref('files',
                                            cascade='all, delete-orphan'))
 
