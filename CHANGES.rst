@@ -1,6 +1,12 @@
 Changelist
 ==========
 
+0.9.11
+------
+
+- Fix support of SQLAlchemy 0.9.x
+- Fix packaging (missing LICENSE)
+
 0.9.10
 ------
 
