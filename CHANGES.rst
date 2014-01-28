@@ -1,6 +1,14 @@
 Changelist
 ==========
 
+0.9.12
+------
+
+- Authorize developper to upload a patched version of a mirrored package
+without any restriction. Some mirrored package may have bugs that are
+critical for you, and it's better to get a mirrored package than rely
+on an external sources.
+
 0.9.11
 ------
 
