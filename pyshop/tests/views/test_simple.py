@@ -1,5 +1,12 @@
+from cStringIO import StringIO
+
 from pyshop.tests import case
 from pyshop.tests import setUpModule, tearDownModule
+
+
+class DummyContent(object):
+    filename = u'whatever.tar.gz'
+    file = StringIO()
 
 
 class SimpleTestCase(case.ViewTestCase):
@@ -21,16 +28,19 @@ class SimpleTestCase(case.ViewTestCase):
                          set(['pyshop', 'package', 'whlify']))
         self.assertEqual(view['package'].name, u'mirrored_package1')
 
-    def test_post_uploadreleasefile_existing_pkg_ko_403(self):
-        from pyramid.httpexceptions import HTTPForbidden
+    def test_post_uploadreleasefile_mirrored_pkg(self):
 
         from pyshop.views.simple import UploadReleaseFile
+        from pyshop.models import ReleaseFile
 
         view = UploadReleaseFile(self.create_request({
-            'name': u'mirrored_package1'
-            }))
-        # only owner and maintainer are authorized to upload
-        self.assertRaises(HTTPForbidden, view)
+            'name': u'mirrored_package1',
+            'version': u'0.2',
+            'filetype': u'sdist',
+            'md5_digest': u'x' * 40,
+            },
+            post={'content': DummyContent}))()
+        self.assertIsInstance(view['release_file'], ReleaseFile)
 
     def test_post_uploadreleasefile_existing_pkg_ok(self):
         from cStringIO import StringIO
@@ -39,13 +49,9 @@ class SimpleTestCase(case.ViewTestCase):
         from pyshop.views.simple import UploadReleaseFile
         from pyshop.models import Package, Release, ReleaseFile
 
-        class Content(object):
-            filename = u'whatever.tar.gz'
-            file = StringIO()
-
         view = UploadReleaseFile(self.create_request({
             'name': u'local_package1',
-            'content': Content,
+            'content': DummyContent,
             'version': u'0.2',
             'filetype': u'sdist',
             'md5_digest': u'x' * 40,
