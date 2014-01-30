@@ -1,51 +1,40 @@
 {% extends "/pyshop/layout.html" %}
 
 {% block subnav %}
-    <h2>{% trans %}Available Packages ({{package_count}}){% endtrans %}</h2>
 {% endblock %}
 
 
 {% block main %}
 
 <form class="filter" method="GET">
-    <input type="text" id="classifier" class="filter-input"
-           name="classifier.added" value=""
-    /><button id="submitter" name="form.submitted">
-        {% trans %} filter {% endtrans %}
-    </button>
-    <ul class="selected-classifiers">
+<!-- /input-group -->
+<div class="input-group">
+    <input type="text" id="classifier" class="form-control" name="classifier.added" value=""/>
+    <span class="input-group-btn"><button class="btn btn-default" id="submitter" name="form.submitted"> {% trans %} filter {% endtrans %} </button></span>
+    <div class="btn-group" data-toggle="buttons">
         {% for c in filter.classifiers %}
-            <li>
-                <input type="checkbox" id="classifier_{{loop.index}}"
-                       onchange="$('#submitter').click()"
-                       name="classifiers" checked="checked" value="{{c.id}}"/>
-                <label for="classifier_{{loop.index}}">{{c.name}}</label>
-            </li>
+        <label class="btn btn-primary">
+          <input type="checkbox" id="classifier_{{loop.index}}" onchange="$('#submitter').click()" name="classifiers" checked="checked" value="{{c.id}}"/> {{c.name}}
+        </label>
         {% endfor %}
-        <li>
-            <input type="checkbox" id="source_local" name="local_only" value="1"
-                   onchange="$('#submitter').click()"
-                   {%if filter.local_only%}checked="checked"{% endif %}/>
-            <label for="source_local">
-                {% trans %}locals only{% endtrans %}
-            </label>
-        </li>
-    </ul>
+        <label class="btn btn-primary">
+          <input type="checkbox" id="source_local" name="local_only" value="1" onchange="$('#submitter').click()" 
+                 {%if filter.local_only%}checked="checked"{% endif %}/> {% trans %}locals only{% endtrans %}
+        </label>
+    </div>
+</div>
 </form>
 
-<table>
-    <colgroup>
-        <col class="label">
-        <col class="version">
-        <col class="download">
-        <col class="source">
-    </colgroup>
+<table class="table table-hover table-condensed">
+<thead>
     <tr>
         <th>{% trans %} package {% endtrans %}</th>
         <th>{% trans %} last version {% endtrans %}</th>
         <th>{% trans %} # downloads {% endtrans %}</th>
         <th>{% trans %} source {% endtrans %}</th>
     </tr>
+</thead>
+<tbody>
 
     {% for pkg in packages %}
         <tr>
@@ -65,6 +54,7 @@
             </td>
         </tr>
     {% endfor %}
+</tbody>
 </table>
 
 <script>
