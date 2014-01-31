@@ -6,11 +6,11 @@
        <li class="disabled"><a href="#">&laquo;</a></li>
     {% endif %}
     {% for p in range(paging.no|round(-1, 'floor')|int, paging.no|round(-1, 'floor')|int +10) %}
-      {%if p < paging.max %}
+      {%if 0 < p <= paging.max %}
         {%if paging.no == p %}
-        <li class="active"><a href="#">{{p+1}}</a></li>
+        <li class="active"><a href="#">{{p}}</a></li>
         {% else %}
-        <li><a href="{{ route_url(paging.route, page_no=p, **paging.kwargs)}}?{{paging.qs}}">{{p+1}}</a></li>
+        <li><a href="{{ route_url(paging.route, page_no=p, **paging.kwargs)}}?{{paging.qs}}">{{p}}</a></li>
         {% endif %}
       {% endif %}
     {% endfor %}
