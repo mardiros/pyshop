@@ -30,10 +30,8 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <span class="glyphicon glyphicon-cog"></span>Administration <b class="caret"></b></a>
         <ul class="dropdown-menu">
           <li><a href="{{ route_url('create_account') }}"> {% trans %}Create new account{% endtrans %} </a></li>
-
-        <li><a href="{{route_url('list_account')}}"> {% trans %}Manage Accounts{% endtrans %} </a></li>
-          <li class="divider"></li>
-          <li><a href="{{route_url('logout')}}">Log Out</a></li>
+          
+          <li><a href="{{route_url('list_account')}}"> {% trans %}Manage Accounts{% endtrans %} </a></li>
         </ul>
       </li>
       <li class="dropdown">
