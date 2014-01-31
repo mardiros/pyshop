@@ -23,16 +23,16 @@
     {% for user in users %}
         <tr>
             <td>
-                <a href="{{ route_url('edit_account', user_id=user.id) }}">
                     {{ user.login }}
-                </a>
             </td>
             <td>{{ user.name }}</td>
             <td>
                 {% set pipe = joiner(", ") %}
                 {% for g in user.groups %}{{ pipe() }}{{g.name}}{% endfor %}
             </td>
-            <td>
+            <td><a href="{{ route_url('edit_account', user_id=user.id) }}" class="btn btn-success">
+                    <span class="glyphicon glyphicon-pencil"></span>edit
+                </a>
                 <a href="{{ route_url('delete_account', user_id=user.id) }}" 
                    class="btn btn-danger btn-sm">
                    <span class="glyphicon glyphicon-remove-sign"></span> delete
