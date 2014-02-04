@@ -12,7 +12,9 @@
         {% if f.package_type == 'sdist' %}
             <a class="btn btn-warning btn-sm active" role="button"
                href="{{ route_url('show_release_file', file_id=f.id, filename=f.filename)
-                       }}#{{ f.md5_digest }}">Download Last version ({{f.filename}})</a>
+                       }}#{{ f.md5_digest }}">
+              <span class="glyphicon glyphicon-download-alt"></span>
+              Download ({{f.filename}})</a>
         {% endif %}
     {% endfor %}
     <p>Other Version: 
@@ -26,13 +28,17 @@
                     href="{{ route_url('show_package_version',
                     package_name=package.name,
                     release_version=package.sorted_releases[0].version)}}">
-                    {{package.sorted_releases[0].version}}
+                  <span class="glyphicon glyphicon-tag"></span>
+                  {{package.sorted_releases[0].version}}
                 </a>
                 ...
             {% endif %}
         {% endif %}
         {% if display and loop.index <= idx + 10 %}
-            <a class="btn btn-info btn-xs active" role="button" href="{{ route_url('show_package_version', package_name=package.name, release_version=r.version)}}">
+            <a class="btn btn-info btn-xs active" 
+               role="button" 
+               href="{{ route_url('show_package_version', package_name=package.name, release_version=r.version)}}">
+              <span class="glyphicon glyphicon-tag"></span>
                 {{r.version}}
             </a>
         {% endif %}
@@ -41,6 +47,25 @@
         {% endif %}
     {% endfor %}
     </p>
+    {% if not release.package.local %}
+    <p>
+      {% if release.package.update_at %}
+      
+      <form role="form-inline" 
+            action="{{route_url('show_package', package_name=release.package.name)}}" 
+            method="post">
+        Last Update: {{release.package.update_at}} 
+        <button type="submit" class="btn btn-default" name="form.refresh_package">
+          <span class="glyphicon glyphicon-refresh"></span>
+          {% trans %}refresh{% endtrans %}
+        </button>
+      </form>
+      {% else %}
+        {% trans %}refreshing during next install{% endtrans %}
+      {% endif %}
+    {% endif %}</p>
+
+
     <ul id="myTab" class="nav nav-tabs">
       <li class="active"><a href="#Desc" data-toggle="tab">Description</a></li>
       <li><a href="#Classif" data-toggle="tab">Classification</a></li>
@@ -68,17 +93,6 @@
             <dd><a href="https://pypi.python.org/pypi/{{release.package.name}}">
                     https://pypi.python.org/pypi/{{release.package.name}}
                 </a></dd>
-            <dt>Last Update</dt>
-            <dd>{% if release.package.update_at %}
-                    {{release.package.update_at}}
-                    <form action="{{route_url('show_package', package_name=release.package.name)}}" method="post">
-                        <button name="form.refresh_package">
-                            {% trans %}refresh{% endtrans %}
-                        </button>
-                    </form>
-                {% else %}
-                    {% trans %}refreshing during next install{% endtrans %}
-                {% endif %}
             </dd>
         {% endif %}
         <dt>{% trans %}Home page:{% endtrans %}</dt>
