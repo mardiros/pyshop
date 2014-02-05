@@ -1,5 +1,11 @@
 {% extends "/pyshop/layout.html" %}
 
+
+{% block header %}
+    <script  type="text/javascript" src="{{ static_url('pyshop:static/js/bootstrap3-typeahead.js') }}"></script>
+{% endblock %}
+
+
 {% block subnav %}
 {% endblock %}
 
@@ -10,7 +16,10 @@
   <!-- /input-group -->
   <div class="form-group">
     <label class="sr-only" for="classifier">Filter</label>
-    <input type="text" id="classifier" class="form-control" name="classifier.added" value=""/>
+    <input type="text" id="classifier" class="form-control"  
+           data-provide="typeahead" data-items="4"
+           data-link="{{ static_url('pyshop:static/classifications.json') }}"
+           name="classifier.added" value="" />
   </div>
   <button type="submit"  class="btn btn-default" id="submitter" name="form.submitted"> Filter</button>
   <div class="checkbox">
@@ -64,16 +73,27 @@
 </tbody>
 </table>
 
+<!--script>
+    $(function() {
+        $( "#classifier" ).typeahead({
+            source: function(query, process) {
+                return $.get('{{ static_url('pyshop:static/classifications.json') }}', 
+                             { query: query }, 
+                             function (data) {return process(data.options);}
+                            );
+            }
+        });
+console.log('toto');
+});
+</script-->
 <script>
     $(function() {
-        var classifiers = [
-        {% for c in classifiers %}
-            '{{c.name}}',
-        {% endfor %}
-        ];
-        $( "#classifier" ).autocomplete({
-            source: classifiers
-        });
+      $(function () {
+        $.getJSON('{{ static_url('pyshop:static/classifications.json') }}')
+          .done(function (data) {
+            $('#classifier').typeahead({ source: data });
+          });
+      });
     });
 </script>
 {% endblock %}
