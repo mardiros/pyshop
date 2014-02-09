@@ -1,51 +1,56 @@
 {% extends "/pyshop/layout.html" %}
 
+
+{% block header %}
+    <script  type="text/javascript" src="{{ static_url('pyshop:static/js/bootstrap3-typeahead.js') }}"></script>
+{% endblock %}
+
+
 {% block subnav %}
-    <h2>{% trans %}Available Packages ({{package_count}}){% endtrans %}</h2>
 {% endblock %}
 
 
 {% block main %}
 
-<form class="filter" method="GET">
-    <input type="text" id="classifier" class="filter-input"
-           name="classifier.added" value=""
-    /><button id="submitter" name="form.submitted">
-        {% trans %} filter {% endtrans %}
-    </button>
-    <ul class="selected-classifiers">
-        {% for c in filter.classifiers %}
-            <li>
-                <input type="checkbox" id="classifier_{{loop.index}}"
-                       onchange="$('#submitter').click()"
-                       name="classifiers" checked="checked" value="{{c.id}}"/>
-                <label for="classifier_{{loop.index}}">{{c.name}}</label>
-            </li>
-        {% endfor %}
-        <li>
-            <input type="checkbox" id="source_local" name="local_only" value="1"
-                   onchange="$('#submitter').click()"
-                   {%if filter.local_only%}checked="checked"{% endif %}/>
-            <label for="source_local">
-                {% trans %}locals only{% endtrans %}
-            </label>
-        </li>
-    </ul>
+<form class="form-inline" role="form" method="GET">
+  <!-- /input-group -->
+  <div class="form-group">
+    <label class="sr-only" for="classifier">Filter</label>
+    <input type="text" id="classifier" class="form-control"  
+           data-provide="typeahead" data-items="4"
+           data-link="{{ static_url('pyshop:static/classifications.json') }}"
+           name="classifier.added" value="" />
+  </div>
+  <button type="submit"  class="btn btn-default" id="submitter" name="form.submitted"> Filter</button>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" id="source_local" name="local_only" value="1" onchange="$('#submitter').click()" 
+               {%if filter.local_only%}checked="checked"{% endif %}/>
+      {% trans %}locals only{% endtrans %}
+    </label>
+  </div>
+  {% for c in filter.classifiers %}
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" id="classifier_{{loop.index}}" 
+             onchange="$('#submitter').click()" name="classifiers" 
+             checked="checked" value="{{c.id}}"/> {{c.name}}
+    </label>
+  </div>
+  {% endfor %}
+
 </form>
 
-<table>
-    <colgroup>
-        <col class="label">
-        <col class="version">
-        <col class="download">
-        <col class="source">
-    </colgroup>
+<table class="table table-hover table-condensed">
+<thead>
     <tr>
         <th>{% trans %} package {% endtrans %}</th>
         <th>{% trans %} last version {% endtrans %}</th>
         <th>{% trans %} # downloads {% endtrans %}</th>
         <th>{% trans %} source {% endtrans %}</th>
     </tr>
+</thead>
+<tbody>
 
     {% for pkg in packages %}
         <tr>
@@ -65,18 +70,30 @@
             </td>
         </tr>
     {% endfor %}
+</tbody>
 </table>
 
+<!--script>
+    $(function() {
+        $( "#classifier" ).typeahead({
+            source: function(query, process) {
+                return $.get('{{ static_url('pyshop:static/classifications.json') }}', 
+                             { query: query }, 
+                             function (data) {return process(data.options);}
+                            );
+            }
+        });
+console.log('toto');
+});
+</script-->
 <script>
     $(function() {
-        var classifiers = [
-        {% for c in classifiers %}
-            '{{c.name}}',
-        {% endfor %}
-        ];
-        $( "#classifier" ).autocomplete({
-            source: classifiers
-        });
+      $(function () {
+        $.getJSON('{{ static_url('pyshop:static/classifications.json') }}')
+          .done(function (data) {
+            $('#classifier').typeahead({ source: data });
+          });
+      });
     });
 </script>
 {% endblock %}

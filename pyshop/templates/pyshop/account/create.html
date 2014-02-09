@@ -7,64 +7,63 @@
     <h2>{% trans %}New Account{% endtrans %}</h2>
 {% endblock %}
 
-
 {% block form %}
-<ul>
-    <input type="hidden" name="user_id" value="{{user.id|default('', true)}}"/>
-    <li>
-        <label>
-            {% trans %}Login:{% endtrans %}
-        </label>
-        <input type="text" name="user.login" value="{{user.login|default('', true)}}"/>
-    </li>
-    <li>
-        <label>
-            {% trans %}Firstname:{% endtrans %}
-        </label>
-        <input type="text" name="user.firstname" value="{{user.firstname|default('', true)}}"/>
-    </li>
-    <li>
-        <label>
-            {% trans %}Lastname:{% endtrans %}
-        </label>
-        <input type="text" name="user.lastname" value="{{user.lastname|default('', true)}}"/>
-    </li>
-    <li>
-        <label>
-            {% trans %}Email:{% endtrans %}
-        </label>
-        <input type="text" name="user.email" value="{{user.email|default('', true)}}"/>
-    </li>
+
+  <input type="hidden" name="user_id" value="{{user.id|default('', true)}}"/>
+  <div class="control-group">
+    <label class="control-label" for="inputLogin">{% trans %}Login{% endtrans %}</label>
+    <div class="controls">
+      <input type="text" id="inputLogin" placeholder="Login" 
+             name="user.login" value="{{user.login|default('', true)}}"/>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputFirstName"> {% trans %}Firstname{% endtrans %} </label>
+    <div class="controls">
+      <input type="text" id="inputFirstName"  placeholder="First Name"
+             name="user.firstname" value="{{user.firstname|default('', true)}}"/>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputLastName"> {% trans %}Lastname{% endtrans %} </label>
+    <div class="controls">
+      <input type="text" id="inputLastName"  placeholder="Last Name"
+             name="user.lastname" value="{{user.lastname|default('', true)}}"/>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputEmail"> {% trans %}Email{% endtrans %} </label>
+    <div class="controls">
+      <input type="text" id="inputEmail"  placeholder="Email"
+             name="user.email" value="{{user.email|default('', true)}}"/>
+    </div>
+  </div>
+
     {% block password %}
-    <li>
-        <label>
-            {% trans %}password:{% endtrans %}
-        </label>
-        <input type="password" name="user.password" value=""/>
-    </li>
-    <li>
-        <label>
-            {% trans %}confirm password:{% endtrans %}
-        </label>
-        <input type="password" name="confirm_password" value=""/>
-    </li>
+  <div class="control-group">
+    <label class="control-label" for="inputPassword"> {% trans %}password{% endtrans %} </label>
+    <div class="controls">
+      <input type="password" id="inputPassword" name="user.password" value=""/>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="inputConfPass"> {% trans %}confirm password{% endtrans %} </label>
+    <div class="controls">
+      <input type="password" id="inputConfPass" name="confirm_password" value=""/>
+    </div>
+  </div>
     {% endblock %}
-    {% block groups %}
-    <li>
-        <label>
-            {% trans %}groups:{% endtrans %}
-        </label>
-        <ul class="checkboxes">
-            {% for g in groups %}
-                <li>
-                    <input type="checkbox" name="groups" value="{{g.id}}"
-                        id="group_{{g.id}}"
-                        {% if g in  user.groups %}checked="checked"{% endif %} />
-                    <label for="group_{{g.id}}">{{g.name}}</label>
-                </li>
-            {% endfor %}
-        </ul>
-    </li>
-    {% endblock %}
-</ul>
+
+  {% block groups %}
+  <label> {% trans %}groups:{% endtrans %} </label>
+
+  {% for g in groups %}
+  <label  class="checkbox" for="group_{{g.id}}">
+    <input type="checkbox" name="groups" value="{{g.id}}" id="group_{{g.id}}" {% if g in  user.groups %}checked="checked"{% endif %} />
+    {{g.name}}
+  </label>
+  {% endfor %}
+
+  {% endblock %}
 {% endblock %}

@@ -1,55 +1,86 @@
 {% extends "/pyshop/layout.html" %}
 
 {% block subnav %}
-    <a href="{{ route_url('list_package')}}">
-        {% trans %}package{% endtrans %}
-    </a>
-    <h2>{{package.name}} {{release.version}}</h2>
+    <h1>{{package.name}} {{release.version}}</h1>
 {% endblock %}
 
 {% block toolbar %}
-        {% set display = 0 %}
-        {% for r in package.sorted_releases %}
-            {% if r.id == release.id %}
-                {% set idx = loop.index0 %}
-                {% set display = 1%}
-                {% if idx > 0 %}
-                    <a href="{{ route_url('show_package_version',
-                        package_name=package.name,
-                        release_version=package.sorted_releases[0].version)}}">
-                        {{package.sorted_releases[0].version}}
-                    </a>
-                    ...
-                {% endif %}
-            {% endif %}
-            {% if display and loop.index <= idx + 10 %}
-                <a href="{{ route_url('show_package_version', package_name=package.name, release_version=r.version)}}">
-                    {{r.version}}
-                </a>
-            {% endif %}
-            {% if loop.last and idx + 10 < loop.index %}
-                ...
-            {% endif %}
-        {% endfor %}
 {% endblock %}
 
 {% block main %}
-<section id="release-download" class="release-download">
-    <h5>download</h5>
-    <a class="anchor" href="#release-files">&darr;</a>
     {% for f in release.files %}
         {% if f.package_type == 'sdist' %}
-            <a class="download"
+            <a class="btn btn-warning btn-sm active" role="button"
                href="{{ route_url('show_release_file', file_id=f.id, filename=f.filename)
-                       }}#{{ f.md5_digest }}">{{f.filename}}</a>
+                       }}#{{ f.md5_digest }}">
+              <span class="glyphicon glyphicon-download-alt"></span>
+              Download ({{f.filename}})</a>
         {% endif %}
     {% endfor %}
-</section>
+    <p>Other Version: 
+    {% set display = 0 %}
+    {% for r in package.sorted_releases %}
+        {% if r.id == release.id %}
+            {% set idx = loop.index0 %}
+            {% set display = 1%}
+            {% if idx > 0 %}
+                <a class="btn btn-info btn-xs active" role="button"
+                    href="{{ route_url('show_package_version',
+                    package_name=package.name,
+                    release_version=package.sorted_releases[0].version)}}">
+                  <span class="glyphicon glyphicon-tag"></span>
+                  {{package.sorted_releases[0].version}}
+                </a>
+                ...
+            {% endif %}
+        {% endif %}
+        {% if display and loop.index <= idx + 10 %}
+            <a class="btn btn-info btn-xs active" 
+               role="button" 
+               href="{{ route_url('show_package_version', package_name=package.name, release_version=r.version)}}">
+              <span class="glyphicon glyphicon-tag"></span>
+                {{r.version}}
+            </a>
+        {% endif %}
+        {% if loop.last and idx + 10 < loop.index %}
+            ...
+        {% endif %}
+    {% endfor %}
+    </p>
+    {% if not release.package.local %}
+    <p>
+      {% if release.package.update_at %}
+      
+      <form role="form-inline" 
+            action="{{route_url('show_package', package_name=release.package.name)}}" 
+            method="post">
+        Last Update: {{release.package.update_at}} 
+        <button type="submit" class="btn btn-default" name="form.refresh_package">
+          <span class="glyphicon glyphicon-refresh"></span>
+          {% trans %}refresh{% endtrans %}
+        </button>
+      </form>
+      {% else %}
+        {% trans %}refreshing during next install{% endtrans %}
+      {% endif %}
+    {% endif %}</p>
 
 
-<section id="release-summary" class="release-summary">
-    <h5> {{ release.summary }} </h5>
-    <dl>
+    <ul id="myTab" class="nav nav-tabs">
+      <li class="active"><a href="#Desc" data-toggle="tab">Description</a></li>
+      <li><a href="#Classif" data-toggle="tab">Classification</a></li>
+      <li><a href="#Release" data-toggle="tab">Release File</a></li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+      <div class="tab-pane fade in active" id="Desc">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            {{ parse_rest(release.description) }}
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="Classif">
+    <dl class="dl-horizontal">
         <dt>{% trans %}Type:{% endtrans %}</dt>
         <dd>{% if release.package.local %}
                 {% trans %}local{% endtrans %}
@@ -62,17 +93,6 @@
             <dd><a href="https://pypi.python.org/pypi/{{release.package.name}}">
                     https://pypi.python.org/pypi/{{release.package.name}}
                 </a></dd>
-            <dt>Last Update</dt>
-            <dd>{% if release.package.update_at %}
-                    {{release.package.update_at}}
-                    <form action="{{route_url('show_package', package_name=release.package.name)}}" method="post">
-                        <button name="form.refresh_package">
-                            {% trans %}refresh{% endtrans %}
-                        </button>
-                    </form>
-                {% else %}
-                    {% trans %}refreshing during next install{% endtrans %}
-                {% endif %}
             </dd>
         {% endif %}
         <dt>{% trans %}Home page:{% endtrans %}</dt>
@@ -94,24 +114,19 @@
             <dd>{{release.keywords}}</dd>
         {% endif %}
     </dl>
-    <div class="description">{{ parse_rest(release.description) }}</div>
-</section>
 
-<section id="release-files" class="release-files">
-    <h5>{% trans %}release files{% endtrans %}</h5>
-    <table>
-        <colgroup>
-            <col class="label"></col>
-            <col class="version"></col>
-            <col class="author"></col>
-            <col class="download"></col>
-        </colgroup>
+      </div>
+      <div class="tab-pane fade" id="Release">
+    <table class="table table-hover table-condensed">
+      <thead>
         <tr>
             <th>{% trans %} files {% endtrans %}</th>
             <th>{% trans %} version {% endtrans %}</th>
             <th>{% trans %} author {% endtrans %}</th>
             <th>{% trans %} downloads {% endtrans %}</th>
         </tr>
+       </thead>
+      <tbody>
         {% for file in release.files %}
         <tr>
             <td>
@@ -130,6 +145,12 @@
             <td class="num">{{ file.downloads }}</td>
         </tr>
         {% endfor %}
+      </tbody>
     </table>
-</section
+
+      </div>
+    </div>
+
+
+
 {% endblock %}

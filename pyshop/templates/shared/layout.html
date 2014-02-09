@@ -2,91 +2,95 @@
 
 {% block body %}
 
-    <header>
-        <h1>{% block maintitle %}
-            <a href="{{ route_url('index') }}">pyshop</a>
-        </h1>
-         {% if pyshop.user %}
-            <figure>
-                {% trans %}Logged as {% endtrans %} 
-                <a rel="username" href="{{route_url('edit_user')}}">
-                    {{pyshop.user.name}}
-                </a>
-                <a href="{{route_url('logout')}}">
-                  {% trans %}Sign out{% endtrans %}
-                </a>
-            </figure>
-        {% endif %}
-        {% endblock %}
-        <nav class="mainnav">
-            {% block mainnav %}
-                {%if has_permission('admin_view') %}
-                    <a href="{{route_url('list_account')}}">
-                        {% trans %}Manage Accounts{% endtrans %}
-                    </a>
-                {% endif %}
-            {% endblock %}
-        </nav>
-        <nav class="subnav">
-            {% block subnav %}
-            {% endblock %}
-        </nav>
-        <nav class="toolbar">
-            {% block toolbar %}
-            {% endblock %}
-        </nav>
-    </header>
-    <section class="main">
-        <article class="page">
-            {% block title %}{% endblock %}
-            {% block messages %}
-                {% block error %}
-                    {% if errormessage %}
-                        <div class="error">
-                            <span>{{ errormessage }}</span>
-                        </div>
-                    {% endif %}
-                    {% if errors %}
-                        <ul class="errors">
-                            {% for msg in errors %}
-                                <li>{{ msg }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                {% endblock %}
-                {% block warn %}
-                    {% if warnmessage %}
-                        <div class="warn">
-                            <span>{{ warnmessage }}</span>
-                        </div>
-                    {% endif %}
-                {% endblock %}
-                {% block info %}
-                    {% if infomessage %}
-                        <div class="info">
-                            <span>{{ infomessage }}</span>
-                        </div>
-                    {% endif %}
-                {% endblock %}
-            {% endblock %}
-            <div>
-                <section>
-                    {% block main %}
-                    {% endblock %}
-                </section>
-            </div>
-            <footer class="paging">
-                {% block paging %}
-                    {% include "/shared/paging.html" %}
-                {% endblock %}
-            </footer>
-        </article>
-    </section>
-    <footer>
-        <div>
-            <a href="https://github.com/mardiros/pyshop/">
-                pyshop v{{pyshop.version}}
-            </a>
-        </div>
-    </footer>
+
+{% block maintitle %}
+<nav class="navbar navbar-default" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="{{ route_url('index') }}">PyShop</a>
+  </div>
+
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav">
+      
+      <li class="active"><a href="{{route_url('index')}}">Packages <span class="badge">{{package_count}}</span></a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+  {% if pyshop.user %}
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <span class="glyphicon glyphicon-cog"></span>Administration <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="{{ route_url('create_account') }}"> {% trans %}Create new account{% endtrans %} </a></li>
+          
+          <li><a href="{{route_url('list_account')}}"> {% trans %}Manage Accounts{% endtrans %} </a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"> {{pyshop.user.name}} <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="{{route_url('edit_user')}}">My Account</a></li>
+    <li><a href="{{ route_url('change_password') }}"> {% trans %}Change password{% endtrans %} </a></li>
+
+          <li class="divider"></li>
+          <li><a href="{{route_url('logout')}}">Log Out</a></li>
+        </ul>
+      </li>
+  {% endif %}
+    </ul>
+  </div><!-- /.navbar-collapse -->
+</nav>
+
+{% endblock %}
+
+<div class="container">
+
+  {% block subnav %}
+  {% endblock %}
+  {% block toolbar %}
+  {% endblock %}
+
+
+  {% block title %}{% endblock %}
+  {% block messages %}
+    {% block error %}
+      {% if errormessage %}
+  <div class="alert alert-danger"> {{ errormessage }} </div>
+      {% endif %}
+      {% if errors %}
+  <div class="alert alert-danger">
+    <ul>
+        {% for msg in errors %}
+      <li>{{ msg }}</li>
+        {% endfor %}
+    </ul>
+  </div>
+      {% endif %}
+    {% endblock %}
+    {% block warn %}
+      {% if warnmessage %}
+  <div class="alert alert-warning"> {{ warnmessage }} </div>
+      {% endif %}
+    {% endblock %}
+    {% block info %}
+      {% if infomessage %}
+  <div class="alert alert-info"> {{ infomessage }} </div>
+      {% endif %}
+    {% endblock %}
+  {% endblock %}
+  
+  {% block main %}
+  {% endblock %}
+
+  {% block paging %}
+      {% include "/shared/paging.html" %}
+  {% endblock %}
+</div>
+
 {% endblock %}

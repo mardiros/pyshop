@@ -5,47 +5,42 @@
 {% endblock %}
 
 {% block toolbar %}
-<a href="{{ route_url('create_account') }}">
-    {% trans %}Create new account{% endtrans %}
-</a>
 {% endblock %}
 
 
 {% block main %}
 
-<table>
-    <colgroup>
-        <col class="user-login">
-        <col class="user-name">
-        <col class="user-groups">
-        <col class="edit">
-    </colgroup>
+<table class="table table-hover table-condensed">
+<thead>
     <tr>
         <th>{% trans %} login {% endtrans %}</th>
         <th>{% trans %} name {% endtrans %}</th>
         <th>{% trans %} groups {% endtrans %}</th>
         <th>{% trans %} edit {% endtrans %}</th>
     </tr>
-
+</thead>
+<tbody>
     {% for user in users %}
         <tr>
             <td>
-                <a href="{{ route_url('edit_account', user_id=user.id) }}">
                     {{ user.login }}
-                </a>
             </td>
             <td>{{ user.name }}</td>
             <td>
                 {% set pipe = joiner(", ") %}
                 {% for g in user.groups %}{{ pipe() }}{{g.name}}{% endfor %}
             </td>
-            <td>
-                <a href="{{ route_url('delete_account', user_id=user.id) }}">
-                    delete
+            <td><a href="{{ route_url('edit_account', user_id=user.id) }}" class="btn btn-success">
+                    <span class="glyphicon glyphicon-pencil"></span>edit
+                </a>
+                <a href="{{ route_url('delete_account', user_id=user.id) }}" 
+                   class="btn btn-danger btn-sm">
+                   <span class="glyphicon glyphicon-remove-sign"></span> delete
                 </a>
             </td>
         </tr>
     {% endfor %}
+</tbody>
 </table>
 
 {% endblock %}
