@@ -1,6 +1,9 @@
 pyshop
 ======
 
+.. image:: https://travis-ci.org/EvaSDK/pyshop.png?branch=master
+   :target: https://travis-ci.org/EvaSDK/pyshop
+
 Getting Started
 ---------------
 
