@@ -125,6 +125,8 @@ Missing Features
 
 Developer cannot add other accounts to give them upload right to their project.
 This can be done in the database or in the pyshop shell by an administrator.
+The pyshop shell is available by installing pyshop shell extras with *pip
+install pyshop[shell]*.
 
 ::
 
