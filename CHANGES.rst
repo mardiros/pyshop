@@ -1,6 +1,11 @@
 Changelist
 ==========
 
+1.0.2
+-----
+
+- Use version sanization regex matching PEP386/440.
+
 1.0.1
 -----
 
