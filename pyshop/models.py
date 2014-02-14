@@ -265,10 +265,11 @@ class User(Base):
                 else:
                     log.debug("No matching LDAP objects for authentication of '%s'", login)
                     raise ValueError("Fail to auth on LDAP")
-                    
+                log.debug('LDAP authentication OK')
                 # we may create a new user if it don't exist
                 user_ldap = User.by_login(session, login)
                 if user_ldap is None:
+                    log.debug('create user %s'%login)
                     user_ldap = User()
                     user_ldap.login = login
                     user_ldap.password = password
@@ -279,6 +280,7 @@ class User(Base):
                     other = User.by_login(session, login)
                     if other is None and user_ldap.validate(session):
                         session.add(user_ldap)
+                        log.debug('user added')
 
                 # its OK
                 return user_ldap
