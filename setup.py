@@ -17,9 +17,7 @@ with open(os.path.join(here, 'pyshop', '__init__.py')) as v_file:
 
 requires = [
     'pyramid >= 1.2',
-    'waitress',
     'SQLAlchemy',
-#    'pyramid_debugtoolbar', # install for developement usage only
 
     'pyScss',
     'pyramid_scss',
@@ -35,9 +33,21 @@ requires = [
     'requests >=1.2, <1.0',  # version excluded bugs in case a proxy is used
     'docutils',
     'setuptools',            # compare package version
-    'wheel',                 # build wheels from source on the proxy
-    'IPython',
 ]
+
+
+extras_require = {
+    'dev': [
+        'waitress',
+        'pyramid_debugtoolbar',
+    ],
+    'shell': [
+        'IPython',
+    ],
+    'wheelify': [
+        'wheel',             # build wheels from source on the proxy
+    ]
+}
 
 
 if 'VIRTUAL_ENV' in os.environ:
@@ -76,14 +86,17 @@ setup(name=name,
       zip_safe=False,
       test_suite=name,
       install_requires=requires,
-      entry_points="""\
-      [paste.app_factory]
-      main = pyshop:main
-      [console_scripts]
-      pyshop_setup = pyshop.bin.install:main
-      pyshop_shell = pyshop.bin.shell:main
-      pyshop_migrate = pyshop.bin.migrate:main
-      """,
+      extras_require=extras_require,
+      entry_points={
+        'paste.app_factory': [
+            "main = pyshop:main",
+        ],
+        'console_scripts': [
+            "pyshop_setup = pyshop.bin.install:main",
+            "pyshop_shell = pyshop.bin.shell:main [shell]",
+            "pyshop_migrate = pyshop.bin.migrate:main",
+        ],
+      },
       paster_plugins=['pyramid'],
       data_files=data_files,
       )

@@ -11,7 +11,7 @@ from .security import groupfinder, RootFactory
 from .config import includeme  # used by pyramid
 from .models import create_engine
 from .helpers.i18n import locale_negotiator
-from .helpers.authentication import RouteSwithchAuthPolicy
+from .helpers.authentication import RouteSwitchAuthPolicy
 
 __version__ = '0.9.12'
 
@@ -27,8 +27,8 @@ def main(global_config, **settings):
     # after the template has been rendered
     create_engine(settings, scoped=True)
 
-    authn_policy = RouteSwithchAuthPolicy(secret=settings['pyshop.cookie_key'],
-                                          callback=groupfinder)
+    authn_policy = RouteSwitchAuthPolicy(secret=settings['pyshop.cookie_key'],
+                                         callback=groupfinder)
     authz_policy = ACLPolicy()
     route_prefix = settings.get('pyshop.route_prefix')
 
