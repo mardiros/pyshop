@@ -28,6 +28,7 @@ requires = [
     'pyramid_jinja2',
     'pyramid_xmlrpc',
     'pyramid_tm',
+    'python-ldap',
     'zope.sqlalchemy',
 
     'cryptacular',
