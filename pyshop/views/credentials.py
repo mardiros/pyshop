@@ -8,16 +8,11 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.url import resource_url, route_url
 from pyramid.security import remember, forget
 from pyramid.response import Response
+
 from pyshop.helpers.i18n import trans as _
 from pyshop.models import DBSession, User
 
 from .base import View
-try:
-    import ldap
-except ImportError:
-    # means that python-ldap is not installed
-    ldap = None
-
 
 log = logging.getLogger(__name__)
 
@@ -36,7 +31,6 @@ class Login(View):
         if 'form.submitted' in self.request.params:
             password = self.request.params.get('user.password', u'')
             if password:
- 
                 if User.by_ldap_credentials(self.session, login, password, self.request.registry.settings) is not None:
                     log.info('login %r succeed' % login)
                     headers = remember(self.request, login)
