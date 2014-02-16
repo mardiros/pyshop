@@ -26,7 +26,6 @@ requires = [
     'pyramid_jinja2',
     'pyramid_xmlrpc',
     'pyramid_tm',
-    'python-ldap',
     'zope.sqlalchemy',
 
     'cryptacular',
@@ -37,6 +36,9 @@ requires = [
 
 
 extras_require = {
+    'ldap': [
+        'python-ldap',
+    ],
     'dev': [
         'waitress',
         'pyramid_debugtoolbar',
