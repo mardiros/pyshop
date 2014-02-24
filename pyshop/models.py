@@ -237,9 +237,34 @@ class User(Base):
             raise ImportError("no module name ldap. Install python-ldap package")
 
         try:
-            server_url = "ldap://{host}:{port}".format(host=settings['pyshop.ldap.host'].strip(),
-                                                       port=settings['pyshop.ldap.port'].strip())
+            if hasattr(ldap, 'OPT_X_TLS_CACERTDIR'):
+                ldap.set_option(ldap.OPT_X_TLS_CACERTDIR, '/etc/openldap/cacerts')
+            ldap.set_option(ldap.OPT_REFERRALS, ldap.OPT_OFF)
+            ldap.set_option(ldap.OPT_RESTART, ldap.OPT_ON)
+            ldap.set_option(ldap.OPT_TIMEOUT, 20)
+            ldap.set_option(ldap.OPT_NETWORK_TIMEOUT, 10)
+            ldap.set_option(ldap.OPT_TIMELIMIT, 15)
+
+            ldap_server_type = settings.get('pyshop.ldap.type', 'ldap')
+            host=settings['pyshop.ldap.host'].strip()
+            port = settings.get('pyshop.ldap.port', None).strip()
+            if ldap_server_type in ["ldaps", "start_tls"]:
+                port =  port or 689
+                ldap_type = "ldaps"
+                certreq = settings.get('pyshop.ldap.certreq', 'DEMAND').strip()
+                if certreq not in ['DEMAND', 'ALLOW', 'HARD', 'TRY', 'NEVER']:
+                    certreq = 'DEMAND'
+                tls_cert = getattr(ldap, 'OPT_X_TLS_%s' % certreq)
+                ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, tls_cert)
+            else:
+                port =  port or 389
+                ldap_type = 'ldap'
+            server_url = "{ldap_type}://{host}:{port}".format(ldap_type=ldap_type,
+                                                              host=host,
+                                                              port=port)
             server = ldap.initialize(server_url)
+            if ldap_server_type == "start_tls":
+                server.start_tls_s()
             server.protocol = ldap.VERSION3
             # bind the account if needed
             if settings['pyshop.ldap.account'] and settings['pyshop.ldap.password']:
