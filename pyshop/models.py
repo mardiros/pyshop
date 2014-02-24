@@ -267,7 +267,7 @@ class User(Base):
 
             log.debug('LDAP authentication OK')
             # we may create a new user if it don't exist
-            user_ldap = User.by_login(session, login)
+            user_ldap = User.by_login(session, login, local=False)
             if user_ldap is None:
                 log.debug('create user %s'%login)
                 user_ldap = User()
@@ -277,7 +277,9 @@ class User(Base):
                 user_ldap.firstname = attrs[settings['pyshop.ldap.first_name_attr']][0]
                 user_ldap.lastname = attrs[settings['pyshop.ldap.last_name_attr']][0]
                 user_ldap.email =  attrs[settings['pyshop.ldap.email_attr']][0]
-                other = User.by_login(session, login)
+                for groupname in ["developer","installer"]:
+                    user_ldap.groups.append(Group.by_name(groupname))
+                other = User.by_login(session, login, local=False)
                 if other is None and user_ldap.validate(session):
                     session.add(user_ldap)
                     log.debug('user added')
