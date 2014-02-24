@@ -283,7 +283,7 @@ class User(Base):
                 if other is None and user_ldap.validate(session):
                     session.add(user_ldap)
                     log.debug('user added')
-
+                    session.commit()
             # its OK
             return user_ldap
         except ldap.NO_SUCH_OBJECT:
