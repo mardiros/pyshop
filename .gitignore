@@ -33,7 +33,7 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
-venv
+venv*
 
 # project files
 /repository/*
