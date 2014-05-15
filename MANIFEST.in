@@ -1,8 +1,6 @@
 include LICENSE
 include *.txt *.ini *.cfg *.rst
-recursive-include pyshop *.ico *.png *.css *.scss *.txt *.js *.html *.pot *.po *.pem
-recursive-include pyshop *.eot
-recursive-include pyshop *.svg
-recursive-include pyshop *.ttf
-recursive-include pyshop *.woff
-recursive-include pyshop *.json
+recursive-exclude . *.pyc
+graft pyshop/static
+graft pythop/templates
+graft pyshop/locale
