@@ -35,6 +35,11 @@ requires = [
 ]
 
 
+test_requires = []
+if sys.version_info < (2, 7):
+    test_requires.append('unittest2')
+
+
 extras_require = {
     'ldap': [
         'python-ldap',
@@ -88,6 +93,7 @@ setup(name=name,
       zip_safe=False,
       test_suite=name,
       install_requires=requires,
+      test_requires=test_requires,
       extras_require=extras_require,
       entry_points={
         'paste.app_factory': [
