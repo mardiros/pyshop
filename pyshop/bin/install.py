@@ -18,6 +18,8 @@ from pyshop.models import (Base, DBSession,
                            Permission, Group, User,
                            )
 
+from pyshop.compat import unicode
+
 
 def usage(argv):
     cmd = os.path.basename(argv[0])

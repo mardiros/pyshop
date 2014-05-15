@@ -67,7 +67,7 @@ class RootFactory(object):
         rm = request.method
         try:
             cru = request.current_route_url()
-        except ValueError, e:
+        except ValueError as e:
             cru = str(e)
 
         log.info(u'[%s] %s %s' % (ca, rm, cru))

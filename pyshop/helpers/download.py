@@ -18,7 +18,7 @@ import zipfile
 import shutil
 
 import requests
-from zope.interface import implements
+from zope.interface import implementer
 from pyramid.interfaces import ITemplateRenderer
 from pyramid.exceptions import NotFound
 
@@ -65,10 +65,9 @@ def build_whl(source, dest):
             shutil.rmtree(tempdir)
 
 
+@implementer(ITemplateRenderer)
 class ReleaseFileRenderer(object):
     """Renderer that serve the python package"""
-
-    implements(ITemplateRenderer)
 
     def __init__(self, repository_root):
         self.repository_root = repository_root

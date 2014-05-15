@@ -18,6 +18,7 @@ from pyramid.security import authenticated_userid
 
 from pyshop.models import User, Package, Classifier, Release, ReleaseFile
 from pyshop.helpers import pypi
+from pyshop.compat import unicode
 
 from .base import View
 

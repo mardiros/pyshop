@@ -2,17 +2,18 @@
 
 import sys
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from pyramid.interfaces import IAuthenticationPolicy
 from pyramid.authentication import CallbackAuthenticationPolicy, \
         AuthTktAuthenticationPolicy
 
 from pyshop.models import DBSession, User
+from pyshop.compat import unicode
 
 
+@implementer(IAuthenticationPolicy)
 class AuthBasicAuthenticationPolicy(CallbackAuthenticationPolicy):
-    implements(IAuthenticationPolicy)
 
     def __init__(self, callback=None):
         self.callback = callback
@@ -55,8 +56,8 @@ class AuthBasicAuthenticationPolicy(CallbackAuthenticationPolicy):
         return []
 
 
+@implementer(IAuthenticationPolicy)
 class RouteSwitchAuthPolicy(CallbackAuthenticationPolicy):
-    implements(IAuthenticationPolicy)
 
     def __init__(self, secret='key',callback=None):
         try:

@@ -26,6 +26,7 @@ from sqlalchemy.orm import relationship, synonym, backref
 from sqlalchemy.sql.expression import func, or_, and_
 from sqlalchemy.ext.declarative import declared_attr
 
+from pyshop.compat import unicode
 from .helpers.sqla import (Database, SessionFactory, ModelError,
                            create_engine as create_engine_base,
                            dispose_engine as dispose_engine_base
