@@ -36,6 +36,9 @@ requires = [
 
 
 extras_require = {
+    'ldap': [
+        'python-ldap',
+    ],
     'dev': [
         'waitress',
         'pyramid_debugtoolbar',

@@ -9,6 +9,12 @@ import re
 import sys
 import logging
 # from distutils.util import get_platform
+try:
+    import ldap
+except ImportError:
+    # means that python-ldap is not installed
+    ldap = None
+from pyramid.settings import asbool
 
 import cryptacular.bcrypt
 from pkg_resources import parse_version
@@ -202,6 +208,119 @@ class User(Base):
         if crypt.check(user.password, password):
             return user
 
+    @classmethod
+    def by_ldap_credentials(cls, session, login, password, settings):
+        """if possible try to contact the LDAP for authentification if success
+        and login don't exist localy create one and return it
+        
+
+        :param session: SQLAlchemy session
+        :type session: :class:`sqlalchemy.Session`
+
+        :param login: username
+        :type login: unicode
+
+        :param password: user password
+        :type password: unicode
+
+        :param settings: settings from self.request.registry.settings in views
+        :type settings: dict
+
+        :return: associated user
+        :rtype: :class:`pyshop.models.User`
+
+        """
+        if not asbool(settings.get('pyshop.ldap.use_for_auth','False')):
+            return None
+        
+        if ldap is None:
+            raise ImportError("no module name ldap. Install python-ldap package")
+
+        try:
+            if hasattr(ldap, 'OPT_X_TLS_CACERTDIR'):
+                ldap.set_option(ldap.OPT_X_TLS_CACERTDIR, '/etc/openldap/cacerts')
+            ldap.set_option(ldap.OPT_REFERRALS, ldap.OPT_OFF)
+            ldap.set_option(ldap.OPT_RESTART, ldap.OPT_ON)
+            ldap.set_option(ldap.OPT_TIMEOUT, 20)
+            ldap.set_option(ldap.OPT_NETWORK_TIMEOUT, 10)
+            ldap.set_option(ldap.OPT_TIMELIMIT, 15)
+
+            ldap_server_type = settings.get('pyshop.ldap.type', 'ldap')
+            host=settings['pyshop.ldap.host'].strip()
+            port = settings.get('pyshop.ldap.port', None).strip()
+            if ldap_server_type in ["ldaps", "start_tls"]:
+                port =  port or 689
+                ldap_type = "ldaps"
+                certreq = settings.get('pyshop.ldap.certreq', 'DEMAND').strip()
+                if certreq not in ['DEMAND', 'ALLOW', 'HARD', 'TRY', 'NEVER']:
+                    certreq = 'DEMAND'
+                tls_cert = getattr(ldap, 'OPT_X_TLS_%s' % certreq)
+                ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, tls_cert)
+            else:
+                port =  port or 389
+                ldap_type = 'ldap'
+            server_url = "{ldap_type}://{host}:{port}".format(ldap_type=ldap_type,
+                                                              host=host,
+                                                              port=port)
+            server = ldap.initialize(server_url)
+            if ldap_server_type == "start_tls":
+                server.start_tls_s()
+            server.protocol = ldap.VERSION3
+            # bind the account if needed
+            if settings['pyshop.ldap.account'] and settings['pyshop.ldap.password']:
+                server.simple_bind_s(settings['pyshop.ldap.account'],
+                                     settings['pyshop.ldap.password'])
+
+            filter_ = settings['pyshop.ldap.search_filter'].format(username=login)
+            results = server.search_ext_s(settings['pyshop.ldap.bind_dn'],
+                                          getattr(ldap,"SCOPE_%s"%settings['pyshop.ldap.search_scope']),
+                                          filter_)
+            if results is None:
+                log.debug("LDAP rejected password for user %s" % (login))
+                return None
+
+            for (dn, _attrs) in results:
+                if dn is None:
+                    continue
+                log.debug('Trying simple bind with %s' % dn)
+                server.simple_bind_s(dn, password)
+                attrs = server.search_ext_s(dn, ldap.SCOPE_BASE, '(objectClass=*)')[0][1]
+                break
+            else:
+                log.debug("No matching LDAP objects for authentication of '%s'", login)
+                return None
+
+            log.debug('LDAP authentication OK')
+            # we may create a new user if it don't exist
+            user_ldap = User.by_login(session, login, local=False)
+            if user_ldap is None:
+                log.debug('create user %s'%login)
+                user_ldap = User()
+                user_ldap.login = login
+                user_ldap.password = password
+                user_ldap.local = False
+                user_ldap.firstname = attrs[settings['pyshop.ldap.first_name_attr']][0]
+                user_ldap.lastname = attrs[settings['pyshop.ldap.last_name_attr']][0]
+                user_ldap.email =  attrs[settings['pyshop.ldap.email_attr']][0]
+                for groupname in ["developer","installer"]:
+                    user_ldap.groups.append(Group.by_name(session, groupname))
+                other = User.by_login(session, login, local=False)
+                if other is None and user_ldap.validate(session):
+                    session.add(user_ldap)
+                    log.debug('user added')
+                    session.commit()
+            # its OK
+            return user_ldap
+        except ldap.NO_SUCH_OBJECT:
+            log.debug("LDAP says no such user '%s'" % (login))
+        except ldap.SERVER_DOWN:
+            log.error("LDAP can't access authentication server")
+        except ldap.LDAPError:
+            log.error('ERROR while using LDAP connection')
+        except Exception as exc:
+            log.error('Unmanaged exception %s' % exc, exc_info=True)
+        return None
+        
     @classmethod
     def get_locals(cls, session, **kwargs):
         """
