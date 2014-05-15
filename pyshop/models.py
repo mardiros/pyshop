@@ -212,7 +212,6 @@ class User(Base):
     def by_ldap_credentials(cls, session, login, password, settings):
         """if possible try to contact the LDAP for authentification if success
         and login don't exist localy create one and return it
-        
 
         :param session: SQLAlchemy session
         :type session: :class:`sqlalchemy.Session`
@@ -232,7 +231,7 @@ class User(Base):
         """
         if not asbool(settings.get('pyshop.ldap.use_for_auth','False')):
             return None
-        
+
         if ldap is None:
             raise ImportError("no module name ldap. Install python-ldap package")
 
@@ -320,7 +319,7 @@ class User(Base):
         except Exception as exc:
             log.error('Unmanaged exception %s' % exc, exc_info=True)
         return None
-        
+
     @classmethod
     def get_locals(cls, session, **kwargs):
         """
