@@ -5,16 +5,16 @@ import re
 from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
-name = 'pyshop'
+NAME = 'pyshop'
 
-with open(os.path.join(here, 'README.rst')) as f:
-    README = f.read()
-with open(os.path.join(here, 'CHANGES.rst')) as f:
-    CHANGES = f.read()
+with open(os.path.join(here, 'README.rst')) as readme:
+    README = readme.read()
+with open(os.path.join(here, 'CHANGES.rst')) as changes:
+    CHANGES = changes.read()
 
-with open(os.path.join(here, 'pyshop', '__init__.py')) as v_file:
-    version = re.compile(r".*__version__ = '(.*?)'",
-                         re.S).match(v_file.read()).group(1)
+with open(os.path.join(here, 'pyshop', '__init__.py')) as version:
+    VERSION = re.compile(r".*__version__ = '(.*?)'",
+                         re.S).match(version.read()).group(1)
 
 requires = [
     'pyramid >= 1.2',
@@ -66,8 +66,8 @@ else:
     data_files = []
 
 
-setup(name=name,
-      version=version,
+setup(name=NAME,
+      version=VERSION,
       description='A cheeseshop clone (PyPI server) written in pyramid',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
@@ -92,9 +92,9 @@ setup(name=name,
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
-      test_suite=name,
+      test_suite=NAME,
       install_requires=requires,
-      test_requires=test_requires,
+      tests_require=test_requires,
       extras_require=extras_require,
       entry_points={
         'paste.app_factory': [
