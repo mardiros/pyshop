@@ -479,10 +479,10 @@ class Package(Base):
         """
         Releases sorted by version.
         """
-        return sorted(self.releases,
-                      cmp=lambda a, b: cmp(parse_version(a.version),
-                                           parse_version(b.version)),
-                      reverse=True)
+        releases = [(parse_version(release.version), release)
+                    for release in self.releases]
+        releases.sort(reverse=True)
+        return [release[1] for release in releases]
 
     @classmethod
     def by_name(cls, session, name):
@@ -755,7 +755,7 @@ class Release(Base):
         for opt, val in opts.items():
             field = available[opt]
             if hasattr(val, '__iter__'):
-                stmt = or_([field.like(u'%%%s%%' % v) for v in val])
+                stmt = or_(*[field.like(u'%%%s%%' % v) for v in val])
             else:
                 stmt = field.like(u'%%%s%%' % val)
             where.append(stmt)

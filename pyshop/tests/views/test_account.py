@@ -1,5 +1,6 @@
 from pyshop.tests import case
 from pyshop.tests import setUpModule, tearDownModule
+from pyshop.compat import unicode
 
 
 class AccountTestCase(case.ViewTestCase):

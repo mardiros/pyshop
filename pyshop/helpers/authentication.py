@@ -1,6 +1,8 @@
-#!/usr/bin/env python
+from __future__ import absolute_import, print_function, unicode_literals
 
 import sys
+import binascii
+import base64
 
 from zope.interface import implementer
 
@@ -31,11 +33,13 @@ class AuthBasicAuthenticationPolicy(CallbackAuthenticationPolicy):
 
         try:
             # Python 3's string is already unicode
-            auth = auth.strip().decode('base64')
-            if sys.version_info[0] == 2:
-                auth = unicode(auth)
+            auth = base64.b64decode(auth.strip())
         except binascii.Error:  # can't decode
             return None
+
+        if not isinstance(auth, unicode):
+            auth = auth.decode('utf-8')
+
         try:
             login, password = auth.split(':', 1)
         except ValueError:  # not enough values to unpack

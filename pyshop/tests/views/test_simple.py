@@ -1,8 +1,7 @@
-from cStringIO import StringIO
 
 from pyshop.tests import case
 from pyshop.tests import setUpModule, tearDownModule
-
+from pyshop.compat import StringIO
 
 class DummyContent(object):
     filename = u'whatever.tar.gz'
@@ -43,7 +42,6 @@ class SimpleTestCase(case.ViewTestCase):
         self.assertIsInstance(view['release_file'], ReleaseFile)
 
     def test_post_uploadreleasefile_existing_pkg_ok(self):
-        from cStringIO import StringIO
         from pyramid.httpexceptions import HTTPForbidden
 
         from pyshop.views.simple import UploadReleaseFile

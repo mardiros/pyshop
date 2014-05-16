@@ -2,7 +2,9 @@
 """
 PyShop Credentials Views.
 """
+from __future__ import absolute_import, print_function, unicode_literals
 import logging
+import base64
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.url import resource_url, route_url
@@ -11,6 +13,7 @@ from pyramid.response import Response
 
 from pyshop.helpers.i18n import trans as _
 from pyshop.models import DBSession, User
+from pyshop.compat import unicode
 
 from .base import View
 
@@ -31,7 +34,8 @@ class Login(View):
         if 'form.submitted' in self.request.params:
             password = self.request.params.get('user.password', u'')
             if password:
-                if User.by_ldap_credentials(self.session, login, password, self.request.registry.settings) is not None:
+                if User.by_ldap_credentials(self.session, login, password,
+                                            self.request.registry.settings) is not None:
                     log.info('login %r succeed' % login)
                     headers = remember(self.request, login)
                     return HTTPFound(location=came_from,
@@ -64,14 +68,16 @@ def authbasic(request):
         auth = request.environ.get('HTTP_AUTHORIZATION')
         scheme, data = auth.split(None, 1)
         assert scheme.lower() == 'basic'
-        username, password = data.decode('base64').split(':', 1)
+        data = base64.b64decode(data)
+        if not isinstance(data, unicode):
+            data = data.decode('utf-8')
+        username, password = data.split(':', 1)
         if User.by_ldap_credentials(DBSession(), username, password, request.registry.settings):
             return HTTPFound(location=request.url)
         if User.by_credentials(DBSession(), username, password):
             return HTTPFound(location=request.url)
     return Response(status=401,
                     headerlist=[('WWW-Authenticate',
-                                 ('Basic realm="%s"' %
-                                 _('pyshop repository access')).encode('utf-8')
+                                 'Basic realm="pyshop repository access"'
                                  )],
                     )

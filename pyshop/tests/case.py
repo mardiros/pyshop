@@ -61,7 +61,7 @@ class UnauthenticatedViewTestCase(TestCase):
         if params and not isinstance(params, MultiDict):
             mparams = MultiDict()
             for k, v in params.items():
-                if hasattr(v, '__iter__'):
+                if isinstance(v, (list, tuple)):
                     [mparams.add(k, vv) for vv in v]
                 else:
                     mparams.add(k, v)

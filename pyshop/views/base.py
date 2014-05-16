@@ -46,7 +46,7 @@ class ViewBase(object):
             # if isinstance(response, dict):
             #     log.info("rendering template with context %r", dict)
             self.session.flush()
-        except Exception, exc:
+        except Exception as exc:
             if self.on_error(exc):
                 log.error('Error on view %s' % self.__class__.__name__,
                           exc_info=True)
