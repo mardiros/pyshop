@@ -59,11 +59,6 @@ def includeme(config):
     config.add_static_view('static', 'static', cache_max_age=3600)
     #config.add_static_view('repository', 'repository', cache_max_age=3600)
 
-    # Css
-    config.add_route('css', '/css/{css_path:.*}.css')
-    config.add_view(route_name=u'css', renderer=u'scss', request_method=u'GET',
-        view=u'pyramid_scss.controller.get_scss')
-
     config.add_route(u'login', u'/login',)
     config.add_view(u'pyshop.views.credentials.Login',
                     route_name=u'login',

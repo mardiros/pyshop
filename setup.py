@@ -20,9 +20,6 @@ requires = [
     'pyramid >= 1.2',
     'SQLAlchemy',
 
-    'pyScss',
-    'pyramid_scss',
-
     'pyramid_filterwarnings',
     'pyramid_jinja2',
     'pyramid_xmlrpc',
@@ -68,7 +65,7 @@ else:
 
 setup(name=NAME,
       version=VERSION,
-      description='A cheeseshop clone (PyPI server) written in pyramid',
+      description='Private Python Package Index',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
       'Programming Language :: Python',
