@@ -55,11 +55,11 @@ class SimpleTestCase(case.ViewTestCase):
             'md5_digest': u'x' * 40,
             'home_page': u'http://local_package1'
             }))()
-        self.assertEquals(set(view.keys()),
+        self.assertEqual(set(view.keys()),
                           set(['pyshop', 'release_file']))
-        self.assertEquals(view['release_file'].filename,
+        self.assertEqual(view['release_file'].filename,
                           u'local_package1-0.2.tar.gz')
-        self.assertEquals(view['release_file'].release.home_page,
+        self.assertEqual(view['release_file'].release.home_page,
                           u'http://local_package1')
-        self.assertEquals(view['release_file'].release.author.login,
+        self.assertEqual(view['release_file'].release.author.login,
                           u'admin')

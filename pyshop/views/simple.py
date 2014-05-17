@@ -102,8 +102,8 @@ class UploadReleaseFile(View):
 
         filepath = os.path.join(dir_, filename)
         while os.path.exists(filepath):
-            log.warn('File %s exists but new upload self.request, deleting'
-                     % filepath)
+            log.warning('File %s exists but new upload self.request, deleting'
+                        % filepath)
             os.unlink(filepath)
 
         size = 0
