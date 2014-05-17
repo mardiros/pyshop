@@ -11,7 +11,7 @@
     {% for f in release.files %}
         {% if f.package_type == 'sdist' %}
             <p>
-            <a class="btn btn-warning btn-sm active" role="button"
+            <a class="btn btn-success btn-sm active" role="button"
                href="{{ route_url('show_release_file', file_id=f.id, filename=f.filename)
                        }}#{{ f.md5_digest }}">
               <span class="glyphicon glyphicon-download-alt"></span>
