@@ -1,11 +1,13 @@
+======
 pyshop
 ======
+
 
 .. image:: https://travis-ci.org/mardiros/pyshop.png?branch=master
    :target: https://travis-ci.org/mardiros/pyshop
 
 Getting Started
----------------
+===============
 
 Pyshop is a private repository for python packages.
 
@@ -18,16 +20,16 @@ certificate.
 
 Pyshop uses clear and simple ACLs to manage privileges:
 
--   an installer group that can only download release files,
--   a developer group that can download and upload release files and browse the
-    website,
--   an admin group that has developer privileges and accounts management.
+- an installer group that can only download release files,
+- a developer group that can download and upload release files and browse the
+  website,
+- an admin group that has developer privileges and accounts management.
 
 Since pyshop is intended to host private packages, every user, including *pip*,
 must be authenticated by login and password.
 
 Installation
-------------
+============
 
 ::
 
@@ -53,13 +55,13 @@ You also should also use an https reverse proxy. Python packaging core uses
 HTTP basic authentication: it sends user/password in clear.
 
 Configuring your environment
-----------------------------
+============================
 
 Here are all configuration files you will need to modify for usual python tools
 to use your newly deployed private repository.
 
 ~/.pip/pip.conf
-~~~~~~~~~~~~~~~
+---------------
 
 Configuration used by pip. This is a user file, you can set a developer or
 the generic pip account.
@@ -76,12 +78,13 @@ the generic pip account.
     index-url = http://pip:changeme@localhost:8000/simple/
 
 
-Note:
-If you are using a WSGI server that kills requests if it is too long, like
-uWSGI or gunicorn, set an appropriate timeout for this service too.
+.. note::
+
+  If you are using a WSGI server that kills requests if it is too long, like
+  uWSGI or gunicorn, set an appropriate timeout for this service too.
 
 setup.cfg and pydistutils.cfg
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
 setup.cfg and pydistutils.cfg are used when running *python setup.py develop*
 to install your package or when using *easy_install*. You should use a generic
@@ -102,7 +105,7 @@ This should work now::
     python setup.py develop
 
 ~/.pypirc
-~~~~~~~~~
+---------
 
 Configuration used by setuptools to upload files.
 All developers should have this configuration in their ``$HOME`` to upload
@@ -123,13 +126,12 @@ This should work now::
 
     python setup.py sdist upload -v -r pyshop
 
+
 Missing Features
-----------------
+================
 
 Developer cannot add other accounts to give them upload right to their project.
 This can be done in the database or in the pyshop shell by an administrator.
-The pyshop shell is available by installing pyshop shell extras with *pip
-install pyshop[shell]*.
 
 ::
 
@@ -139,10 +141,9 @@ install pyshop[shell]*.
     In [3]: session.commit()
 
 Alternatives
-------------
+============
 
 - pypiserver: https://pypi.python.org/pypi/pypiserver
 - localshop: http://pypi.python.org/pypi/localshop
 - djangopypi: http://pypi.python.org/pypi/djangopypi
 - chishop: http://pypi.python.org/pypi/chishop
-
