@@ -1,6 +1,14 @@
 Changelist
 ==========
 
+1.0
+---
+
+- Add compatibility with python 3.3 and 3.4
+- Add ldap support (mgoacolou)
+- Replace scss by bootstrap (mgoacolou)
+
+
 0.9.12
 ------
 
