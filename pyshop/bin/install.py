@@ -11,6 +11,11 @@ except ImportError:
      def setup_logging(config_uri):
          return None
 
+try:
+    input = raw_input  # you are using python 2
+except NameError:
+    pass  # you are using python 3
+
 from sqlalchemy import engine_from_config
 
 from pyshop.helpers.sqla import create_engine, dispose_engine
@@ -59,14 +64,14 @@ def populate(engine, interactive=True):
     session.add(pip_group)
 
     if interactive:
-        login = (raw_input('administrator login [admin]:')
+        login = (input('administrator login [admin]:')
                  or 'admin')
-        password = (raw_input('administrator password [changeme]:')
+        password = (input('administrator password [changeme]:')
                     or 'changeme')
-        email = (raw_input('administrator email [root@localhost.localdomain]')
+        email = (input('administrator email [root@localhost.localdomain]')
                  or 'root@localhost.localdomain')
-        piplogin = (raw_input('installer login [pip]:') or 'pip')
-        pippassword = (raw_input('installer password [changeme]:') or
+        piplogin = (input('installer login [pip]:') or 'pip')
+        pippassword = (input('installer password [changeme]:') or
                        'changeme')
     else:
         login = 'admin'
