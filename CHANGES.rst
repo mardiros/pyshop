@@ -1,6 +1,11 @@
 Changelist
 ==========
 
+1.0.1
+-----
+
+- Fix pyshop_setup command with Python 3
+
 1.0
 ---
 
