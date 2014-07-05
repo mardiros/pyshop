@@ -98,7 +98,7 @@ class UploadReleaseFile(View):
                             filename[0].lower())
 
         if not os.path.exists(dir_):
-            os.mkdir(dir_, 0o750)
+            os.makedirs(dir_, 0o750)
 
         filepath = os.path.join(dir_, filename)
         while os.path.exists(filepath):
