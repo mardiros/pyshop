@@ -77,7 +77,7 @@ def authbasic(request):
         if User.by_credentials(DBSession(), username, password):
             return HTTPFound(location=request.url)
     return Response(status=401,
-                    headerlist=[('WWW-Authenticate',
-                                 'Basic realm="pyshop repository access"'
+                    headerlist=[(b'WWW-Authenticate',
+                                 b'Basic realm="pyshop repository access"'
                                  )],
                     )
