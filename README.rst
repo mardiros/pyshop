@@ -36,7 +36,7 @@ Installation
     $ virtualenv pyshop
     $ cd pyshop
     (pyshop)$ source bin/activate
-    (pyshop)$ pip install pyshop
+    (pyshop)$ pip install pyshop[waitress]
     (pyshop)$ cp pyshop.sample.ini pyshop.ini
     (pyshop)$ vim pyshop.ini  # change the pyshop.cookie_key setting
     (pyshop)$ pyshop_setup pyshop.ini
@@ -53,6 +53,11 @@ accounts.
 
 You also should also use an https reverse proxy. Python packaging core uses
 HTTP basic authentication: it sends user/password in clear.
+
+The pythop.sample.ini file use waitress as the default WSGI server, but,
+if you are familiar with another WSGI server that support paste format,
+you could use it.
+
 
 Configuring your environment
 ============================

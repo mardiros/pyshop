@@ -42,6 +42,9 @@ extras_require = {
     'ldap': [
         'python-ldap',
     ],
+    'waitress': [
+        'waitress',
+    ],
     'dev': [
         'waitress',
         'pyramid_debugtoolbar',
