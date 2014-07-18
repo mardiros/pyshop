@@ -9,6 +9,7 @@ import logging
 from pyramid_xmlrpc import XMLRPCView
 
 from pyshop.models import DBSession, Package, Release, ReleaseFile
+from pyshop.helpers import pypi
 
 log = logging.getLogger(__name__)
 
@@ -197,15 +198,22 @@ class PyPI(XMLRPCView):
          'version': package release version,
          'summary': package release summary} 
         """
+        api = pypi.proxy
+        rv = []
+         # search in proxy
+        for k, v in spec.items():
+            rv += api.search({k: v}, True)
+
+        # search in local
         session = DBSession()
         release = Release.search(session, spec, operator)
         session.rollback()
-        rv = [{'name': r.package.name,
-               'version': r.version,
-               'summary': r.summary,
-               # hack https://mail.python.org/pipermail/catalog-sig/2012-October/004633.html
-               '_pypi_ordering':'',
-               } for r in release]
+        rv += [{'name': r.package.name,
+                'version': r.version,
+                'summary': r.summary,
+                # hack https://mail.python.org/pipermail/catalog-sig/2012-October/004633.html
+                '_pypi_ordering':'',
+                } for r in release]
         return rv
 
     def browse(self, classifiers):
