@@ -82,6 +82,9 @@ the generic pip account.
     [install]
     index-url = http://pip:changeme@localhost:8000/simple/
 
+    [search]
+    index = http://pip:changeme@localhost:8000/pypi
+
 
 .. note::
 
