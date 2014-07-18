@@ -202,7 +202,10 @@ class PyPI(XMLRPCView):
         session.rollback()
         rv = [{'name': r.package.name,
                'version': r.version,
-               'summary': r.summary} for r in release]
+               'summary': r.summary,
+               # hack https://mail.python.org/pipermail/catalog-sig/2012-October/004633.html
+               '_pypi_ordering':'',
+               } for r in release]
         return rv
 
     def browse(self, classifiers):
