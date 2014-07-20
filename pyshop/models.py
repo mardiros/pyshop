@@ -754,7 +754,7 @@ class Release(Base):
         join = []
         for opt, val in opts.items():
             field = available[opt]
-            if hasattr(val, '__iter__'):
+            if hasattr(val, '__iter__') and len(val) > 1:
                 stmt = or_(*[field.like(u'%%%s%%' % v) for v in val])
             else:
                 stmt = field.like(u'%%%s%%' % val)
