@@ -10,6 +10,7 @@ Changelist
   information, it will return the currently being created user due to autoflush
   and if other thread was about to do the same, it would be protected from doing
   anything wrong by the SQL transaction anyway.
+- Consider LDAP created users as local as well.
 
 1.0.1
 -----

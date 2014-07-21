@@ -293,13 +293,13 @@ class User(Base):
 
             log.debug('LDAP authentication OK')
             # we may create a new user if it don't exist
-            user_ldap = User.by_login(session, login, local=False)
+            user_ldap = User.by_login(session, login)
             if user_ldap is None:
                 log.debug('create user %s'%login)
                 user_ldap = User()
                 user_ldap.login = login
                 user_ldap.password = password
-                user_ldap.local = False
+                user_ldap.local = True
                 user_ldap.firstname = attrs[settings['pyshop.ldap.first_name_attr']][0]
                 user_ldap.lastname = attrs[settings['pyshop.ldap.last_name_attr']][0]
                 user_ldap.email =  attrs[settings['pyshop.ldap.email_attr']][0]
