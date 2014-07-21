@@ -305,8 +305,7 @@ class User(Base):
                 user_ldap.email =  attrs[settings['pyshop.ldap.email_attr']][0]
                 for groupname in ["developer","installer"]:
                     user_ldap.groups.append(Group.by_name(session, groupname))
-                other = User.by_login(session, login, local=False)
-                if other is None and user_ldap.validate(session):
+                if user_ldap.validate(session):
                     session.add(user_ldap)
                     log.debug('user added')
                     transaction.commit()

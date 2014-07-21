@@ -6,6 +6,10 @@ Changelist
 
 - Use version sanization regex matching PEP386/440.
 - Fix invalid commit call in LDAP user creation.
+- Do not fetch user from database again while creating it from LDAP
+  information, it will return the currently being created user due to autoflush
+  and if other thread was about to do the same, it would be protected from doing
+  anything wrong by the SQL transaction anyway.
 
 1.0.1
 -----
