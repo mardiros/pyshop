@@ -17,6 +17,7 @@ except ImportError:
 from pyramid.settings import asbool
 
 import cryptacular.bcrypt
+import transaction
 from pkg_resources import parse_version
 
 from sqlalchemy import (Table, Column, ForeignKey, Index,
@@ -292,23 +293,22 @@ class User(Base):
 
             log.debug('LDAP authentication OK')
             # we may create a new user if it don't exist
-            user_ldap = User.by_login(session, login, local=False)
+            user_ldap = User.by_login(session, login)
             if user_ldap is None:
                 log.debug('create user %s'%login)
                 user_ldap = User()
                 user_ldap.login = login
                 user_ldap.password = password
-                user_ldap.local = False
+                user_ldap.local = True
                 user_ldap.firstname = attrs[settings['pyshop.ldap.first_name_attr']][0]
                 user_ldap.lastname = attrs[settings['pyshop.ldap.last_name_attr']][0]
                 user_ldap.email =  attrs[settings['pyshop.ldap.email_attr']][0]
                 for groupname in ["developer","installer"]:
                     user_ldap.groups.append(Group.by_name(session, groupname))
-                other = User.by_login(session, login, local=False)
-                if other is None and user_ldap.validate(session):
+                if user_ldap.validate(session):
                     session.add(user_ldap)
-                    log.debug('user added')
-                    session.commit()
+                    log.debug('User "{}" added'.format(login))
+                    transaction.commit()
             # its OK
             return user_ldap
         except ldap.NO_SUCH_OBJECT:
