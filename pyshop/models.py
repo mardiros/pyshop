@@ -17,6 +17,7 @@ except ImportError:
 from pyramid.settings import asbool
 
 import cryptacular.bcrypt
+import transaction
 from pkg_resources import parse_version
 
 from sqlalchemy import (Table, Column, ForeignKey, Index,
@@ -308,7 +309,7 @@ class User(Base):
                 if other is None and user_ldap.validate(session):
                     session.add(user_ldap)
                     log.debug('user added')
-                    session.commit()
+                    transaction.commit()
             # its OK
             return user_ldap
         except ldap.NO_SUCH_OBJECT:

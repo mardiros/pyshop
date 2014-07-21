@@ -5,6 +5,7 @@ Changelist
 -----
 
 - Use version sanization regex matching PEP386/440.
+- Fix invalid commit call in LDAP user creation.
 
 1.0.1
 -----
