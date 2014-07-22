@@ -1,7 +1,7 @@
 Changelist
 ==========
 
-1.0.2
+1.0.3
 -----
 
 - Use version sanization regex matching PEP386/440.
@@ -11,6 +11,14 @@ Changelist
   and if other thread was about to do the same, it would be protected from doing
   anything wrong by the SQL transaction anyway.
 - Consider LDAP created users as local as well.
+
+
+1.0.2
+-----
+
+- Fix upload of local package with waitress
+- Fix creation of the repository directory when creating a local package
+
 
 1.0.1
 -----
