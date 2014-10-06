@@ -112,9 +112,9 @@ class ReleaseFileRenderer(object):
 
                 build_whl(sdistpath, localpath)
 
-            data = ''
+            data = b''
             with open(localpath, 'rb') as file:
-                data = ''
+                data = b''
                 while True:
                     content = file.read(2 << 16)
                     if not content:
