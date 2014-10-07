@@ -2,7 +2,7 @@
 """
 PyShop Web Application.
 """
-
+import sys
 from pyramid.config import Configurator
 from pyramid.authorization import ACLAuthorizationPolicy as ACLPolicy
 
@@ -20,9 +20,11 @@ def main(global_config, **settings):
     """
     Get a PyShop WSGI application configured with settings.
     """
+    if sys.version_info[0] < 3:
+        reload(sys)
+        sys.setdefaultencoding('utf-8')
 
     settings = dict(settings)
-
     # Scoping sessions for Pyramid ensure session are commit/rollback
     # after the template has been rendered
     create_engine(settings, scoped=True)
