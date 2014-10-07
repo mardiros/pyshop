@@ -24,6 +24,15 @@ from .base import View
 log = logging.getLogger(__name__)
 
 
+import unicodedata
+
+def _sanitize(input_str):
+    input_str = input_str.lower()
+    nkfd_form = unicodedata.normalize('NFKD', input_str)
+    only_ascii = nkfd_form.encode('ASCII', 'ignore')
+    return only_ascii
+
+
 class List(View):
 
     def render(self):
@@ -185,30 +194,40 @@ class Show(View):
                           )
         if data.get('author'):
             
-            if data['author'].lower() in session_users:
-                author = session_users[data['author'].lower()]
+            log.info('Looking for author {0}'.format(data['author']))
+            if _sanitize(data['author']) in session_users:
+                author = session_users[_sanitize(data['author'])]
             else:
                 author = User.by_login(self.session, data['author'],
                                        local=False)
             if not author:
-                log.info('Author {0} not found in the database'.format(
+                log.info('Author {0} not found, creating'.format(
                     data['author']))
                 author = User(login=data['author'],
                               local=False,
                               email=data.get('author_email'))
                 self.session.add(author)
+                session_users[_sanitize(data['author'])] = author
             release.author = author
-        self.session.flush()
+            self.session.flush()
+
         if data.get('maintainer'):
-            maintainer = User.by_login(self.session, data['maintainer'],
-                                       local=False)
+            log.info('Looking for maintainer {0}'.format(data['maintainer']))
+            if _sanitize(data['maintainer']) in session_users:
+                maintainer = session_users[_sanitize(data['maintainer'])]
+            else:
+                maintainer = User.by_login(self.session, data['maintainer'],
+                                           local=False)
             if not maintainer:
+                log.info('Maintainer not found, creating user {0}'
+                         ''.format(data['maintainer']))
                 maintainer = User(login=data['maintainer'],
                                   local=False,
                                   email=data.get('maintainer_email'))
                 self.session.add(maintainer)
+                session_users[_sanitize(data['maintainer'])] = maintainer
             release.maintainer = maintainer
-        self.session.flush()
+            self.session.flush()
 
         for name in data.get('classifiers', []):
             classifier = Classifier.by_name(self.session, name.decode('utf-8'))
@@ -326,7 +345,10 @@ class Show(View):
             for role, login in roles:
                 login = login.decode('utf-8')  # XMLRPC should return utf-8
                 log.info('Looking for non local user {0}'.format(login))
-                user = User.by_login(self.session, login, local=False)
+                if _sanitize(login) in session_users:
+                    user = session_users[_sanitize(login)]
+                else:
+                    user = User.by_login(self.session, login, local=False)
                 if not user:
                     log.info('Not found. creating user {0}'.format(login))
                     user = User(login=login, local=False)
@@ -335,8 +357,8 @@ class Show(View):
                     pkg.owners.append(user)
                 elif role == 'Maintainer':
                     pkg.maintainers.append(user)
+                session_users[_sanitize(login)] = user
                 self.session.flush()
-                session_users[user.login.lower()] = user
 
         self.session.flush()
         refresh = True
