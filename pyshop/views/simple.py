@@ -14,11 +14,9 @@ from sqlalchemy.sql.expression import func
 
 from pyramid import httpexceptions as exc
 from pyramid.settings import asbool
-from pyramid.security import authenticated_userid
 
 from pyshop.models import User, Package, Classifier, Release, ReleaseFile
 from pyshop.helpers import pypi
-from pyshop.compat import unicode
 
 from .base import View
 
@@ -164,10 +162,13 @@ class Show(View):
 
     def _to_unicode(self, data):
         # xmlrpc use utf8 encoded string
-        return dict([(key, val.decode('utf-8') if isinstance(val, str) else val)
+        return dict([(key, val.decode('utf-8')
+                      if isinstance(val, str) else val)
                      for key, val in data.items()])
 
-    def _create_release(self, package, data):
+    def _create_release(self, package, data, session_users):
+        log.info('Create release {0} for package {1}'.format(
+            data.get('version'), package.name))
         data = self._to_unicode(data)
         release = Release(package=package,
                           summary=data.get('summary'),
@@ -183,8 +184,15 @@ class Show(View):
                           docs_url=data.get('docs_url'),
                           )
         if data.get('author'):
-            author = User.by_login(self.session, data['author'], local=False)
+            
+            if data['author'].lower() in session_users:
+                author = session_users[data['author'].lower()]
+            else:
+                author = User.by_login(self.session, data['author'],
+                                       local=False)
             if not author:
+                log.info('Author {0} not found in the database'.format(
+                    data['author']))
                 author = User(login=data['author'],
                               local=False,
                               email=data.get('author_email'))
@@ -238,8 +246,10 @@ class Show(View):
         package_name = package_name.lower().replace('-', '_')
         search_result = [p for p in search_result
                          if p['name'].lower() == package_name
-                         or p['name'].lower().replace('-', '_') == package_name]
-        log.debug('Found {sc}, matched {mc}'.format(sc=search_count, mc=len(search_result)))
+                         or p['name'].lower().replace('-', '_') == package_name
+                         ]
+        log.debug('Found {sc}, matched {mc}'.format(sc=search_count,
+                                                    mc=len(search_result)))
 
         if not search_result:
             return None
@@ -264,8 +274,9 @@ class Show(View):
             else:
                 if pkg.update_at:
                     current_td = datetime.now() - pkg.update_at
-                    max_td = timedelta(hours=int(settings.get('pyshop.mirror.cache.ttl',
-                                                              '24')))
+                    max_td = timedelta(
+                        hours=int(settings.get('pyshop.mirror.cache.ttl',
+                                               '24')))
                     refresh = current_td > max_td
                     log.debug('"{cdt}" > "{max}": {refr}'.format(cdt=current_td,
                                                                  max=max_td,
@@ -275,7 +286,7 @@ class Show(View):
             log.info('refresh package {pkg}'.format(pkg=package_name))
             pypi_versions = api.package_releases(package_name, True)
             # XXX package_releases is case sensitive
-            # but dependancies declaration not...
+            # but dependencies declaration not...
             if not pypi_versions:
                 pkg_info = self._search_package(package_name)
                 if not pkg_info and '-' in package_name:
@@ -311,26 +322,31 @@ class Show(View):
                 self.session.add(pkg)
                 self.session.flush()
             roles = api.package_roles(package_name)
+            session_users = {}
             for role, login in roles:
                 login = login.decode('utf-8')  # XMLRPC should return utf-8
+                log.info('Looking for non local user {0}'.format(login))
                 user = User.by_login(self.session, login, local=False)
                 if not user:
+                    log.info('Not found. creating user {0}'.format(login))
                     user = User(login=login, local=False)
                     self.session.add(user)
                 if role == 'Owner':
                     pkg.owners.append(user)
                 elif role == 'Maintainer':
                     pkg.maintainers.append(user)
+                self.session.flush()
+                session_users[user.login.lower()] = user
 
         self.session.flush()
-
         refresh = True
         if not pkg.local and refresh:
             pkg_versions = pkg.versions
             for version in pypi_versions:
                 if version not in pkg_versions:
                     release_data = api.release_data(package_name, version)
-                    release = self._create_release(pkg, release_data)
+                    release = self._create_release(pkg, release_data,
+                                                   session_users)
 
                     release_files = api.release_urls(package_name, version)
 

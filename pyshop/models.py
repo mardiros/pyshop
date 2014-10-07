@@ -139,6 +139,9 @@ class User(Base):
     def __table_args__(cls):
         return (Index('idx_%s_login_local' % cls.__tablename__,
                       'login', 'local', unique=True),
+                {'mysql_engine': 'InnoDB',
+                 'mysql_charset': 'utf8',
+                 }
                 )
 
     login = Column(Unicode(255), nullable=False)
@@ -378,6 +381,9 @@ class Classifier(Base):
     def __table_args__(cls):
         return (Index('idx_%s_category_name' % cls.__tablename__,
                       'category', 'name', unique=True),
+                {'mysql_engine': 'InnoDB',
+                 'mysql_charset': 'utf8',
+                 }
                 )
 
     name = Column(Unicode(255), nullable=False, unique=True)
@@ -625,6 +631,9 @@ class Release(Base):
     def __table_args__(cls):
         return (Index('idx_%s_package_id_version' % cls.__tablename__,
                       'package_id', 'version', unique=True),
+                {'mysql_engine': 'InnoDB',
+                 'mysql_charset': 'utf8',
+                 }
                 )
 
     version = Column(Unicode(60), nullable=False)
