@@ -10,10 +10,11 @@ from pyramid.httpexceptions import HTTPNotFound
 
 from pyshop.models import Package, Release, Classifier
 
-from .base import View
+from .base import View, DeleteView
 
 
 log = logging.getLogger(__name__)
+
 
 
 class List(View):
@@ -91,3 +92,10 @@ class Refresh(View):
 
         package = Package.by_name(self.session,
                                   self.request.matchdict['package_name'])
+
+
+
+class Purge(DeleteView):
+    model = Package
+    matchdict_key = 'package_id'
+    redirect_route = 'list_package'

@@ -48,6 +48,7 @@
         <th>{% trans %} last version {% endtrans %}</th>
         <th>{% trans %} # downloads {% endtrans %}</th>
         <th>{% trans %} source {% endtrans %}</th>
+        <th>{% trans %} remove {% endtrans %}</th>
     </tr>
 </thead>
 <tbody>
@@ -67,6 +68,11 @@
                 {% else %}
                     {% trans %} mirror {% endtrans %}
                 {% endif %}
+            </td>
+            <td>
+                <a href="{{ route_url('purge_package', package_id=pkg.id) }}" class="btn btn-danger btn-sm">
+                    <span class="glyphicon glyphicon-remove-sign"></span> purge
+                </a>
             </td>
         </tr>
     {% endfor %}

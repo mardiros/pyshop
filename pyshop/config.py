@@ -184,6 +184,12 @@ def includeme(config):
                     renderer=u'pyshop/account/delete.html',
                     permission=u'admin_view')
 
+    config.add_route(u'purge_package', u'/pyshop/purge/package/{package_id}')
+    config.add_view(u'pyshop.views.package.Purge',
+                    route_name=u'purge_package',
+                    renderer=u'pyshop/package/purge.html',
+                    permission=u'admin_view')
+
     # Current user can update it's information
     config.add_route(u'edit_user', u'/pyshop/user')
     config.add_view(u'pyshop.views.user.Edit',
