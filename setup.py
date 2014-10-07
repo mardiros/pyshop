@@ -33,7 +33,7 @@ requires = [
 ]
 
 
-test_requires = []
+test_requires = ['nose']
 if sys.version_info < (2, 7):
     test_requires.append('unittest2')
 
@@ -54,7 +54,8 @@ extras_require = {
     ],
     'wheelify': [
         'wheel',             # build wheels from source on the proxy
-    ]
+    ],
+    'test': test_requires
 }
 
 
