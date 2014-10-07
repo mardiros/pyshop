@@ -4,19 +4,17 @@ import sys
 try:
     from pyramid.paster import get_appsettings, setup_logging
 except ImportError:
-     from paste.deploy.loadwsgi import appconfig
-     def get_appsettings(name):
-         return  appconfig('config:{0}'.format(name), 'main',
-                           relative_to=os.getcwd())
-     def setup_logging(config_uri):
-         return None
+    from paste.deploy.loadwsgi import appconfig
+    def get_appsettings(name):
+        return  appconfig('config:{0}'.format(name), 'main',
+                          relative_to=os.getcwd())
+    def setup_logging(config_uri):
+        return None
 
 try:
     input = raw_input  # you are using python 2
 except NameError:
     pass  # you are using python 3
-
-from sqlalchemy import engine_from_config
 
 from pyshop.helpers.sqla import create_engine, dispose_engine
 from pyshop.models import (Base, DBSession,
@@ -28,7 +26,10 @@ from pyshop.compat import unicode
 
 def usage(argv):
     cmd = os.path.basename(argv[0])
-    print('usage: %s <config_uri>\n'
+    print('usage: %s [-y] <config_uri>\n'
+          '\n'
+          '        -y: for non interactive usage\n'
+          'config_uri: File name of the paste configuration\n\n'
           '(example: "%s development.ini")' % (cmd, cmd))
     sys.exit(1)
 
@@ -96,13 +97,26 @@ def populate(engine, interactive=True):
 
 
 def main(argv=sys.argv):
-    if len(argv) != 2:
+    if len(argv) < 2:
         usage(argv)
-    config_uri = argv[1]
+        return
+
+    if len(argv) == 2:
+        interactive = True
+        config_uri = argv[1]
+    else:
+
+        if argv[1] != '-y':
+            usage(argv)
+            return
+        interactive = False
+        config_uri = argv[2]
+        
+        
     setup_logging(config_uri)
     settings = get_appsettings(config_uri)
     engine = create_engine('pyshop', settings, scoped=False)
-    populate(engine)
+    populate(engine, interactive)
     dispose_engine('pyshop')
 
 
