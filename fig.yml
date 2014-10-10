@@ -24,3 +24,21 @@ mysql:
     MYSQL_ROOT_PASSWORD: pwd
   ports:
     - 3306:3306
+
+
+pgpyshop:
+  build: .
+  # user: docker
+  command: pserve development.pg.ini --reload
+  ports:
+    - 6543:6543
+  volumes:
+    - .:/srv/pyshop
+  links:
+    - postgresql:postgresql.localdomain
+
+postgresql:
+  image: postgres:9.4
+  ports:
+    - 5432:5432
+
