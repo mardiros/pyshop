@@ -833,7 +833,7 @@ class ReleaseFile(Base):
     @classmethod
     def by_filename(cls, session, release, filename):
         """
-        Get a release file for a given realease and a given filename.
+        Get a release file for a given release and a given filename.
 
         :param session: SQLAlchemy session
         :type session: :class:`sqlalchemy.Session`
