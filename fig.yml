@@ -24,6 +24,3 @@ mysql:
     MYSQL_ROOT_PASSWORD: pwd
   ports:
     - 3306:3306
-  volumes:
-    - docker/data/mysql:/usr/local/mysql/data
-
