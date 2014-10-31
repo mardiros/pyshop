@@ -1,9 +1,10 @@
 Changelist
 ==========
 
-1.0.3 (unreleased)
-------------------
+1.1.0 - Released on 2014-10-31
+------------------------------
 
+- Add support of MySQL
 - Use version sanization regex matching PEP386/440.
 - Fix invalid commit call in LDAP user creation.
 - Do not fetch user from database again while creating it from LDAP
