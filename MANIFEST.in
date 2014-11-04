@@ -2,5 +2,5 @@ include LICENSE
 include *.txt *.ini *.cfg *.rst
 recursive-exclude . *.pyc
 graft pyshop/static
-graft pythop/templates
+graft pyshop/templates
 graft pyshop/locale
