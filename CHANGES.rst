@@ -1,6 +1,12 @@
 Changelist
 ==========
 
+1.1.1 - Released on 2014-11-04
+------------------------------
+
+- Fix packaging (DeaconDesperado)
+
+
 1.1.0 - Released on 2014-10-31
 ------------------------------
 
