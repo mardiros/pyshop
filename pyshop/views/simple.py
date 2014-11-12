@@ -233,7 +233,8 @@ class Show(View):
             classifier = Classifier.by_name(self.session, name.decode('utf-8'))
 
             while classifier:
-                release.classifiers.append(classifier)
+                if classifier not in release.classifiers:
+                    release.classifiers.append(classifier)
                 if classifier not in package.classifiers:
                     package.classifiers.append(classifier)
                 classifier = classifier.parent

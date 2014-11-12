@@ -4,16 +4,18 @@ PyShop Package Management Views.
 """
 import math
 import logging
+import os
 
 from sqlalchemy.sql.expression import func
 from pyramid.httpexceptions import HTTPNotFound
 
 from pyshop.models import Package, Release, Classifier
 
-from .base import View
+from .base import View, RedirectView
 
 
 log = logging.getLogger(__name__)
+
 
 
 class List(View):
@@ -91,3 +93,32 @@ class Refresh(View):
 
         package = Package.by_name(self.session,
                                   self.request.matchdict['package_name'])
+
+
+class Purge(RedirectView):
+    model = Package
+    matchdict_key = 'package_id'
+    redirect_route = 'list_package'
+
+    def delete(self, model):
+
+        # Check for and delete any packages on disk
+        repository = self.request.registry.settings['pyshop.repository']
+        for release in model.releases:
+            for f in release.files:
+                filepath = os.path.join(repository, f.filename[0], f.filename)
+                if os.path.isfile(filepath):
+                    os.remove(filepath)
+
+        self.session.delete(model)
+
+    def render(self):
+
+        model = self.model.by_id(self.session,
+            int(self.request.matchdict[self.matchdict_key]))
+
+        if 'form.submitted' in self.request.params:
+            self.delete(model)
+            return self.redirect()
+
+        return {self.model.__tablename__: model}
