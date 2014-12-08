@@ -287,6 +287,7 @@ class Show(View):
         package_name = self.request.matchdict['package_name']
         pkg = Package.by_name(self.session, package_name)
         refresh = True
+        session_users = {}
 
         if pkg:
             if pkg.local:
@@ -342,7 +343,6 @@ class Show(View):
                 self.session.add(pkg)
                 self.session.flush()
             roles = api.package_roles(package_name)
-            session_users = {}
             for role, login in roles:
                 login = login.decode('utf-8')  # XMLRPC should return utf-8
                 log.info('Looking for non local user {0}'.format(login))
