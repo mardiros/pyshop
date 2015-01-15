@@ -357,8 +357,10 @@ class Show(View):
                     self.session.add(user)
                 if role == 'Owner':
                     pkg.owners.append(user)
+                    self.session.add(pkg)
                 elif role == 'Maintainer':
                     pkg.maintainers.append(user)
+                    self.session.add(pkg)
                 session_users[_sanitize(login)] = user
                 self.session.flush()
 
