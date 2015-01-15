@@ -15,10 +15,10 @@
                href="{{ route_url('show_release_file', file_id=f.id, filename=f.filename)
                        }}#{{ f.md5_digest }}">
               <span class="glyphicon glyphicon-download-alt"></span>
-              Download ({{f.filename}})</a></p>
+              {% trans filename=f.filename %}Download ({{filename}}){% endtrans %}</a></p>
         {% endif %}
     {% endfor %}
-    <p>Other Version: 
+    <p>{% trans %}Other Version:{% endtrans %}
     {% set display = 0 %}
     {% for r in package.sorted_releases %}
         {% if r.id == release.id %}
@@ -67,9 +67,9 @@
     {% endif %}</p>
 
     <ul id="myTab" class="nav nav-tabs">
-      <li class="active"><a href="#Desc" data-toggle="tab">Description</a></li>
-      <li><a href="#Classif" data-toggle="tab">Classification</a></li>
-      <li><a href="#Release" data-toggle="tab">Release File</a></li>
+      <li class="active"><a href="#Desc" data-toggle="tab">{% trans %}Description{% endtrans %}</a></li>
+      <li><a href="#Classif" data-toggle="tab">{% trans %}Classification{% endtrans %}</a></li>
+      <li><a href="#Release" data-toggle="tab">{% trans %}Release File{% endtrans %}</a></li>
     </ul>
     <div id="myTabContent" class="tab-content">
       <div class="tab-pane fade in active" id="Desc">

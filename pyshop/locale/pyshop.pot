@@ -1,19 +1,217 @@
 # Translations template for pyshop.
-# Copyright (C) 2012 ORGANIZATION
+# Copyright (C) 2015 ORGANIZATION
 # This file is distributed under the same license as the pyshop project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
-
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: pyshop 0.1\n"
+"Project-Id-Version: pyshop 1.1.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-12-02 21:27+0100\n"
+"POT-Creation-Date: 2015-01-15 12:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.3\n"
+
+#: pyshop/templates/pyshop/account/create.html:5
+#: pyshop/templates/pyshop/account/edit.html:5
+msgid "Account"
+msgstr ""
+
+#: pyshop/templates/pyshop/account/create.html:7
+msgid "New Account"
+msgstr ""
+
+#: pyshop/templates/pyshop/account/create.html:14
+msgid "Login"
+msgstr ""
+
+#: pyshop/templates/pyshop/account/create.html:21
+msgid "Firstname"
+msgstr ""
+
+#: pyshop/templates/pyshop/account/create.html:28
+msgid "Lastname"
+msgstr ""
+
+#: pyshop/templates/pyshop/account/create.html:35
+msgid "Email"
+msgstr ""
+
+#: pyshop/templates/pyshop/account/create.html:44
+msgid "password"
+msgstr ""
+
+#: pyshop/templates/pyshop/account/create.html:51
+msgid "confirm password"
+msgstr ""
+
+#: pyshop/templates/pyshop/account/create.html:59
+msgid "groups:"
+msgstr ""
+
+#: pyshop/templates/pyshop/account/list.html:4
+msgid "Accounts"
+msgstr ""
+
+#: pyshop/templates/pyshop/account/list.html:16
+msgid " login "
+msgstr ""
+
+#: pyshop/templates/pyshop/account/list.html:17
+msgid " name "
+msgstr ""
+
+#: pyshop/templates/pyshop/account/list.html:18
+msgid " groups "
+msgstr ""
+
+#: pyshop/templates/pyshop/account/list.html:19
+msgid " edit "
+msgstr ""
+
+#: pyshop/templates/pyshop/package/list.html:29
+msgid "locals only"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/list.html:56
+msgid " package "
+msgstr ""
+
+#: pyshop/templates/pyshop/package/list.html:57
+msgid " last version "
+msgstr ""
+
+#: pyshop/templates/pyshop/package/list.html:58
+msgid " # downloads "
+msgstr ""
+
+#: pyshop/templates/pyshop/package/list.html:59
+msgid " source "
+msgstr ""
+
+#: pyshop/templates/pyshop/package/list.html:60
+msgid " remove "
+msgstr ""
+
+#: pyshop/templates/pyshop/package/list.html:76
+msgid " local "
+msgstr ""
+
+#: pyshop/templates/pyshop/package/list.html:78
+msgid " mirror "
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:18
+#, python-format
+msgid "Download (%(filename)s)"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:21
+msgid "Other Version:"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:61
+msgid "refresh"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:65
+msgid "refreshing during next install"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:70
+msgid "Description"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:71
+msgid "Classification"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:72
+msgid "Release File"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:84
+msgid "Type:"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:86
+msgid "local"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:88
+msgid "mirrored"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:98
+msgid "Home page:"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:100
+msgid "Author:"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:102
+msgid "Classifiers:"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:113
+msgid "Keywords:"
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:123
+msgid " files "
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:124
+msgid " version "
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:125
+msgid " author "
+msgstr ""
+
+#: pyshop/templates/pyshop/package/show.html:126
+msgid " downloads "
+msgstr ""
+
+#: pyshop/templates/pyshop/user/change_password.html:6
+msgid "current password:"
+msgstr ""
+
+#: pyshop/templates/pyshop/user/change_password.html:14
+msgid "new password:"
+msgstr ""
+
+#: pyshop/templates/pyshop/user/change_password.html:22
+msgid "confirm password:"
+msgstr ""
+
+#: pyshop/templates/shared/layout.html:31
+msgid "Create new account"
+msgstr ""
+
+#: pyshop/templates/shared/layout.html:33
+msgid "Manage Accounts"
+msgstr ""
+
+#: pyshop/templates/shared/layout.html:41
+msgid "Change password"
+msgstr ""
+
+#: pyshop/views/account.py:63 pyshop/views/user.py:46
+msgid "passwords do not match"
+msgstr ""
+
+#: pyshop/views/user.py:41
+msgid "current password is not correct"
+msgstr ""
+
+#: pyshop/views/user.py:43
+msgid "password is inchanged"
+msgstr ""
 
