@@ -294,6 +294,7 @@ class Show(View):
                 refresh = False
             else:
                 if pkg.update_at:
+                    log.debug('validating cache interval')
                     current_td = datetime.now() - pkg.update_at
                     max_td = timedelta(
                         hours=int(settings.get('pyshop.mirror.cache.ttl',
@@ -362,8 +363,8 @@ class Show(View):
                 self.session.flush()
 
         self.session.flush()
-        refresh = True
         if not pkg.local and refresh:
+            log.debug('refreshing %s package' % package_name)
             pkg_versions = pkg.versions
             for version in pypi_versions:
                 if version not in pkg_versions:
@@ -380,8 +381,8 @@ class Show(View):
                         if not rf:
                             rf = self._create_release_file(release, data)
 
-        pkg.update_at = func.now()
-        self.session.add(pkg)
-        log.info('package %s mirrored' % package_name)
+            pkg.update_at = func.now()
+            self.session.add(pkg)
+            log.info('package %s mirrored' % package_name)
         return {'package': pkg,
                 'whlify': asbool(settings.get('pyshop.mirror.wheelify', '0'))}
