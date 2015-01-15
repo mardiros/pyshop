@@ -13,6 +13,7 @@ from pyshop.helpers import pypi
 
 log = logging.getLogger(__name__)
 
+
 # XXX not tested.
 
 class PyPI(XMLRPCView):
@@ -24,7 +25,6 @@ class PyPI(XMLRPCView):
         """
         session = DBSession()
         names = [p.name for p in Package.all(session, order_by=Package.name)]
-        session.rollback()
         return names
 
     def package_releases(self, package_name, show_hidden=False):
@@ -33,9 +33,8 @@ class PyPI(XMLRPCView):
         Returns a list with all version strings if show_hidden is True or
         only the non-hidden ones otherwise."""
         session = DBSession()
-        releases = Release.by_package_name(session, package_name, show_hidden)
-        session.rollback()
-        return releases
+        package = Package.by_name(session, package_name)
+        return [rel.version for rel in package.sorted_releases]
 
     def package_roles(self, package_name):
         """
@@ -58,7 +57,6 @@ class PyPI(XMLRPCView):
         maintained = Package.by_maintainer(session, user)
         owned = [('Owner', p.name) for p in owned]
         maintained = [('Maintainer', p.name) for p in maintained]
-        session.rollback()
         return owned + maintained
 
     def release_downloads(self, package_name, version):
@@ -71,7 +69,6 @@ class PyPI(XMLRPCView):
         if release_files:
             release_files = [(f.release.package.name,
                              f.filename) for f in release_files]
-        session.rollback()
         return release_files
 
     def release_urls(self, package_name, version):
@@ -97,7 +94,8 @@ class PyPI(XMLRPCView):
                  'md5_digest': f.md5_digest,
                  'downloads': f.downloads,
                  'has_sig': f.has_sig,
-                 'comment_text': f.comment_text
+                 'comment_text': f.comment_text,
+                 'python_version': f.python_version
                  }
                 for f in release_files]
 
@@ -137,34 +135,37 @@ class PyPI(XMLRPCView):
         release = Release.by_version(session, package_name, version)
 
         if release:
-            release = {'name': release.package.name,
-                       'version': release.version,
-                       'stable_version': '',
-                       'author': release.author,
-                       'author_email': release.author_email,
-                       'maintainer': release.maintainer,
-                       'maintainer_email': release.maintainer_email,
-                       'home_page': release.home_page,
-                       'license': release.license,
-                       'summary': release.summary,
-                       'description': release.description,
-                       'keywords': release.keywords,
-                       'platform': release.platform,
-                       'download_url': release.download_url,
-                       'classifiers': [c.name for c in release.classifiers],
-                       #'requires': '',
-                       #'requires_dist': '',
-                       #'provides': '',
-                       #'provides_dist': '',
-                       #'requires_external': '',
-                       #'requires_python': '',
-                       #'obsoletes': '',
-                       #'obsoletes_dist': '',
-                       'bugtrack_url': release.bugtrack_url,
-                       'docs_url': release.docs_url,
-                       }
+            result = {'name': release.package.name,
+                      'version': release.version,
+                      'stable_version': '',
+                      'author': release.author.name,
+                      'author_email': release.author.email,
+                      'home_page': release.home_page,
+                      'license': release.license,
+                      'summary': release.summary,
+                      'description': release.description,
+                      'keywords': release.keywords,
+                      'platform': release.platform,
+                      'download_url': release.download_url,
+                      'classifiers': [c.name for c in release.classifiers],
+                      #'requires': '',
+                      #'requires_dist': '',
+                      #'provides': '',
+                      #'provides_dist': '',
+                      #'requires_external': '',
+                      #'requires_python': '',
+                      #'obsoletes': '',
+                      #'obsoletes_dist': '',
+                      'bugtrack_url': release.bugtrack_url,
+                      'docs_url': release.docs_url,
+                      }
 
-        return release
+        if release.maintainer:
+            result.update({'maintainer': release.maintainer.name,
+                           'maintainer_email': release.maintainer.email,
+                           })
+
+        return dict([(key, val or '') for key, val in result.items()])
 
     def search(self, spec, operator='and'):
         """
@@ -200,14 +201,13 @@ class PyPI(XMLRPCView):
         """
         api = pypi.proxy
         rv = []
-         # search in proxy
+        # search in proxy
         for k, v in spec.items():
             rv += api.search({k: v}, True)
 
         # search in local
         session = DBSession()
         release = Release.search(session, spec, operator)
-        session.rollback()
         rv += [{'name': r.package.name,
                 'version': r.version,
                 'summary': r.summary,
