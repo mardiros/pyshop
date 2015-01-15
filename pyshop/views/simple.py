@@ -141,7 +141,8 @@ class UploadReleaseFile(View):
 
         classifiers = params.getall('classifiers')
         for name in classifiers:
-            classifier = Classifier.by_name(self.session, name)
+            classifier = Classifier.by_name(self.session, name,
+                                            create_if_not_exists=True)
             while classifier:
                 if classifier not in release.classifiers:
                     release.classifiers.append(classifier)
@@ -230,7 +231,8 @@ class Show(View):
             self.session.flush()
 
         for name in data.get('classifiers', []):
-            classifier = Classifier.by_name(self.session, name.decode('utf-8'))
+            classifier = Classifier.by_name(self.session, name.decode('utf-8'),
+                                            create_if_not_exists=True)
 
             while classifier:
                 if classifier not in release.classifiers:

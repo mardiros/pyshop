@@ -401,7 +401,7 @@ class Classifier(Base):
         return self.name.rsplit(u'::', 1)[-1].strip()
 
     @classmethod
-    def by_name(cls, session, name):
+    def by_name(cls, session, name, **kwargs):
         """
         Get a classifier from a given name.
 
@@ -415,6 +415,9 @@ class Classifier(Base):
         :rtype: :class:`pyshop.models.Classifier`
         """
         classifier = cls.first(session, where=(cls.name == name,))
+
+        if not kwargs.get('create_if_not_exists', False):
+            return classifier
 
         if not classifier:
             splitted_names = [n.strip() for n in name.split(u'::')]
@@ -534,6 +537,9 @@ class Package(Base):
 
         if opts.get('local_only'):
             where.append(cls.local == True)
+
+        if opts.get('names'):
+            where.append(cls.name.in_(opts['names']))
 
         if opts.get('classifiers'):
             ids = [c.id for c in opts.get('classifiers')]

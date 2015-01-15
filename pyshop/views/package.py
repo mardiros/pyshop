@@ -32,16 +32,26 @@ class List(View):
             opts['local_only'] = req.params.get('local_only', '0') == '1'
         else:
             opts['local_only'] = True
+
+        opts['names'] = []
+        opts['classifiers'] = [] # TODO: set defaults in settings
+
         if 'form.submitted' in req.params or req.params.get('classifier.added'):
             classifiers = [Classifier.by_id(self.session, id)
                            for id in set(req.params.getall('classifiers'))]
+            names = req.params.getall('names')
 
             if req.params.get('classifier.added'):
-                classifiers.append(Classifier.by_name(self.session,
-                                   req.params['classifier.added']))
+                classifier = Classifier.by_name(self.session,
+                                                req.params['classifier.added'])
+                if classifier:
+                    log.info('!'*80)
+                    log.info(classifier.__dict__)
+                    classifiers.append(classifier)
+                else:
+                    names.append(req.params['classifier.added'])
             opts['classifiers'] = classifiers
-        else:
-            opts['classifiers'] = [] # TODO: set defaults in settings
+            opts['names'] = names
 
         package_count = Package.by_filter(self.session, opts, count='*')
 

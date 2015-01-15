@@ -34,7 +34,8 @@ def setUpModule():
                          u'Intended Audience :: Developers',
                          u'Intended Audience :: System Administrators'
                          ]
-    classifiers = [Classifier.by_name(session, name=c)
+    classifiers = [Classifier.by_name(session, name=c,
+                                      create_if_not_exists=True)
                    for c in classifiers_names]
 
     pack1 = Package(name=u'mirrored_package1')

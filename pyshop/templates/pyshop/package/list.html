@@ -29,11 +29,20 @@
       {% trans %}locals only{% endtrans %}
     </label>
   </div>
+  {% for name in filter.names %}
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" id="name_{{loop.index}}"
+             onchange="$('#submitter').click()" name="names"
+             checked="checked" value="{{name}}"/>{{name}}
+    </label>
+  </div>
+  {% endfor %}
   {% for c in filter.classifiers %}
   <div class="checkbox">
     <label>
-      <input type="checkbox" id="classifier_{{loop.index}}" 
-             onchange="$('#submitter').click()" name="classifiers" 
+      <input type="checkbox" id="classifier_{{loop.index}}"
+             onchange="$('#submitter').click()" name="classifiers"
              checked="checked" value="{{c.id}}"/> {{c.name}}
     </label>
   </div>
