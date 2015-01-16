@@ -8,17 +8,20 @@
 {% endblock %}
 
 {% block main %}
-    {% for f in release.files %}
-        {% if f.package_type == 'sdist' %}
-            <p>
-            <a class="btn btn-success btn-sm active" role="button"
-               href="{{ route_url('show_release_file', file_id=f.id, filename=f.filename)
-                       }}#{{ f.md5_digest }}">
-              <span class="glyphicon glyphicon-download-alt"></span>
-              {% trans filename=f.filename %}Download ({{filename}}){% endtrans %}</a></p>
-        {% endif %}
-    {% endfor %}
-    <p>{% trans %}Other Version:{% endtrans %}
+
+  {% for f in release.files %}
+      {% if f.package_type == 'sdist' %}
+          <p>
+          <a class="btn btn-success btn-sm active" role="button"
+             href="{{ route_url('show_release_file', file_id=f.id, filename=f.filename)
+                     }}#{{ f.md5_digest }}">
+            <span class="glyphicon glyphicon-download-alt"></span>
+            {% trans filename=f.filename %}Download ({{filename}}){% endtrans %}</a></p>
+      {% endif %}
+  {% endfor %}
+
+  <p>
+    {% trans %}Other Version:{% endtrans %}
     {% set display = 0 %}
     {% for r in package.sorted_releases %}
         {% if r.id == release.id %}
@@ -47,8 +50,8 @@
             ...
         {% endif %}
     {% endfor %}
-    </p>
-    {% if not release.package.local %}
+  </p>
+  {% if not release.package.local %}
     <p>
       {% if release.package.update_at %}
       
@@ -64,92 +67,187 @@
       {% else %}
         {% trans %}refreshing during next install{% endtrans %}
       {% endif %}
-    {% endif %}</p>
+    </p>
+  {% endif %}
 
-    <ul id="myTab" class="nav nav-tabs">
-      <li class="active"><a href="#Desc" data-toggle="tab">{% trans %}Description{% endtrans %}</a></li>
-      <li><a href="#Classif" data-toggle="tab">{% trans %}Classification{% endtrans %}</a></li>
-      <li><a href="#Release" data-toggle="tab">{% trans %}Release File{% endtrans %}</a></li>
-    </ul>
-    <div id="myTabContent" class="tab-content">
-      <div class="tab-pane fade in active" id="Desc">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            {{ parse_rest(release.description) }}
-          </div>
+  <ul id="myTab" class="nav nav-tabs">
+    <li class="active"><a href="#Desc" data-toggle="tab">{% trans %}Description{% endtrans %}</a></li>
+    <li><a href="#Classif" data-toggle="tab">{% trans %}Classification{% endtrans %}</a></li>
+    <li><a href="#Release" data-toggle="tab">{% trans %}Release File{% endtrans %}</a></li>
+    <li><a href="#Roles" data-toggle="tab">{% trans %}Roles{% endtrans %}</a></li>
+  </ul>
+  <div id="myTabContent" class="tab-content">
+    <div class="tab-pane fade in active" id="Desc">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          {{ parse_rest(release.description) }}
         </div>
       </div>
-      <div class="tab-pane fade" id="Classif">
-    <dl class="dl-horizontal">
-        <dt>{% trans %}Type:{% endtrans %}</dt>
-        <dd>{% if release.package.local %}
-                {% trans %}local{% endtrans %}
-            {% else %}
-                {% trans %}mirrored{% endtrans %}
-            {% endif %}
-        </dd>
-        {% if not release.package.local %}
-            <dt>PyPI</dt>
-            <dd><a href="https://pypi.python.org/pypi/{{release.package.name}}">
-                    https://pypi.python.org/pypi/{{release.package.name}}
-                </a></dd>
-            </dd>
-        {% endif %}
-        <dt>{% trans %}Home page:{% endtrans %}</dt>
-        <dd><a href="{{release.home_page}}">{{release.home_page}}</a></dd>
-        <dt>{% trans %}Author:{% endtrans %}</dt>
-        <dd>{{release.author.name}}</dd>
-        <dt>{% trans %}Classifiers:{% endtrans %}</dt>
-        <dd>
-            <ul class="classifiers">
-                {% for c in release.classifiers %}
-                    {% if not c.childs %}
-                        <li>{{c.name}}</li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </dd>
-        {% if release.keywords %}
-            <dt>{% trans %}Keywords:{% endtrans %}</dt>
-            <dd>{{release.keywords}}</dd>
-        {% endif %}
-    </dl>
-
-      </div>
-      <div class="tab-pane fade" id="Release">
-    <table class="table table-hover table-condensed">
-      <thead>
-        <tr>
+    </div>
+    <div class="tab-pane fade" id="Classif">
+      <dl class="dl-horizontal">
+          <dt>{% trans %}Type:{% endtrans %}</dt>
+          <dd>{% if release.package.local %}
+                  {% trans %}local{% endtrans %}
+              {% else %}
+                  {% trans %}mirrored{% endtrans %}
+              {% endif %}
+          </dd>
+          {% if not release.package.local %}
+              <dt>PyPI</dt>
+              <dd><a href="https://pypi.python.org/pypi/{{release.package.name}}">
+                      https://pypi.python.org/pypi/{{release.package.name}}
+                  </a></dd>
+              </dd>
+          {% endif %}
+          <dt>{% trans %}Home page:{% endtrans %}</dt>
+          <dd><a href="{{release.home_page}}">{{release.home_page}}</a></dd>
+          <dt>{% trans %}Author:{% endtrans %}</dt>
+          <dd>{{release.author.name}}</dd>
+          <dt>{% trans %}Classifiers:{% endtrans %}</dt>
+          <dd>
+              <ul class="classifiers">
+                  {% for c in release.classifiers %}
+                      {% if not c.childs %}
+                          <li>{{c.name}}</li>
+                      {% endif %}
+                  {% endfor %}
+              </ul>
+          </dd>
+          {% if release.keywords %}
+              <dt>{% trans %}Keywords:{% endtrans %}</dt>
+              <dd>{{release.keywords}}</dd>
+          {% endif %}
+      </dl>
+    </div>
+    <div class="tab-pane fade" id="Release">
+      <table class="table table-hover table-condensed">
+        <thead>
+          <tr>
             <th>{% trans %} files {% endtrans %}</th>
             <th>{% trans %} version {% endtrans %}</th>
             <th>{% trans %} author {% endtrans %}</th>
             <th>{% trans %} downloads {% endtrans %}</th>
-        </tr>
-       </thead>
-      <tbody>
-        {% for file in release.files %}
-        <tr>
-            <td>
-                <a class="download"
-                   href="{{ route_url('show_release_file', file_id=file.id,
-                            filename=file.filename)
-                           }}#{{ file.md5_digest }}">{{file.filename}}
-                </a>
-            </td>
-            <td class="num">
-                v{{ release.version }}
-            </td>
-            <td>
-                {{ release.author.login }}
-            </td>
-            <td class="num">{{ file.downloads }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-      </div>
+          </tr>
+         </thead>
+        <tbody>
+          {% for file in release.files %}
+          <tr>
+              <td>
+                  <a class="download"
+                     href="{{ route_url('show_release_file', file_id=file.id,
+                              filename=file.filename)
+                             }}#{{ file.md5_digest }}">{{file.filename}}
+                  </a>
+              </td>
+              <td class="num">
+                  v{{ release.version }}
+              </td>
+              <td>
+                  {{ release.author.login }}
+              </td>
+              <td class="num">{{ file.downloads }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+    <div class="tab-pane fade" id="Roles">
+      <table class="table table-hover table-condensed">
+        <thead>
+          <tr>
+              <th>{% trans %} Role {% endtrans %}</th>
+              <th>{% trans %} User name {% endtrans %}</th>
+              <th>{% trans %} User email {% endtrans %}</th>
+              {% if can_edit_role %}
+                <th>{% trans %} Edit {% endtrans %}</th>
+              {% endif %}
+          </tr>
+         </thead>
+        <tbody>
+          <tr>
+              <td>{% trans %} Author {% endtrans %}</td>
+              <td>{{ release.author.name }}</td>
+              <td>{{ release.author.email }}</td>
+              {% if can_edit_role %}
+                <td></td>
+              {% endif %}
+          </tr>
+          {% if release.maintainer %}
+            <tr>
+              <td>{% trans %} Maintainer {% endtrans %}</td>
+              <td>{{ release.maintainer.name }}</td>
+              <td>{{ release.maintainer.email }}</td>
+              {% if can_edit_role %}
+                <td></td>
+              {% endif %}
+            </tr>
+          {% endif %}
+          {% for owner in release.package.owners %}
+            <tr>
+              <td>{% trans %} Package Owner {% endtrans %}</td>
+              <td>{{ owner.name }}</td>
+              <td>{{ owner.email or '' }}</td>
+              {% if can_edit_role and release.package.owners|length > 1 %}
+                <td>
+                  <form role="form-inline" action="" method="post">
+                    <input type="hidden" name="login" value="{{ owner.login }}">
+                    <button type="submit" class="btn btn-danger" name="form.remove_owner">
+                      <span class="glyphicon glyphicon-remove"></span>
+                      {% trans %}Remove{% endtrans %}
+                    </button>
+                  </form>
+                </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+          {% for maintainer in release.package.maintainers %}
+            <tr>
+              <td>{% trans %} Package Maintainer {% endtrans %}</td>
+              <td>{{ maintainer.name }}</td>
+              <td>{{ maintainer.email or '' }}</td>
+              {% if can_edit_role %}
+                <td>
+                  <form role="form-inline" action="" method="post">
+                    <input type="hidden" name="login" value="{{ maintainer.login }}">
+                    <button type="submit" class="btn btn-danger" name="form.remove_maintainer">
+                      <span class="glyphicon glyphicon-remove"></span>
+                      {% trans %}Remove{% endtrans %}
+                    </button>
+                  </form>
+                </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 
-
+      {% if can_edit_role %}
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            {% trans %}Modify Roles{% endtrans %}
+          </div>
+          <div class="panel-body">
+            <form role="form-inline" action="" method="post">
+              <div class="form-group">
+                <label>{% trans %}Username:{% endtrans %}</label>
+                <input type="text" name="login"  class="form-control"
+                       value=""/>
+              </div>
+              <div class="form-group">
+                <label>{% trans %}Role:{% endtrans %}</label>
+                <select name="role">
+                  <option value="maintainer">{%trans%}Maintainer{%endtrans%}</option>
+                  <option value="owner">{%trans%}Owner{%endtrans%}</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-secondary" name="form.add_role">
+                <span class="glyphicon glyphicon-plus"></span>
+                {% trans %}Add role to user{% endtrans %}
+              </button>
+            </form>
+          </div>
+        {% endif %}
+    </div>
+  </div>
 {% endblock %}

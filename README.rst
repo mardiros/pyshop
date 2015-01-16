@@ -135,19 +135,6 @@ This should work now::
     python setup.py sdist upload -v -r pyshop
 
 
-Missing Features
-================
-
-Developer cannot add other accounts to give them upload right to their project.
-This can be done in the database or in the pyshop shell by an administrator.
-
-::
-
-    $ pyshop_shell pyshop.ini
-    In [1]: pkg = Package.by_name(session, u'pyshop')
-    In [2]: pkg.owners.append(User.by_login(session, u'admin'))
-    In [3]: session.commit()
-
 Alternatives
 ============
 

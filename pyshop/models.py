@@ -169,6 +169,13 @@ class User(Base):
     password = property(_get_password, _set_password)
     password = synonym('_password', descriptor=password)
 
+    @property
+    def permissions(self):
+        result = set()
+        for group in self.groups:
+            result = result.union([perm.name for perm in group.permissions])
+        return list(result)
+
     @classmethod
     def by_login(cls, session, login, local=True):
         """
@@ -339,6 +346,9 @@ class User(Base):
                         where=(cls.local == True,),
                         order_by=cls.login,
                         **kwargs)
+
+    def has_permission(self, permission):
+        return permission in self.permissions
 
     def validate(self, session):
         """

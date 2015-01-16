@@ -7,9 +7,9 @@ import logging
 import os
 
 from sqlalchemy.sql.expression import func
-from pyramid.httpexceptions import HTTPNotFound
+from pyramid.httpexceptions import HTTPNotFound, HTTPForbidden
 
-from pyshop.models import Package, Release, Classifier
+from pyshop.models import Package, Release, Classifier, User
 
 from .base import View, RedirectView
 
@@ -86,6 +86,47 @@ class Show(View):
             package.update_at = None
             self.session.add(package)
 
+        owners = dict((usr.login, usr) for usr in package.owners)
+        can_edit_role = self.login in owners.keys() and package.local
+
+        if 'form.add_role' in self.request.params:
+
+            if not can_edit_role:
+                raise HTTPForbidden()
+
+            user = User.by_login(self.session, self.request.params['login'])
+            if user and user.has_permission('upload_releasefile'):
+                if self.request.params['role'] == 'owner':
+                    if user.login not in owners:
+                        package.owners.append(user)
+                else:
+                    maintainers = [usr.login for usr in package.owners]
+                    if user.login not in maintainers:
+                        package.maintainers.append(user)
+                self.session.add(package)
+
+        if 'form.remove_maintainer' in self.request.params:
+            if not can_edit_role:
+                raise HTTPForbidden()
+
+            user = User.by_login(self.session, self.request.params['login'])
+            if user:
+                maintainers = dict((usr.login, usr)
+                                   for usr in package.maintainers)
+                if user.login in maintainers:
+                    package.maintainers.remove(maintainers[user.login])
+                    self.session.add(package)
+
+        if 'form.remove_owner' in self.request.params:
+            if not can_edit_role:
+                raise HTTPForbidden()
+
+            user = User.by_login(self.session, self.request.params['login'])
+            if user:
+                if user.login in owners:
+                    package.owners.remove(owners[user.login])
+                    self.session.add(package)
+
         if 'release_version' in self.request.matchdict:
             release = Release.by_version(self.session, package.name,
                 self.request.matchdict['release_version'])
@@ -94,6 +135,7 @@ class Show(View):
 
         return {u'package': package,
                 u'release': release,
+                u'can_edit_role': can_edit_role,
                 }
 
 
