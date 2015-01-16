@@ -26,6 +26,7 @@ class PackageTestCase(case.ViewTestCase):
         view = Show(self.create_request(
             matchdict={'package_name': u'local_package1'}))()
         self.assertEqual(set(view.keys()),
-                         set(['pyshop', 'release', 'package']))
+                         set(['pyshop', 'release', 'package',
+                              'can_edit_role']))
         self.assertIsInstance(view['package'], Package)
         self.assertEqual(view['package'].name, u'local_package1')
