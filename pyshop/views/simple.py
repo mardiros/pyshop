@@ -20,7 +20,6 @@ from pyshop.helpers import pypi
 
 from .base import View
 
-
 log = logging.getLogger(__name__)
 
 
@@ -323,6 +322,7 @@ class Show(View):
 
                 if pkg_info:
                     package_name, pypi_versions = pkg_info
+            pypi_versions = [ver.decode('utf-8') for ver in pypi_versions]
         else:
             pypi_versions = []
 
@@ -369,21 +369,25 @@ class Show(View):
         self.session.flush()
         if not pkg.local and refresh:
             log.debug('refreshing %s package' % package_name)
-            pkg_versions = pkg.versions
-            for version in pypi_versions:
-                if version not in pkg_versions:
-                    release_data = api.release_data(package_name, version)
-                    release = self._create_release(pkg, release_data,
-                                                   session_users)
+            pkg_versions = set(pypi_versions).difference(pkg.versions)
+            if not pkg_versions:
+                log.info('No new version to mirror')
+                log.debug('pypi versions: {0!r}'.format(pypi_versions))
+                log.debug('mirrored versions: {0!r}'.format(pkg.versions))
+            for version in pkg_versions:
+                log.info('Mirroring version {0}'.format(version))
+                release_data = api.release_data(package_name, version)
+                release = self._create_release(pkg, release_data,
+                                               session_users)
 
-                    release_files = api.release_urls(package_name, version)
+                release_files = api.release_urls(package_name, version)
 
-                    for data in release_files:
-                        filename = data['filename'].decode('utf-8')
-                        rf = ReleaseFile.by_filename(self.session, release,
-                                                     filename)
-                        if not rf:
-                            rf = self._create_release_file(release, data)
+                for data in release_files:
+                    filename = data['filename'].decode('utf-8')
+                    rf = ReleaseFile.by_filename(self.session, release,
+                                                 filename)
+                    if not rf:
+                        rf = self._create_release_file(release, data)
 
             pkg.update_at = func.now()
             self.session.add(pkg)
