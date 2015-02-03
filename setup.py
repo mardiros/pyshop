@@ -27,7 +27,7 @@ requires = [
     'zope.sqlalchemy',
 
     'cryptacular',
-    'requests >=1.2, <1.0',  # version excluded bugs in case a proxy is used
+    'requests',
     'docutils',
     'setuptools',            # compare package version
 ]
