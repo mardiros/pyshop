@@ -1,6 +1,12 @@
 Changelist
 ==========
 
+1.2.1 - Released on 2015-02-15
+------------------------------
+
+- Update requests dependencies
+
+
 1.2.0 - Released on 2015-02-15
 ------------------------------
 
