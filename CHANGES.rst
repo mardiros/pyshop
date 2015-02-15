@@ -1,6 +1,17 @@
 Changelist
 ==========
 
+1.2.0 - Released on 2015-02-15
+------------------------------
+
+- Implement roles edition
+- Filter package by names, if the input is not a classifier
+- Add purge option to packages (Chris Powell)
+- Add remove file from disk (Chris Powell)
+- Fix XML-RPC view
+- Fix bugs
+
+
 1.1.1 - Released on 2014-11-04
 ------------------------------
 
