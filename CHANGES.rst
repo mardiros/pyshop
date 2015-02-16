@@ -1,6 +1,12 @@
 Changelist
 ==========
 
+1.2.2 - Released on 2015-02-16
+------------------------------
+
+- Update pyramid dependencies
+
+
 1.2.1 - Released on 2015-02-15
 ------------------------------
 
