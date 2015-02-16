@@ -17,7 +17,7 @@ with open(os.path.join(here, 'pyshop', '__init__.py')) as version:
                          re.S).match(version.read()).group(1)
 
 requires = [
-    'pyramid >= 1.2',
+    'pyramid >= 1.5',
     'SQLAlchemy',
 
     'pyramid_filterwarnings',
