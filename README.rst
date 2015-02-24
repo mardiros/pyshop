@@ -36,7 +36,7 @@ Installation
     $ virtualenv pyshop
     $ cd pyshop
     (pyshop)$ source bin/activate
-    (pyshop)$ pip install pyshop[waitress]
+    (pyshop)$ pip install "pyshop[waitress]"
     (pyshop)$ cp pyshop.sample.ini pyshop.ini
     (pyshop)$ vim pyshop.ini  # change the pyshop.cookie_key setting
     (pyshop)$ pyshop_setup pyshop.ini
