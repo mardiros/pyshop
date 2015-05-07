@@ -1,16 +1,13 @@
 #-*- coding: utf-8 -*-
 """
-migrate from 0.7.5 version.
+migrate from 1.2.2 version.
 
-Alter the table release_file, to handle the format "bdist_wheel"
-
-see: http://wheel.readthedocs.org/en/latest/
+Alter the table classifier__release with a cascade on delete.
 
 """
 
 import os
 import sys
-
 
 from pyshop.models import DBSession
 
