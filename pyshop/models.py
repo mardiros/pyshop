@@ -631,8 +631,8 @@ class Package(Base):
 
 
 classifier__release = Table('classifier__release', Base.metadata,
-                            Column('classifier_id',
-                                   Integer, ForeignKey('classifier.id')),
+                            Column('classifier_id', Integer,
+                                   ForeignKey('classifier.id', ondelete='cascade')),
                             Column('release_id',
                                    Integer, ForeignKey('release.id'))
                             )
