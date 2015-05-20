@@ -22,7 +22,7 @@ from pkg_resources import parse_version
 
 from sqlalchemy import (Table, Column, ForeignKey, Index,
                         Integer, Boolean, Unicode, UnicodeText,
-                        DateTime, Enum)
+                        DateTime, Enum, func)
 from sqlalchemy.orm import relationship, synonym, backref
 from sqlalchemy.sql.expression import func, or_, and_
 from sqlalchemy.ext.declarative import declared_attr
@@ -517,16 +517,13 @@ class Package(Base):
         :return: package instance
         :rtype: :class:`pyshop.models.Package`
         """
-        # XXX the field "name" should be created with a
-        # case insensitive collation.
-        pkg = cls.first(session, where=(cls.name.like(name),))
+        name = name.lower()
+        pkg = cls.first(session, where=(func.lower(cls.name).like(name),))
         if not pkg:
-            name = name.replace(u'-', u'_').upper()
+            # XXX _ is a LIKE operator, backslash it
+            name = name.replace(u'-', u'\\_')
             pkg = cls.first(session,
-                            where=(cls.name.like(name),))
-            # XXX _ is a like operator
-            if pkg and pkg.name.upper().replace(u'-', u'_') != name:
-                pkg = None
+                            where=(func.lower(cls.name).like(name),))
         return pkg
 
     @classmethod

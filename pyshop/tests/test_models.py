@@ -89,6 +89,12 @@ class PackageTestCase(ModelTestCase):
         self.assertEqual(pkg.id, 1)
         self.assertEqual(pkg.name, u'mirrored_package1')
 
+        # Test case insensitivity
+        pkg = Package.by_name(self.session, u'MirRored_pAckaGe1')
+        self.assertIsInstance(pkg, Package)
+        self.assertEqual(pkg.id, 1)
+        self.assertEqual(pkg.name, u'mirrored_package1')
+
     def test_by_owner(self):
         from pyshop.models import Package
         pkges = Package.by_owner(self.session, u'johndo')
