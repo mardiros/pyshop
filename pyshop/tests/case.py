@@ -20,10 +20,6 @@ class ModelTestCase(TestCase):
     def setUp(self):
         transaction.begin()
         self.session = DBSession()
-        # With SQLite3 - used for tests - 'x' LIKE 'X' returns true which is
-        # not the case of, for instance, PostgreSQL. Disabling this behaviour
-        # makes tests more realistic.
-        self.session.execute('PRAGMA case_sensitive_like = ON')
 
     def tearDown(self):
         transaction.commit()
