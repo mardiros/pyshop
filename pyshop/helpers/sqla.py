@@ -42,7 +42,7 @@ class _Base(object):
     def find(cls, session, join=None, where=None, order_by=None, limit=None,
              offset=None, count=None):
         if count:
-            order_by = None  # XXX posgresql doesn't like it
+            offset = limit = order_by = None  # XXX posgresql doesn't like it
         qry = cls.build_query(session, join, where, order_by, limit,
                               offset, count)
         return qry.scalar() if count is not None else qry.all()
