@@ -38,6 +38,9 @@ def populate(engine, interactive=True):
 
     Base.metadata.create_all(engine)
     session = DBSession()
+    if Group.by_name(session, u'admin'):
+        return
+
     user_perm = Permission(name=u'user_view')
     admin_perm = Permission(name=u'admin_view')
     download_perm = Permission(name=u'download_releasefile')

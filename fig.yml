@@ -28,7 +28,7 @@ mysql:
 
 pgpyshop:
   build: .
-  # user: docker
+  user: docker
   command: pserve development.pg.ini --reload
   ports:
     - 6543:6543
@@ -36,6 +36,9 @@ pgpyshop:
     - .:/srv/pyshop
   links:
     - postgresql:postgresql.localdomain
+  environment:
+    PYSHOP_CONFIG_URI: development.pg.ini
+
 
 postgresql:
   image: postgres:9.4
