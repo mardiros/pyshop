@@ -1,0 +1,5 @@
+pyshop.egg-info
+*.pyc
+dist
+venv2
+venv3
