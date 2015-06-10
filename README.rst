@@ -71,16 +71,18 @@ with the command:
     docker-compose up pgpyshop
 
 
-It will create the database with the default pyshop users admin/changeme
-and pip/changeme. 
+It will create the database with the default pyshop users:
+
+* privileged user:   login admin, password: changeme
+* unprivileged user: login pip, password changeme
 
 If you want to use a different orchestrator, you have to link the postgresql
-container to pyshop container with the name postgresql.localdomain
+container to Pyshop container with the name postgresql.localdomain
 
 The MySQL support does not automate the database setup right now.
 
 
-The official docker image of Pyshop is available here on the docker hub:
+The official Docker image of Pyshop is available here on the Docker Hub:
 
 https://registry.hub.docker.com/u/mardiros/pyshop/
 
