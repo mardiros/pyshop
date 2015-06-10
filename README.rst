@@ -58,6 +58,27 @@ The pythop.sample.ini file use waitress as the default WSGI server, but,
 if you are familiar with another WSGI server that support paste format,
 you could use it.
 
+Using Docker
+~~~~~~~~~~~~
+
+Currently, there is an image of pyshop used for development purpose,
+it support both MySQL and PostgreSQL. The PostgreSQL integration is
+fully operation, you can run a new Pyshop install using docker-compose,
+with the command:
+
+::
+
+  docker-compose up pgpyshop
+
+
+It will create the database with the default pyshop users `admin`/`changeme`
+and `pip`/`changeme`. 
+
+If you want to use a different orchestrator, you have to link the postgresql
+container to pyshop container with the name `postgresql.localdomain`
+
+The MySQL support does not automate the database setup right now.
+
 
 Configuring your environment
 ============================
