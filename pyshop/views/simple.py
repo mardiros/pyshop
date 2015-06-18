@@ -259,7 +259,7 @@ class Show(View):
     def _search_package(self, package_name):
         api = pypi.proxy
 
-        search_result = api.search({'name': package_name}, True)
+        search_result = api.search({'name': package_name})
         search_count = len(search_result)
         if not search_count:
             return None
