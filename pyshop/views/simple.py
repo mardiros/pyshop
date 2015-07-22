@@ -288,7 +288,7 @@ class Show(View):
         package_name = self.request.matchdict['package_name']
         pkg = Package.by_name(self.session, package_name)
         if pkg is None:
-            pkg = Package.by_name(self.session, package_name.repalce('-', '_'))
+            pkg = Package.by_name(self.session, package_name.replace('-', '_'))
 
         refresh = True
         session_users = {}
