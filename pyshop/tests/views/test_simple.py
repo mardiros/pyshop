@@ -1,14 +1,21 @@
 
-from pyshop.tests import case
-from pyshop.tests import setUpModule, tearDownModule
+import pyshop.tests
+
+from ..case import ViewTestCase
 from pyshop.compat import StringIO
+
+
+setUpModule = pyshop.tests.setUpModule
+
+tearDownModule = pyshop.tests.tearDownModule
+
 
 class DummyContent(object):
     filename = u'whatever.tar.gz'
     file = StringIO()
 
 
-class SimpleTestCase(case.ViewTestCase):
+class SimpleTestCase(ViewTestCase):
 
     def test_get_list_ok(self):
         from pyshop.views.simple import List
@@ -42,10 +49,8 @@ class SimpleTestCase(case.ViewTestCase):
         self.assertIsInstance(view['release_file'], ReleaseFile)
 
     def test_post_uploadreleasefile_existing_pkg_ok(self):
-        from pyramid.httpexceptions import HTTPForbidden
 
         from pyshop.views.simple import UploadReleaseFile
-        from pyshop.models import Package, Release, ReleaseFile
 
         view = UploadReleaseFile(self.create_request({
             'name': u'local_package1',
@@ -56,10 +61,10 @@ class SimpleTestCase(case.ViewTestCase):
             'home_page': u'http://local_package1'
             }))()
         self.assertEqual(set(view.keys()),
-                          set(['pyshop', 'release_file']))
+                         set(['pyshop', 'release_file']))
         self.assertEqual(view['release_file'].filename,
-                          u'local_package1-0.2.tar.gz')
+                         u'local_package1-0.2.tar.gz')
         self.assertEqual(view['release_file'].release.home_page,
-                          u'http://local_package1')
+                         u'http://local_package1')
         self.assertEqual(view['release_file'].release.author.login,
-                          u'admin')
+                         u'admin')
