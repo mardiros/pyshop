@@ -1,11 +1,17 @@
 
+import unittest
+
 import pyramid
 
 import pyshop.tests
 
+from copy import deepcopy
+
+from nose.tools import raises
 from pyramid.exceptions import HTTPForbidden
 
 from ..case import ViewTestCase
+from pyshop.models import create_engine, dispose_engine
 from pyshop.compat import StringIO
 
 
@@ -84,3 +90,28 @@ class SimpleTestCase(ViewTestCase):
         UploadReleaseFile(self.create_request({
             'version': u'0.1dev',
         }))()
+
+
+class SimpleUploadReleaseFileBadVersionFunctionalTests(unittest.TestCase):
+
+    def setUp(self):
+        from pyshop import main
+        from ..conf import settings
+        settings = deepcopy(settings)
+        settings['pyshop.upload.sanitize'] = 1
+        app = main({}, **settings)
+
+        from pyshop.bin.install import populate
+        engine = create_engine(settings)
+        populate(engine, interactive=False)
+
+        from webtest import TestApp
+        self.testapp = TestApp(app)
+
+    def tearDown(self):
+        dispose_engine()
+
+    def test_post_uploadreleasefile_bad_version_403(self):
+
+        self.testapp.authorization = ('Basic', ('admin', 'changeme'))
+        self.testapp.post('/simple/', {'version': '0.1dev'}, status=403)

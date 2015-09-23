@@ -14,4 +14,9 @@ settings = {'jinja2.directories': 'pyshop:templates',
             'pyshop.mirror.sanitize': False,
             'pyshop.pypi.url': 'http://localhost:65432',
             'pyshop.repository': '/tmp',
+            'pyramid.debug_notfound': True,
+            'pyramid.includes': (
+                'pyramid_filterwarnings', 'pyramid_tm', 'pyramid_jinja2',
+                'pyshop'
+            ),
             }
