@@ -1,5 +1,9 @@
 
+import pyramid
+
 import pyshop.tests
+
+from pyramid.exceptions import HTTPForbidden
 
 from ..case import ViewTestCase
 from pyshop.compat import StringIO
@@ -68,3 +72,15 @@ class SimpleTestCase(ViewTestCase):
                          u'http://local_package1')
         self.assertEqual(view['release_file'].release.author.login,
                          u'admin')
+
+    @raises(HTTPForbidden)
+    def test_post_uploadreleasefile_bad_version(self):
+
+        from pyshop.views.simple import UploadReleaseFile
+
+        settings = pyramid.threadlocal.get_current_registry().settings
+        settings['pyshop.upload.sanitize'] = 1
+
+        UploadReleaseFile(self.create_request({
+            'version': u'0.1dev',
+        }))()
