@@ -33,7 +33,7 @@ requires = [
 ]
 
 
-test_requires = ['nose']
+test_requires = ['nose', 'webtest']
 if sys.version_info < (2, 7):
     test_requires.append('unittest2')
 
