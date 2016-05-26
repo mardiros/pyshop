@@ -308,7 +308,8 @@ class User(Base):
                 log.debug('create user %s'%login)
                 user_ldap = User()
                 user_ldap.login = login
-                user_ldap.password = password
+                # when creating a User, do not copy the ldap password
+                user_ldap.password = ''
                 user_ldap.local = True
                 user_ldap.firstname = attrs[settings['pyshop.ldap.first_name_attr']][0]
                 user_ldap.lastname = attrs[settings['pyshop.ldap.last_name_attr']][0]
