@@ -34,13 +34,15 @@ proxy = None
 class RequestsTransport(xmlrpc.Transport):
     """
     Drop in Transport for xmlrpclib that uses Requests instead of httplib
+
     # https://gist.github.com/chrisguitarguy/2354951
     """
     # change our user agent to reflect Requests
     user_agent = "PyShop"
 
-    # override this if you'd like to https
-    use_https = True
+    def __init__(self, use_https):
+        xmlrpc.Transport.__init__(self)  # Transport does not inherit object
+        self.scheme = 'https' if use_https else 'http'
 
     def request(self, host, handler, request_body, verbose):
         """
@@ -81,14 +83,14 @@ class RequestsTransport(xmlrpc.Transport):
         Build a url for our request based on the host, handler and use_http
         property
         """
-        scheme = 'https' if self.use_https else 'http'
-        return '%s://%s%s' % (scheme, host, handler)
+        return '%s://%s%s' % (self.scheme, host, handler)
 
 
 
 def set_proxy(proxy_url, transport_proxy=None):
     """Create the proxy to PyPI XML-RPC Server"""
     global proxy
-    proxy = xmlrpc.ServerProxy(proxy_url,
-                               transport=RequestsTransport(),
-                               allow_none=True)
+    proxy = xmlrpc.ServerProxy(
+        proxy_url,
+        transport=RequestsTransport(proxy_url.startswith('https://')),
+        allow_none=True)
