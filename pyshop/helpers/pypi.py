@@ -40,7 +40,7 @@ class RequestsTransport(xmlrpc.Transport):
     user_agent = "PyShop"
 
     # override this if you'd like to https
-    use_https = False
+    use_https = True
 
     def request(self, host, handler, request_body, verbose):
         """
