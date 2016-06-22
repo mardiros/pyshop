@@ -39,7 +39,7 @@ class PyPI(XMLRPCView):
     def package_roles(self, package_name):
         """
         Retrieve a list of users and their attributes roles for a given
-        package_name. Role is either 'Maintainer' or 'Owner'. 
+        package_name. Role is either 'Maintainer' or 'Owner'.
         """
         session = DBSession()
         package = Package.by_name(session, package_name)
@@ -50,7 +50,7 @@ class PyPI(XMLRPCView):
     def user_packages(self, user):
         """
         Retrieve a list of [role_name, package_name] for a given username.
-        Role is either 'Maintainer' or 'Owner'. 
+        Role is either 'Maintainer' or 'Owner'.
         """
         session = DBSession()
         owned = Package.by_owner(session, user)
@@ -62,7 +62,7 @@ class PyPI(XMLRPCView):
     def release_downloads(self, package_name, version):
         """
         Retrieve a list of files and download count for a given package and
-        release version. 
+        release version.
         """
         session = DBSession()
         release_files = ReleaseFile.by_release(session, package_name, version)
@@ -83,7 +83,7 @@ class PyPI(XMLRPCView):
             downloads
             has_sig
             python_version (required version, or 'source', or 'any')
-            comment_text 
+            comment_text
         """
         session = DBSession()
         release_files = ReleaseFile.by_release(session, package_name, version)
@@ -128,8 +128,8 @@ class PyPI(XMLRPCView):
             obsoletes_dist
             project_url
             docs_url (URL of the packages.python.org docs
-                      if they've been supplied) 
-        If the release does not exist, an empty dictionary is returned. 
+                      if they've been supplied)
+        If the release does not exist, an empty dictionary is returned.
         """
         session = DBSession()
         release = Release.by_version(session, package_name, version)
@@ -169,7 +169,7 @@ class PyPI(XMLRPCView):
 
     def search(self, spec, operator='and'):
         """
-        Search the package database using the indicated search spec. 
+        Search the package database using the indicated search spec.
 
         The spec may include any of the keywords described in the above list
         (except 'stable_version' and 'classifiers'),
@@ -190,14 +190,14 @@ class PyPI(XMLRPCView):
             description
             keywords
             platform
-            download_url 
+            download_url
         Arguments for different fields are combined using either "and"
         (the default) or "or".
         Example: search({'name': 'foo', 'description': 'bar'}, 'or').
         The results are returned as a list of dicts
         {'name': package name,
          'version': package release version,
-         'summary': package release summary} 
+         'summary': package release summary}
         """
         api = pypi.proxy
         rv = []
@@ -220,12 +220,12 @@ class PyPI(XMLRPCView):
         """
         Retrieve a list of (name, version) pairs of all releases classified
         with all of the given classifiers. 'classifiers' must be a list of
-        Trove classifier strings. 
+        Trove classifier strings.
 
         changelog(since)
         Retrieve a list of four-tuples (name, version, timestamp, action)
         since the given timestamp. All timestamps are UTC values.
-        The argument is a UTC integer seconds since the epoch. 
+        The argument is a UTC integer seconds since the epoch.
         """
         session = DBSession()
         release = Release.by_classifiers(session, classifiers)
