@@ -4,6 +4,7 @@ Changelist
 1.2.3 - Released on 2016-06-22
 ------------------------------
 
+- For ldap accounts, do not copy the ldap password into local db
 - Use https for XML-RPC calls
 
 1.2.2 - Released on 2015-02-16
