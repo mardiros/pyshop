@@ -43,10 +43,14 @@ class UploadReleaseFile(View):
     def _guess_filename(self, params, original):
         try:
             if params['filetype'] == 'sdist':
-                if original[-7:] == u'.tar.gz':
+                if original.endswith(u'.tar.gz'):
                     ext = u'tar.gz'
-                elif original[-8:] == u'.tar.bz2':
+                elif original.endswith(u'.tar.bz2'):
                     ext = u'tar.bz2'
+                elif original.endswith(u'.zip'):
+                    ext = u'zip'
+                else:
+                    raise exc.HTTPBadRequest('Unknown extension {}'.format(original))
             else:
                 ext = {u'bdist_egg': u'egg',
                        u'bdist_msi': u'msi',
@@ -79,7 +83,7 @@ class UploadReleaseFile(View):
             and not re.match(settings['pyshop.upload.sanitize.regex'],
                              params['version']
                              )):
-            raise exc.HTTPForbidden()
+            raise exc.HTTPForbidden("Provided version ({}) should match regexp {}".format(params['version'], settings['pyshop.upload.sanitize.regex']))
 
         pkg = Package.by_name(self.session, params['name'])
         if pkg and pkg.local:
