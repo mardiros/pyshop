@@ -33,7 +33,7 @@ from .helpers.sqla import (Database, SessionFactory, ModelError,
                            dispose_engine as dispose_engine_base
                            )
 
-log = logging.getLogger(__file__)
+log = logging.getLogger(__name__)
 crypt = cryptacular.bcrypt.BCRYPTPasswordManager()
 
 Base = Database.register('pyshop')
