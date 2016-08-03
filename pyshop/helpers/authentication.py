@@ -47,7 +47,10 @@ class AuthBasicAuthenticationPolicy(CallbackAuthenticationPolicy):
 
         if User.by_credentials(DBSession(), login, password):
             return login
-
+        
+        if User.by_ldap_credentials(DBSession(), login, password,request.registry.settings):
+            return login
+        
         return None
 
     def unauthenticated_userid(self, request):
