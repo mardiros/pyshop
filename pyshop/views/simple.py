@@ -32,6 +32,10 @@ def _sanitize(input_str):
     return only_ascii
 
 
+def unify_package_name(package_name):
+    return package_name.lower().replace('-', '_').replace('.', '_')
+
+
 class List(View):
 
     def render(self):
@@ -268,11 +272,10 @@ class Show(View):
         if not search_count:
             return None
 
-        package_name = package_name.lower().replace('-', '_')
-        search_result = [p for p in search_result
-                         if p['name'].lower() == package_name
-                         or p['name'].lower().replace('-', '_') == package_name
-                         ]
+        search_result = [
+            p for p in search_result
+            if unify_package_name(p['name']) == unify_package_name(package_name)
+        ]
         log.debug('Found {sc}, matched {mc}'.format(sc=search_count,
                                                     mc=len(search_result)))
 
