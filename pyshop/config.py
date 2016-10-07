@@ -116,7 +116,13 @@ def includeme(config):
 
     # Used by setup.py sdist upload
 
-    config.add_route(u'upload_releasefile', u'/simple/',
+    upload_path = config.get_settings().get('pyshop.upload.route', '/simple/')
+    try:
+        upload_path = upload_path.decode('utf-8')
+    except AttributeError:
+        pass
+
+    config.add_route(u'upload_releasefile', upload_path,
                      request_method=u'POST')
 
     config.add_view(u'pyshop.views.simple.UploadReleaseFile',
