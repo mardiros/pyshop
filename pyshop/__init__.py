@@ -12,7 +12,7 @@ from .security import groupfinder, RootFactory
 from .config import includeme  # used by pyramid
 from .models import create_engine
 from .helpers.i18n import locale_negotiator
-from .helpers.authentication import RouteSwitchAuthPolicy
+from .helpers.authentication import RouteSwitchAuthPolicy, auth_from_config
 
 __version__ = '1.2.3'
 
@@ -30,28 +30,22 @@ def main(global_config, **settings):
     # after the template has been rendered
     create_engine(settings, scoped=True)
 
-    use_remote_user = asbool(settings.get('pyshop.remote_user.use_for_auth', 'False'))
-    remote_user_key = settings.get('pyshop.remote_user.login', 'REMOTE_USER')
+    cookie_key = settings.get('pyshop.cookie_key')
+    if cookie_key is not None:
+        updated_methods = set()
+        for key in settings.keys():
+            if key.startswith('pyshop.auth.methods'):
+                method_name = key.split('.')[-1]
+                method_type = settings.get('.'.join(['pyshop.auth.methods', method_name, 'type']))
+                if method_name not in updated_methods and method_type == 'session':
+                    settings['.'.join('pyshop.auth.methods', method_name, 'secret')] = cookie_key
+                    updated_methods.add(method_name)
 
-    if use_remote_user:
-        remote_user_email_domain = settings.get('pyshop.remote_user.email_domain')
-        remote_user_email_key = settings.get('pyshop.remote_user.email')
-        if remote_user_email_domain is None and remote_user_email_key is None:
-            raise RuntimeError("Pyshop is configured for server authentication, but email isn't "\
-                               "specified. Set either pyshop.remote_user.email_domain or "\
-                               "pyshop.remote_user.email in the config file")
-        if remote_user_email_key is not None:
-            email_factory = lambda login, request: request.environ.get(remote_user_email_key)
-        else:
-            email_factory = lambda login, reqeust: "%s@%s" % (login, remote_user_email_domain)
-    else:
-        email_factory = None
+    web_policy = auth_from_config('web', settings)
+    simple_policy = auth_from_config('simple', settings)
+    upload_policy = auth_from_config('upload', settings)
 
-    authn_policy = RouteSwitchAuthPolicy(secret=settings['pyshop.cookie_key'],
-                                         callback=groupfinder,
-                                         use_remote_user=use_remote_user,
-                                         remote_user_key=remote_user_key,
-                                         remote_user_email_factory=email_factory)
+    authn_policy = RouteSwitchAuthPolicy(web_policy, simple_policy, upload_policy, callback=groupfinder)
 
     authz_policy = ACLPolicy()
     route_prefix = settings.get('pyshop.route_prefix')
@@ -65,3 +59,4 @@ def main(global_config, **settings):
     config.end()
 
     return config.make_wsgi_app()
+
