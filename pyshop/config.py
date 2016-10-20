@@ -116,7 +116,13 @@ def includeme(config):
 
     # Used by setup.py sdist upload
 
-    config.add_route(u'upload_releasefile', u'/simple/',
+    upload_path = config.get_settings().get('pyshop.upload.route', '/simple/')
+    try:
+        upload_path = upload_path.decode('utf-8')
+    except AttributeError:
+        pass
+
+    config.add_route(u'upload_releasefile', upload_path,
                      request_method=u'POST')
 
     config.add_view(u'pyshop.views.simple.UploadReleaseFile',
@@ -204,13 +210,24 @@ def includeme(config):
                     permission=u'user_view')
 
     # Credentials
+    simple_name = config.get_settings().get('pyshop.auth.simple', 'basic')
+    simple_type = config.get_settings().get('pyshop.auth.methods.'+simple_name+'.type', 'basic')
     for route in ('list_simple', 'show_simple',
-                  'show_release_file', 'show_external_release_file',
-                  'upload_releasefile'):
+                  'show_release_file', 'show_external_release_file'):
+        if simple_type == 'basic':
+            config.add_view('pyshop.views.credentials.authbasic',
+                            route_name=route,
+                            context='pyramid.exceptions.Forbidden'
+                            )
+
+    upload_name = config.get_settings().get('pyshop.auth.upload', 'basic')
+    upload_type = config.get_settings().get('pyshop.auth.methods.'+upload_name+'.type', 'basic')
+    if upload_type == 'basic':
         config.add_view('pyshop.views.credentials.authbasic',
-                        route_name=route,
+                        route_name='upload_releasefile',
                         context='pyramid.exceptions.Forbidden'
                         )
+
 
     config.add_view('pyshop.views.credentials.Login',
                     renderer=u'shared/login.html',
