@@ -214,6 +214,9 @@ class PyPI(XMLRPCView):
                 # hack https://mail.python.org/pipermail/catalog-sig/2012-October/004633.html
                 '_pypi_ordering':'',
                 } for r in release]
+        for r in rv:
+            if r.get('summary', None) is None:
+                r['summary'] = ''
         return rv
 
     def browse(self, classifiers):

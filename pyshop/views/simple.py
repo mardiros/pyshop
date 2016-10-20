@@ -8,6 +8,7 @@ release files.
 import re
 import logging
 import os.path
+import requests
 from datetime import datetime, timedelta
 
 from sqlalchemy.sql.expression import func
@@ -22,8 +23,8 @@ from .base import View
 
 log = logging.getLogger(__name__)
 
-
 import unicodedata
+
 
 def _sanitize(input_str):
     input_str = input_str.lower()
@@ -32,14 +33,26 @@ def _sanitize(input_str):
     return only_ascii
 
 
-class List(View):
+def unify_package_name(package_name):
+    return package_name.lower().replace('-', '_').replace('.', '_')
 
+
+json_request_session = requests.Session()
+def get_json_package_info(upstream_url, name):
+    url = os.path.join(upstream_url, name, 'json')
+    try:
+        resp = json_request_session.get(url).json()
+        return [resp['info']]
+    except Exception:
+        return []
+
+
+class List(View):
     def render(self):
         return {'packages': Package.all(self.session, order_by=Package.name)}
 
 
 class UploadReleaseFile(View):
-
     def _guess_filename(self, params, original):
         try:
             if params['filetype'] == 'sdist':
@@ -83,7 +96,9 @@ class UploadReleaseFile(View):
             and not re.match(settings['pyshop.upload.sanitize.regex'],
                              params['version']
                              )):
-            raise exc.HTTPForbidden("Provided version ({}) should match regexp {}".format(params['version'], settings['pyshop.upload.sanitize.regex']))
+            raise exc.HTTPForbidden("Provided version ({}) should match regexp {}".format(
+                params['version'], settings['pyshop.upload.sanitize.regex']
+            ))
 
         pkg = Package.by_name(self.session, params['name'])
         if pkg and pkg.local:
@@ -172,11 +187,9 @@ class UploadReleaseFile(View):
 
 
 class Show(View):
-
     def _to_unicode(self, data):
         # xmlrpc use utf8 encoded string
-        return dict([(key, val.decode('utf-8')
-                      if isinstance(val, str) else val)
+        return dict([(key, val.decode('utf-8') if isinstance(val, str) else val)
                      for key, val in data.items()])
 
     def _create_release(self, package, data, session_users):
@@ -262,17 +275,18 @@ class Show(View):
 
     def _search_package(self, package_name):
         api = pypi.proxy
+        settings = self.request.registry.settings
 
-        search_result = api.search({'name': package_name})
+        search_result = get_json_package_info(settings['pyshop.pypi.url'], package_name)
+        search_result.extend(api.search({'name': package_name}))
         search_count = len(search_result)
         if not search_count:
             return None
 
-        package_name = package_name.lower().replace('-', '_')
-        search_result = [p for p in search_result
-                         if p['name'].lower() == package_name
-                         or p['name'].lower().replace('-', '_') == package_name
-                         ]
+        search_result = [
+            p for p in search_result
+            if unify_package_name(p['name']) == unify_package_name(package_name)
+        ]
         log.debug('Found {sc}, matched {mc}'.format(sc=search_count,
                                                     mc=len(search_result)))
 
