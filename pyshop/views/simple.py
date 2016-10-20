@@ -197,7 +197,7 @@ class Show(View):
                           docs_url=data.get('docs_url'),
                           )
         if data.get('author'):
-            
+
             log.info('Looking for author {0}'.format(data['author']))
             if _sanitize(data['author']) in session_users:
                 author = session_users[_sanitize(data['author'])]
@@ -291,6 +291,9 @@ class Show(View):
 
         package_name = self.request.matchdict['package_name']
         pkg = Package.by_name(self.session, package_name)
+        if pkg is None:
+            pkg = Package.by_name(self.session, package_name.replace('-', '_'))
+
         refresh = True
         session_users = {}
 
