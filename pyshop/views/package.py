@@ -17,7 +17,6 @@ from .base import View, RedirectView
 log = logging.getLogger(__name__)
 
 
-
 class List(View):
 
     def render(self):
@@ -34,9 +33,10 @@ class List(View):
             opts['local_only'] = True
 
         opts['names'] = []
-        opts['classifiers'] = [] # TODO: set defaults in settings
+        opts['classifiers'] = []
 
-        if 'form.submitted' in req.params or req.params.get('classifier.added'):
+        if 'form.submitted' in req.params or \
+                req.params.get('classifier.added'):
             classifiers = [Classifier.by_id(self.session, id)
                            for id in set(req.params.getall('classifiers'))]
             names = req.params.getall('names')
@@ -45,8 +45,6 @@ class List(View):
                 classifier = Classifier.by_name(self.session,
                                                 req.params['classifier.added'])
                 if classifier:
-                    log.info('!'*80)
-                    log.info(classifier.__dict__)
                     classifiers.append(classifier)
                 else:
                     names.append(req.params['classifier.added'])
@@ -59,17 +57,18 @@ class List(View):
                 u'paging': {u'route': u'list_package_page',
                             u'qs': self.request.query_string,
                             u'kwargs': {},
-                            u'max': int(math.ceil(
-                                        float(package_count) / page_size)),
+                            u'max': int(
+                                math.ceil(float(package_count) / page_size)),
                             u'no': page_no},
-                 u'package_count': package_count,
-                 u'packages': Package.by_filter(self.session, opts,
-                     limit=page_size, offset=page_size * (page_no - 1),
-                     order_by=func.lower(Package.name)
-                     ),
-                 u'filter': opts,
-                 u'classifiers': Classifier.all(self.session,
-                             order_by=Classifier.name)
+                u'package_count': package_count,
+                u'packages': Package.by_filter(
+                    self.session, opts,
+                    limit=page_size, offset=page_size * (page_no - 1),
+                    order_by=func.lower(Package.name)
+                    ),
+                u'filter': opts,
+                u'classifiers': Classifier.all(self.session,
+                                               order_by=Classifier.name)
                 }
 
 
@@ -128,7 +127,8 @@ class Show(View):
                     self.session.add(package)
 
         if 'release_version' in self.request.matchdict:
-            release = Release.by_version(self.session, package.name,
+            release = Release.by_version(
+                self.session, package.name,
                 self.request.matchdict['release_version'])
         else:
             release = package.sorted_releases[0]
@@ -166,7 +166,8 @@ class Purge(RedirectView):
 
     def render(self):
 
-        model = self.model.by_id(self.session,
+        model = self.model.by_id(
+            self.session,
             int(self.request.matchdict[self.matchdict_key]))
 
         if 'form.submitted' in self.request.params:

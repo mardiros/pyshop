@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 PyShop models
 
@@ -33,13 +33,17 @@ from .helpers.sqla import (Database, SessionFactory, ModelError,
                            dispose_engine as dispose_engine_base
                            )
 
+
 log = logging.getLogger(__name__)
 crypt = cryptacular.bcrypt.BCRYPTPasswordManager()
 
-Base = Database.register('pyshop')
-DBSession = lambda: SessionFactory.get('pyshop')()
-
 re_email = re.compile(r'^[^@]+@[a-z0-9]+[-.a-z0-9]+\.[a-z]+$', re.I)
+
+Base = Database.register('pyshop')
+
+
+def DBSession():
+    return SessionFactory.get('pyshop')()
 
 
 def _whlify(filename):
@@ -54,7 +58,7 @@ def _whlify(filename):
         raise NotImplementedError('filename %s not supported' % filename)
 
     return u'{pkg}-py{pyvermax}{pyvermin}-none-{platform}'\
-            '.whl'.format(pkg=pkg,
+           u'.whl'.format(pkg=pkg,
                           platform='any',  # XXX should works ! get_platform()
                           pyvermax=sys.version_info[0],
                           pyvermin=sys.version_info[1],
@@ -241,15 +245,17 @@ class User(Base):
         :rtype: :class:`pyshop.models.User`
 
         """
-        if not asbool(settings.get('pyshop.ldap.use_for_auth','False')):
+        if not asbool(settings.get('pyshop.ldap.use_for_auth', 'False')):
             return None
 
         if ldap is None:
-            raise ImportError("no module name ldap. Install python-ldap package")
+            raise ImportError(
+                "no module name ldap. Install python-ldap package")
 
         try:
             if hasattr(ldap, 'OPT_X_TLS_CACERTDIR'):
-                ldap.set_option(ldap.OPT_X_TLS_CACERTDIR, '/etc/openldap/cacerts')
+                ldap.set_option(
+                    ldap.OPT_X_TLS_CACERTDIR, '/etc/openldap/cacerts')
             ldap.set_option(ldap.OPT_REFERRALS, ldap.OPT_OFF)
             ldap.set_option(ldap.OPT_RESTART, ldap.OPT_ON)
             ldap.set_option(ldap.OPT_TIMEOUT, 20)
@@ -257,10 +263,10 @@ class User(Base):
             ldap.set_option(ldap.OPT_TIMELIMIT, 15)
 
             ldap_server_type = settings.get('pyshop.ldap.type', 'ldap')
-            host=settings['pyshop.ldap.host'].strip()
+            host = settings['pyshop.ldap.host'].strip()
             port = settings.get('pyshop.ldap.port', None).strip()
             if ldap_server_type in ["ldaps", "start_tls"]:
-                port =  port or 689
+                port = port or 689
                 ldap_type = "ldaps"
                 certreq = settings.get('pyshop.ldap.certreq', 'DEMAND').strip()
                 if certreq not in ['DEMAND', 'ALLOW', 'HARD', 'TRY', 'NEVER']:
@@ -268,68 +274,76 @@ class User(Base):
                 tls_cert = getattr(ldap, 'OPT_X_TLS_%s' % certreq)
                 ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, tls_cert)
             else:
-                port =  port or 389
+                port = port or 389
                 ldap_type = 'ldap'
-            server_url = "{ldap_type}://{host}:{port}".format(ldap_type=ldap_type,
-                                                              host=host,
-                                                              port=port)
+            server_url = "{ldap_type}://{host}:{port}".format(
+                ldap_type=ldap_type, host=host, port=port)
             server = ldap.initialize(server_url)
             if ldap_server_type == "start_tls":
                 server.start_tls_s()
             server.protocol = ldap.VERSION3
             # bind the account if needed
-            if settings['pyshop.ldap.account'] and settings['pyshop.ldap.password']:
+            if settings['pyshop.ldap.account'] and \
+                    settings['pyshop.ldap.password']:
                 server.simple_bind_s(settings['pyshop.ldap.account'],
                                      settings['pyshop.ldap.password'])
 
-            filter_ = settings['pyshop.ldap.search_filter'].format(username=login)
-            results = server.search_ext_s(settings['pyshop.ldap.bind_dn'],
-                                          getattr(ldap,"SCOPE_%s"%settings['pyshop.ldap.search_scope']),
-                                          filter_)
+            filter_ = settings['pyshop.ldap.search_filter'].format(
+                username=login)
+            results = server.search_ext_s(
+                settings['pyshop.ldap.bind_dn'],
+                getattr(ldap,
+                        'SCOPE_%s' % settings['pyshop.ldap.search_scope']),
+                filter_)
             if results is None:
-                log.debug("LDAP rejected password for user %s" % (login))
+                log.debug("LDAP rejected password for user %s", (login))
                 return None
 
             for (dn, _attrs) in results:
                 if dn is None:
                     continue
-                log.debug('Trying simple bind with %s' % dn)
+                log.debug('Trying simple bind with %s', dn)
                 server.simple_bind_s(dn, password)
-                attrs = server.search_ext_s(dn, ldap.SCOPE_BASE, '(objectClass=*)')[0][1]
+                attrs = server.search_ext_s(
+                    dn, ldap.SCOPE_BASE, '(objectClass=*)')[0][1]
                 break
             else:
-                log.debug("No matching LDAP objects for authentication of '%s'", login)
+                log.debug("No matching LDAP objects for authentication of "
+                          "'%s'", login)
                 return None
 
             log.debug('LDAP authentication OK')
             # we may create a new user if it don't exist
             user_ldap = User.by_login(session, login)
             if user_ldap is None:
-                log.debug('create user %s'%login)
+                log.debug('create user %s', login)
                 user_ldap = User()
                 user_ldap.login = login
                 # when creating a User, do not copy the ldap password
                 user_ldap.password = ''
                 user_ldap.local = True
-                user_ldap.firstname = attrs[settings['pyshop.ldap.first_name_attr']][0]
-                user_ldap.lastname = attrs[settings['pyshop.ldap.last_name_attr']][0]
-                user_ldap.email =  attrs[settings['pyshop.ldap.email_attr']][0]
-                for groupname in ["developer","installer"]:
+                user_ldap.firstname = attrs[
+                    settings['pyshop.ldap.first_name_attr']][0]
+                user_ldap.lastname = attrs[
+                    settings['pyshop.ldap.last_name_attr']][0]
+                user_ldap.email = attrs[
+                    settings['pyshop.ldap.email_attr']][0]
+                for groupname in ["developer", "installer"]:
                     user_ldap.groups.append(Group.by_name(session, groupname))
                 if user_ldap.validate(session):
                     session.add(user_ldap)
-                    log.debug('User "{}" added'.format(login))
+                    log.debug('User "%s" added', login)
                     transaction.commit()
             # its OK
             return user_ldap
         except ldap.NO_SUCH_OBJECT:
-            log.debug("LDAP says no such user '%s'" % (login))
+            log.debug("LDAP says no such user '%s'", login)
         except ldap.SERVER_DOWN:
             log.error("LDAP can't access authentication server")
         except ldap.LDAPError:
             log.error('ERROR while using LDAP connection')
         except Exception as exc:
-            log.error('Unmanaged exception %s' % exc, exc_info=True)
+            log.error('Unmanaged exception %s', exc, exc_info=True)
         return None
 
     @classmethod
@@ -633,7 +647,8 @@ class Package(Base):
 
 classifier__release = Table('classifier__release', Base.metadata,
                             Column('classifier_id', Integer,
-                                   ForeignKey('classifier.id', ondelete='cascade')),
+                                   ForeignKey('classifier.id',
+                                              ondelete='cascade')),
                             Column('release_id',
                                    Integer, ForeignKey('release.id'))
                             )

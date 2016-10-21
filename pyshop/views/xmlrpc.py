@@ -44,7 +44,7 @@ class PyPI(XMLRPCView):
         session = DBSession()
         package = Package.by_name(session, package_name)
         owners = [('Owner', o.name) for o in package.owners]
-        maintainers  = [('Maintainer', o.name) for o in package.maintainers]
+        maintainers = [('Maintainer', o.name) for o in package.maintainers]
         return owners + maintainers
 
     def user_packages(self, user):

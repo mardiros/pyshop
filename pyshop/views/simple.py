@@ -79,11 +79,14 @@ class UploadReleaseFile(View):
 
         params = self.request.params
 
-        if (asbool(settings['pyshop.upload.sanitize'])
-            and not re.match(settings['pyshop.upload.sanitize.regex'],
+        if (asbool(settings['pyshop.upload.sanitize']) and
+                not re.match(settings['pyshop.upload.sanitize.regex'],
                              params['version']
                              )):
-            raise exc.HTTPForbidden("Provided version ({}) should match regexp {}".format(params['version'], settings['pyshop.upload.sanitize.regex']))
+            raise exc.HTTPForbidden(
+                "Provided version ({}) should match ""regexp {}"
+                .format(params['version'],
+                        settings['pyshop.upload.sanitize.regex']))
 
         pkg = Package.by_name(self.session, params['name'])
         if pkg and pkg.local:
@@ -112,8 +115,8 @@ class UploadReleaseFile(View):
 
         filepath = os.path.join(dir_, filename)
         while os.path.exists(filepath):
-            log.warning('File %s exists but new upload self.request, deleting'
-                        % filepath)
+            log.warning('File %s exists but new upload self.request, deleting',
+                        filepath)
             os.unlink(filepath)
 
         size = 0
@@ -180,8 +183,8 @@ class Show(View):
                      for key, val in data.items()])
 
     def _create_release(self, package, data, session_users):
-        log.info('Create release {0} for package {1}'.format(
-            data.get('version'), package.name))
+        log.info('Create release %s for package %s',
+                 data.get('version'), package.name)
         data = self._to_unicode(data)
         release = Release(package=package,
                           summary=data.get('summary'),
@@ -198,15 +201,15 @@ class Show(View):
                           )
         if data.get('author'):
 
-            log.info('Looking for author {0}'.format(data['author']))
+            log.info('Looking for author %s', data['author'])
             if _sanitize(data['author']) in session_users:
                 author = session_users[_sanitize(data['author'])]
             else:
                 author = User.by_login(self.session, data['author'],
                                        local=False)
             if not author:
-                log.info('Author {0} not found, creating'.format(
-                    data['author']))
+                log.info('Author %s not found, creating',
+                         data['author'])
                 author = User(login=data['author'],
                               local=False,
                               email=data.get('author_email'))
@@ -269,12 +272,14 @@ class Show(View):
             return None
 
         package_name = package_name.lower().replace('-', '_')
-        search_result = [p for p in search_result
-                         if p['name'].lower() == package_name
-                         or p['name'].lower().replace('-', '_') == package_name
-                         ]
-        log.debug('Found {sc}, matched {mc}'.format(sc=search_count,
-                                                    mc=len(search_result)))
+        search_result = [
+            pkg
+            for pkg in search_result
+            if pkg['name'].lower() == package_name or
+            pkg['name'].lower().replace('-', '_') == package_name
+            ]
+        log.debug('Found %s, matched %s',
+                  search_count, len(search_result))
 
         if not search_result:
             return None
@@ -308,12 +313,11 @@ class Show(View):
                         hours=int(settings.get('pyshop.mirror.cache.ttl',
                                                '24')))
                     refresh = current_td > max_td
-                    log.debug('"{cdt}" > "{max}": {refr}'.format(cdt=current_td,
-                                                                 max=max_td,
-                                                                 refr=refresh))
+                    log.debug('"%s" > "%s": %s',
+                              current_td, max_td, refresh)
 
         if refresh:
-            log.info('refresh package {pkg}'.format(pkg=package_name))
+            log.info('refresh package %s', package_name)
             pypi_versions = api.package_releases(package_name, True)
             # XXX package_releases is case sensitive
             # but dependencies declaration not...
@@ -335,7 +339,7 @@ class Show(View):
 
         if not pkg:
             if not pypi_versions:
-                log.info('package %s has no versions' % package_name)
+                log.info('package %s has no versions', package_name)
                 return {'package': None,
                         'package_name': package_name}
 
@@ -346,7 +350,7 @@ class Show(View):
                                  if re_sanitize.match(v)]
 
             # mirror the package now
-            log.info('mirror package %s now' % package_name)
+            log.info('mirror package %s now', package_name)
             pkg = Package.by_name(self.session, package_name)
             if not pkg:
                 pkg = Package(name=package_name, local=False)
@@ -355,7 +359,7 @@ class Show(View):
             roles = api.package_roles(package_name)
             for role, login in roles:
                 login = login.decode('utf-8')  # XMLRPC should return utf-8
-                log.info('Looking for non local user {0}'.format(login))
+                log.info('Looking for non local user %s', login)
                 if _sanitize(login) in session_users:
                     user = session_users[_sanitize(login)]
                 else:
@@ -375,14 +379,14 @@ class Show(View):
 
         self.session.flush()
         if not pkg.local and refresh:
-            log.debug('refreshing %s package' % package_name)
+            log.debug('refreshing %s package', package_name)
             pkg_versions = set(pypi_versions).difference(pkg.versions)
             if not pkg_versions:
                 log.info('No new version to mirror')
-                log.debug('pypi versions: {0!r}'.format(pypi_versions))
-                log.debug('mirrored versions: {0!r}'.format(pkg.versions))
+                log.debug('pypi versions: %s', pypi_versions)
+                log.debug('mirrored versions: %s', pkg.versions)
             for version in pkg_versions:
-                log.info('Mirroring version {0}'.format(version))
+                log.info('Mirroring version %s', version)
                 release_data = api.release_data(package_name, version)
                 release = self._create_release(pkg, release_data,
                                                session_users)

@@ -16,6 +16,7 @@ from ..models import DBSession, User
 
 log = logging.getLogger(__name__)
 
+
 class ViewBase(object):
     """
     PyShop view base class.
@@ -24,13 +25,13 @@ class ViewBase(object):
     def __init__(self, request):
         self.request = request
         self.session = DBSession()
-        login = authenticated_userid(self.request)
+        login = self.request.authenticated_userid
         if login:
             self.login = login
             self.user = User.by_login(self.session, login)
         else:
-           self.login = u'anonymous'
-           self.user = None
+            self.login = u'anonymous'
+            self.user = None
 
     def update_response(self, response):
         pass
@@ -48,7 +49,8 @@ class ViewBase(object):
             self.session.flush()
         except Exception as exc:
             if self.on_error(exc):
-                log.error('Error on view %s' % self.__class__.__name__,
+                log.error('Error on view %s',
+                          self.__class__.__name__,
                           exc_info=True)
                 raise
         return response
@@ -127,15 +129,15 @@ class CreateView(RedirectView):
         return len(errors) == 0
 
     def save_model(self, model):
-        log.debug('saving %s' % model.__class__.__name__)
-        log.debug('%r' % model.__dict__)
+        log.debug('saving %s', model.__class__.__name__)
+        log.debug('%r', model.__dict__)
         self.session.add(model)
 
     def render(self):
         if 'form.cancelled' in self.request.params:
             return self.redirect()
 
-        log.debug('rendering %s' % self.__class__.__name__)
+        log.debug('rendering %s', self.__class__.__name__)
         errors = []
         model = self.get_model()
 
@@ -154,7 +156,7 @@ class CreateView(RedirectView):
                 self.save_model(model)
                 return self.redirect()
 
-        rv =  {'errors': errors, self.model.__tablename__: model}
+        rv = {'errors': errors, self.model.__tablename__: model}
         self.update_view(model, rv)
         log.debug(repr(rv))
         return rv
@@ -166,8 +168,8 @@ class EditView(CreateView):
     """
 
     def get_model(self):
-        return self.model.by_id(self.session,
-                                int(self.request.matchdict[self.matchdict_key]))
+        return self.model.by_id(
+            self.session, int(self.request.matchdict[self.matchdict_key]))
 
 
 class DeleteView(RedirectView):
@@ -184,8 +186,8 @@ class DeleteView(RedirectView):
 
     def render(self):
 
-        model = self.model.by_id(self.session,
-            int(self.request.matchdict[self.matchdict_key]))
+        model = self.model.by_id(
+            self.session, int(self.request.matchdict[self.matchdict_key]))
 
         if 'form.submitted' in self.request.params:
             self.delete(model)

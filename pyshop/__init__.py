@@ -36,7 +36,7 @@ def main(global_config, **settings):
 
     config = Configurator(settings=settings,
                           root_factory=RootFactory,
-                          route_prefix = route_prefix,
+                          route_prefix=route_prefix,
                           locale_negotiator=locale_negotiator,
                           authentication_policy=authn_policy,
                           authorization_policy=authz_policy)

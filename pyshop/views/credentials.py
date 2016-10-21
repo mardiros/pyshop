@@ -34,15 +34,17 @@ class Login(View):
         if 'form.submitted' in self.request.params:
             password = self.request.params.get('user.password', u'')
             if password:
-                if User.by_ldap_credentials(self.session, login, password,
-                                            self.request.registry.settings) is not None:
-                    log.info('login %r succeed' % login)
+                if User.by_ldap_credentials(
+                        self.session, login, password,
+                        self.request.registry.settings) is not None:
+                    log.info('login %r succeed', login)
                     headers = remember(self.request, login)
                     return HTTPFound(location=came_from,
                                      headers=headers)
  
-                if User.by_credentials(self.session, login, password) is not None:
-                    log.info('login %r succeed' % login)
+                if User.by_credentials(
+                        self.session, login, password) is not None:
+                    log.info('login %r succeed', login)
                     headers = remember(self.request, login)
                     return HTTPFound(location=came_from,
                                      headers=headers)
@@ -64,7 +66,7 @@ def authbasic(request):
     """
     Authentification basic, Upload pyshop repository access
     """
-    if len(request.environ.get('HTTP_AUTHORIZATION','')) > 0:
+    if len(request.environ.get('HTTP_AUTHORIZATION', '')) > 0:
         auth = request.environ.get('HTTP_AUTHORIZATION')
         scheme, data = auth.split(None, 1)
         assert scheme.lower() == 'basic'
@@ -72,7 +74,8 @@ def authbasic(request):
         if not isinstance(data, unicode):
             data = data.decode('utf-8')
         username, password = data.split(':', 1)
-        if User.by_ldap_credentials(DBSession(), username, password, request.registry.settings):
+        if User.by_ldap_credentials(
+                DBSession(), username, password, request.registry.settings):
             return HTTPFound(location=request.url)
         if User.by_credentials(DBSession(), username, password):
             return HTTPFound(location=request.url)

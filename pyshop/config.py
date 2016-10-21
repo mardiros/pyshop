@@ -27,11 +27,10 @@ def add_urlhelpers(event):
     """
     event['static_url'] = lambda x: static_path(x, event['request'])
     event['route_url'] = lambda name, *args, **kwargs: \
-                            route_path(name, event['request'], *args, **kwargs)
-    event['parse_rest'] = lambda x: parse_rest(x)
-    event['has_permission'] = lambda perm: has_permission(perm,
-                                    event['request'].context,
-                                    event['request'])
+        route_path(name, event['request'], *args, **kwargs)
+    event['parse_rest'] = parse_rest
+    event['has_permission'] = lambda perm: \
+        has_permission(perm, event['request'].context, event['request'])
 
 
 def includeme(config):
@@ -57,7 +56,7 @@ def includeme(config):
 
     # Javascript + Media
     config.add_static_view('static', 'static', cache_max_age=3600)
-    #config.add_static_view('repository', 'repository', cache_max_age=3600)
+    # config.add_static_view('repository', 'repository', cache_max_age=3600)
 
     config.add_route(u'login', u'/login',)
     config.add_view(u'pyshop.views.credentials.Login',
@@ -106,7 +105,6 @@ def includeme(config):
                     renderer=u'pyshop/simple/show.html',
                     permission=u'download_releasefile')
 
-
     try:
         config.add_notfound_view(notfound, append_slash=True)
     except AttributeError:
@@ -120,9 +118,9 @@ def includeme(config):
                      request_method=u'POST')
 
     config.add_view(u'pyshop.views.simple.UploadReleaseFile',
-                     renderer=u'pyshop/simple/create.html',
-                     route_name=u'upload_releasefile',
-                     permission=u'upload_releasefile')
+                    renderer=u'pyshop/simple/create.html',
+                    route_name=u'upload_releasefile',
+                    permission=u'upload_releasefile')
 
     # Web Services
 

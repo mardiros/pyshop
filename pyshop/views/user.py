@@ -11,7 +11,6 @@ from .account import AccountMixin
 from .base import EditView
 
 
-
 class UserMixin(AccountMixin):
     redirect_route = 'list_package'
 
