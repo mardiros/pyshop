@@ -22,32 +22,17 @@
 
   <p>
     {% trans %}Other Version:{% endtrans %}
-    {% set display = 0 %}
     {% for r in package.sorted_releases %}
-        {% if r.id == release.id %}
-            {% set idx = loop.index0 %}
-            {% set display = 1%}
-            {% if idx > 0 %}
-                <a class="btn btn-info btn-xs active" role="button"
-                    href="{{ route_url('show_package_version',
-                    package_name=package.name,
-                    release_version=package.sorted_releases[0].version)}}">
-                  <span class="glyphicon glyphicon-tag"></span>
-                  {{package.sorted_releases[0].version}}
-                </a>
-                ...
-            {% endif %}
-        {% endif %}
-        {% if display and loop.index <= idx + 10 %}
-            <a class="btn btn-info btn-xs active" 
-               role="button" 
+        {% if loop.index < 10 %}
+            <a class="btn btn-info btn-xs{% if r.id == release.id %} active{% endif %}"
+               role="button"
                href="{{ route_url('show_package_version', package_name=package.name, release_version=r.version)}}">
               <span class="glyphicon glyphicon-tag"></span>
                 {{r.version}}
             </a>
         {% endif %}
-        {% if loop.last and idx + 10 < loop.index %}
-            ...
+        {% if loop.last and loop.index >= 10 %}
+            <a class="btn btn-link btn-xs" role="button" href="{{ route_url('show_simple', package_name=package.name) }}">...</a>
         {% endif %}
     {% endfor %}
   </p>
