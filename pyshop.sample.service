@@ -1,0 +1,11 @@
+[Unit]
+Description=Pyshop
+After=multi-user.target
+
+[Service]
+WorkingDirectory=/srv/pyshop
+ExecStart=/srv/pyshop/bin/python ./bin/pserve pyshop.ini
+ExecStop=
+
+[Install]
+WantedBy=multi-user.target
