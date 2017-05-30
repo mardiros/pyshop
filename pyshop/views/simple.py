@@ -8,6 +8,7 @@ release files.
 import re
 import logging
 import os.path
+import unicodedata
 from datetime import datetime, timedelta
 
 from sqlalchemy.sql.expression import func
@@ -17,13 +18,12 @@ from pyramid.settings import asbool
 
 from pyshop.models import User, Package, Classifier, Release, ReleaseFile
 from pyshop.helpers import pypi
+from pyshop.compat import to_unicode
 
 from .base import View
 
 log = logging.getLogger(__name__)
 
-
-import unicodedata
 
 def _sanitize(input_str):
     input_str = input_str.lower()
@@ -50,7 +50,8 @@ class UploadReleaseFile(View):
                 elif original.endswith(u'.zip'):
                     ext = u'zip'
                 else:
-                    raise exc.HTTPBadRequest('Unknown extension {}'.format(original))
+                    raise exc.HTTPBadRequest(
+                        'Unknown extension {}'.format(original))
             else:
                 ext = {u'bdist_egg': u'egg',
                        u'bdist_msi': u'msi',
@@ -178,8 +179,7 @@ class Show(View):
 
     def _to_unicode(self, data):
         # xmlrpc use utf8 encoded string
-        return dict([(key, val.decode('utf-8')
-                      if isinstance(val, str) else val)
+        return dict([(key, to_unicode(val))
                      for key, val in data.items()])
 
     def _create_release(self, package, data, session_users):
@@ -219,15 +219,15 @@ class Show(View):
             self.session.flush()
 
         if data.get('maintainer'):
-            log.info('Looking for maintainer {0}'.format(data['maintainer']))
+            log.info('Looking for maintainer %s', data['maintainer'])
             if _sanitize(data['maintainer']) in session_users:
                 maintainer = session_users[_sanitize(data['maintainer'])]
             else:
                 maintainer = User.by_login(self.session, data['maintainer'],
                                            local=False)
             if not maintainer:
-                log.info('Maintainer not found, creating user {0}'
-                         ''.format(data['maintainer']))
+                log.info('Maintainer not found, creating user %s',
+                         data['maintainer'])
                 maintainer = User(login=data['maintainer'],
                                   local=False,
                                   email=data.get('maintainer_email'))
@@ -237,7 +237,7 @@ class Show(View):
             self.session.flush()
 
         for name in data.get('classifiers', []):
-            classifier = Classifier.by_name(self.session, name.decode('utf-8'),
+            classifier = Classifier.by_name(self.session, to_unicode(name),
                                             create_if_not_exists=True)
 
             while classifier:
@@ -286,7 +286,7 @@ class Show(View):
 
         package_name = search_result[0]['name']
         pypi_versions = api.package_releases(package_name, True)
-        return package_name.decode('utf-8'), pypi_versions
+        return to_unicode(package_name), pypi_versions
 
     def render(self):
 
@@ -333,7 +333,7 @@ class Show(View):
 
                 if pkg_info:
                     package_name, pypi_versions = pkg_info
-            pypi_versions = [ver.decode('utf-8') for ver in pypi_versions]
+            pypi_versions = [to_unicode(ver) for ver in pypi_versions]
         else:
             pypi_versions = []
 
@@ -358,14 +358,14 @@ class Show(View):
                 self.session.flush()
             roles = api.package_roles(package_name)
             for role, login in roles:
-                login = login.decode('utf-8')  # XMLRPC should return utf-8
+                login = to_unicode(login)
                 log.info('Looking for non local user %s', login)
                 if _sanitize(login) in session_users:
                     user = session_users[_sanitize(login)]
                 else:
                     user = User.by_login(self.session, login, local=False)
                 if not user:
-                    log.info('Not found. creating user {0}'.format(login))
+                    log.info('Not found. creating user %s', login)
                     user = User(login=login, local=False)
                     self.session.add(user)
                 if role == 'Owner':
@@ -394,7 +394,8 @@ class Show(View):
                 release_files = api.release_urls(package_name, version)
 
                 for data in release_files:
-                    filename = data['filename'].decode('utf-8')
+                    data = self._to_unicode(data)
+                    filename = data['filename']
                     rf = ReleaseFile.by_filename(self.session, release,
                                                  filename)
                     if not rf:
@@ -402,6 +403,6 @@ class Show(View):
 
             pkg.update_at = func.now()
             self.session.add(pkg)
-            log.info('package %s mirrored' % package_name)
+            log.info('package %s mirrored', package_name)
         return {'package': pkg,
                 'whlify': asbool(settings.get('pyshop.mirror.wheelify', '0'))}
