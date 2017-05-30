@@ -23,6 +23,7 @@
   <p>
     {% trans %}Other Version:{% endtrans %}
     {% set display = 0 %}
+    {% set idx = 0 %}
     {% for r in package.sorted_releases %}
         {% if r.id == release.id %}
             {% set idx = loop.index0 %}
