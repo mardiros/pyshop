@@ -35,6 +35,7 @@ Using A virtualen with Python 3
 -------------------------------
 
 ::
+
     $ cd /srv
     $ sudo mkdir pyshop
     $ sudo chown $(whoami) pyshop
