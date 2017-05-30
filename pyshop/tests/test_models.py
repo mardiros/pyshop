@@ -1,5 +1,5 @@
-from .case import ModelTestCase
-from . import setUpModule, tearDownModule
+from pyshop.tests.case import ModelTestCase
+from pyshop.tests import setUpModule, tearDownModule
 
 
 class GroupTestCase(ModelTestCase):
@@ -122,7 +122,8 @@ class ReleaseTestCase(ModelTestCase):
 
     def test_by_version(self):
         from pyshop.models import Release
-        release = Release.by_version(self.session, u'mirrored_package2', u'1.0')
+        release = Release.by_version(
+            self.session, u'mirrored_package2', u'1.0')
         self.assertIsInstance(release, Release)
         self.assertEqual(release.package.name, u'mirrored_package2')
         self.assertEqual(release.version, u'1.0')
