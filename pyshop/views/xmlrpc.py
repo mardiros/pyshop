@@ -6,7 +6,11 @@ See: http://wiki.python.org/moin/PyPiXmlRpc
 
 """
 import logging
-from pyramid_xmlrpc import XMLRPCView
+
+try:
+    from pyramid_xmlrpc import XMLRPCView
+except (ModuleNotFoundError, ImportError):
+    XMLRPCView = object
 
 from pyshop.models import DBSession, Package, Release, ReleaseFile
 from pyshop.helpers import pypi
