@@ -62,6 +62,7 @@ extras_require = {
 if 'VIRTUAL_ENV' in os.environ:
     venv = os.environ['VIRTUAL_ENV']
     data_files = [(venv, ['pyshop.sample.ini',
+                          'pyshop.sample.service',
                           ])]
 else:
     data_files = []
