@@ -31,8 +31,8 @@ must be authenticated by login and password.
 Installation
 ============
 
-Using A virtualen with Python 3
--------------------------------
+Using A virtualenv with Python 3
+--------------------------------
 
 ::
 
@@ -81,6 +81,8 @@ Daemonize with systemd on linux
 `Pyramid 1.8 has removed deamonized options`_ you have to use a process manager.
 
 Here is a simple way to daemonise it undex linux that use systemd
+
+::
 
       (pyshop)$ curl -o pyshop.service https://raw.githubusercontent.com/mardiros/pyshop/master/pyshop.sample.service
       (pyshop)$ sudo mv pyshop.service /etc/systemd/system/pyshop.service
