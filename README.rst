@@ -31,16 +31,32 @@ must be authenticated by login and password.
 Installation
 ============
 
-::
+Using A virtualen with Python 3
+-------------------------------
 
-    $ virtualenv pyshop
+::
+    $ cd /srv
+    $ sudo mkdir pyshop
+    $ sudo chown $(whoami) pyshop
     $ cd pyshop
+    $ pyvenv .
     (pyshop)$ source bin/activate
     (pyshop)$ pip install "pyshop[waitress]"
     (pyshop)$ cp pyshop.sample.ini pyshop.ini
-    (pyshop)$ vim pyshop.ini  # change the pyshop.cookie_key setting
-    (pyshop)$ pyshop_setup pyshop.ini
-    (pyshop)$ pserve pyshop.ini start --log-file=pyshop.log
+    (pyshop)$ vim pyshop.ini  # change at least the pyshop.cookie_key setting
+    (pyshop)$ pyshop_setup pyshop.ini  # Create the database
+    (pyshop)$ pserve pyshop.ini        # start pyshop CTRL+C to stop
+
+
+.. Note::
+
+    If you are using python2 and the pyshop you may not have the pyshop.sample.ini file, you can
+    download it with:
+
+    ::
+
+      (pyshop)$ curl -o pyshop.ini https://raw.githubusercontent.com/mardiros/pyshop/master/pyshop.sample.ini
+
 
 You should edit the pyshop.ini file in order to configure the
 ``pyshop.cookie_key`` and the host:port that hosts the service. When the server
@@ -57,6 +73,25 @@ HTTP basic authentication: it sends user/password in clear.
 The pythop.sample.ini file use waitress as the default WSGI server, but,
 if you are familiar with another WSGI server that support paste format,
 you could use it.
+
+Daemonize with systemd on linux
+-------------------------------
+
+`Pyramid 1.8 has removed deamonized options`_ you have to use a process manager.
+
+Here is a simple way to daemonise it undex linux that use systemd
+
+      (pyshop)$ curl -o pyshop.service https://raw.githubusercontent.com/mardiros/pyshop/master/pyshop.sample.service
+      (pyshop)$ sudo mv pyshop.service /etc/systemd/system/pyshop.service
+
+
+.. note::
+
+   you may edit the pyshop.service file to adapt path in case you install it
+
+
+_`Pyramid 1.8 has removed deamonized options`: http://docs.pylonsproject.org/projects/pyramid/en/latest/whatsnew-1.8.html#backwards-incompatibilities
+
 
 Using Docker
 ------------
@@ -119,6 +154,12 @@ the generic pip account.
 
   If you are using a WSGI server that kills requests if it is too long, like
   uWSGI or gunicorn, set an appropriate timeout for this service too.
+
+
+.. note::
+
+   The search funciton is not working with Python 3
+
 
 setup.cfg and pydistutils.cfg
 -----------------------------
