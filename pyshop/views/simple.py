@@ -264,28 +264,8 @@ class Show(View):
                            )
 
     def _search_package(self, package_name):
-        api = pypi.proxy
-
-        search_result = api.search({'name': package_name})
-        search_count = len(search_result)
-        if not search_count:
-            return None
-
-        package_name = package_name.lower().replace('-', '_')
-        search_result = [
-            pkg
-            for pkg in search_result
-            if pkg['name'].lower() == package_name or
-            pkg['name'].lower().replace('-', '_') == package_name
-            ]
-        log.debug('Found %s, matched %s',
-                  search_count, len(search_result))
-
-        if not search_result:
-            return None
-
-        package_name = search_result[0]['name']
-        pypi_versions = api.package_releases(package_name, True)
+        package_name = pypi.resolve_name(package_name)
+        pypi_versions = pypi.proxy.package_releases(package_name, True)
         return to_unicode(package_name), pypi_versions
 
     def render(self):
