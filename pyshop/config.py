@@ -37,6 +37,7 @@ def includeme(config):
     """
     Pyramid includeme file for the :class:`pyramid.config.Configurator`
     """
+    settings = config.registry.settings
 
     # config.add_renderer('json', JSONP())
     # release file download
@@ -50,9 +51,13 @@ def includeme(config):
     # i18n
     config.add_translation_dirs('locale/')
 
+    pypi_url = settings.get('pyshop.pypi.url', 'https://pypi.python.org/pypi')
+    simple_url = settings.get(
+        'pyshop.pypi.simple_url', 'https://pypi.python.org/simple').rstrip('/')
     # PyPI url for XML RPC service consume
-    pypi.set_proxy(config.registry.settings['pyshop.pypi.url'],
-                   config.registry.settings.get('pyshop.pypi.transport_proxy'))
+    pypi.set_proxy(pypi_url,
+                   simple_url,
+                   settings.get('pyshop.pypi.transport_proxy'))
 
     # Javascript + Media
     config.add_static_view('static', 'static', cache_max_age=3600)
@@ -124,7 +129,7 @@ def includeme(config):
 
     # Web Services
 
-    if asbool(config.registry.settings.get('pyshop.enable_xmlrpc', 'true')):
+    if asbool(settings.get('pyshop.enable_xmlrpc', 'true')):
         config.add_view('pyshop.views.xmlrpc.PyPI', name='pypi')
 
     # Backoffice Views
