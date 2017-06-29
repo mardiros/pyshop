@@ -1,6 +1,25 @@
 Changelist
 ==========
 
+1.3.0 - Released on 2017-06-29
+------------------------------
+
+- Handle package with hyphen, undescore and dot properly.
+- Implement xmlrpc api for pip search for python 3 and by default.
+
+.. important::
+
+    configuration must be updated. due to a dependency changes.
+    replace pyramid_xmlrpc by pyramid_rpc.
+
+    ::
+
+        pyramid.includes =
+            ...
+            pyramid_rpc.xmlrpc
+            ...
+
+
 1.2.5 - Released on 2017-06-03
 ------------------------------
 
