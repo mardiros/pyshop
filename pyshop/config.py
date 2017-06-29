@@ -29,8 +29,7 @@ def add_urlhelpers(event):
     event['route_url'] = lambda name, *args, **kwargs: \
         route_path(name, event['request'], *args, **kwargs)
     event['parse_rest'] = parse_rest
-    event['has_permission'] = lambda perm: \
-        event['request'].has_permission(perm)
+    event['has_permission'] = event['request'].has_permission
 
 
 def includeme(config):
