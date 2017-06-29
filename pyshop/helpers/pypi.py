@@ -29,7 +29,7 @@ import requests
 
 log = logging.getLogger(__name__)
 proxy = None
-PYPI_SIMPLE_URL = None
+PYPI_URL = None
 
 
 class RequestsTransport(xmlrpc.Transport):
@@ -87,26 +87,24 @@ class RequestsTransport(xmlrpc.Transport):
         return '%s://%s%s' % (self.scheme, host, handler)
 
 
+def get_json_package_info(name):
+    url = '/'.join([PYPI_URL, name, 'json'])
+    resp = requests.get(url)
+    resp.raise_for_status()
+    return resp.json()
+
+
 def resolve_name(package_name):
-    """ Return the  """
+    """ Resolve the real name of the upstream package """
     log.info('Resolving hyphenation of %s', package_name)
-    url = '{}/{}'.format(PYPI_SIMPLE_URL, package_name)
-    response = requests.get(url,
-                            allow_redirects=False)
-    if 300 <= response.status_code < 400:
-        loc = response.headers['Location'].rstrip('/')
-        real_package_name = loc.rsplit('/', 1).pop()
-        log.info('Package %s is %s in upstream index',
-                 package_name, real_package_name)
-        return real_package_name
-    else:
-        response.raise_for_status()
+    package = get_json_package_info(package_name)
+    return package['info']['name']
 
 
-def set_proxy(proxy_url, simple_url, transport_proxy=None):
+def set_proxy(proxy_url, transport_proxy=None):
     """Create the proxy to PyPI XML-RPC Server"""
-    global proxy, PYPI_SIMPLE_URL
-    PYPI_SIMPLE_URL = simple_url
+    global proxy, PYPI_URL
+    PYPI_URL = proxy_url
     proxy = xmlrpc.ServerProxy(
         proxy_url,
         transport=RequestsTransport(proxy_url.startswith('https://')),

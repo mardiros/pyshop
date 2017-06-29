@@ -48,12 +48,8 @@ def includeme(config):
     config.add_translation_dirs('locale/')
 
     pypi_url = settings.get('pyshop.pypi.url', 'https://pypi.python.org/pypi')
-    simple_url = settings.get(
-        'pyshop.pypi.simple_url', 'https://pypi.python.org/simple').rstrip('/')
     # PyPI url for XML RPC service consume
-    pypi.set_proxy(pypi_url,
-                   simple_url,
-                   settings.get('pyshop.pypi.transport_proxy'))
+    pypi.set_proxy(pypi_url, settings.get('pyshop.pypi.transport_proxy'))
 
     # Javascript + Media
     config.add_static_view('static', 'static', cache_max_age=3600)
