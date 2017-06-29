@@ -32,14 +32,16 @@ def _sanitize(input_str):
     return only_ascii
 
 
-class List(View):
+def unify_package_name(package_name):
+    return package_name.lower().replace('-', '_').replace('.', '_')
 
+
+class List(View):
     def render(self):
         return {'packages': Package.all(self.session, order_by=Package.name)}
 
 
 class UploadReleaseFile(View):
-
     def _guess_filename(self, params, original):
         try:
             if params['filetype'] == 'sdist':
@@ -176,7 +178,6 @@ class UploadReleaseFile(View):
 
 
 class Show(View):
-
     def _to_unicode(self, data):
         # xmlrpc use utf8 encoded string
         return dict([(key, to_unicode(val))

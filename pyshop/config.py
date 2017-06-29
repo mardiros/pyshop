@@ -3,14 +3,11 @@
 PyShop Pyramid configuration helpers.
 """
 
-from pyramid.settings import asbool
 from pyramid.interfaces import IBeforeRender
-from pyramid.security import has_permission
 from pyramid.url import static_path, route_path
 from pyramid.httpexceptions import HTTPNotFound
-# from pyramid.renderers import JSONP
-
 from pyramid_jinja2 import renderer_factory
+from pyramid_rpc.xmlrpc import XMLRPCRenderer
 
 from pyshop.helpers import pypi
 from pyshop.helpers.restxt import parse_rest
@@ -51,11 +48,8 @@ def includeme(config):
     config.add_translation_dirs('locale/')
 
     pypi_url = settings.get('pyshop.pypi.url', 'https://pypi.python.org/pypi')
-    simple_url = settings.get(
-        'pyshop.pypi.simple_url', 'https://pypi.python.org/simple').rstrip('/')
     # PyPI url for XML RPC service consume
     pypi.set_proxy(pypi_url,
-                   simple_url,
                    settings.get('pyshop.pypi.transport_proxy'))
 
     # Javascript + Media
@@ -128,8 +122,10 @@ def includeme(config):
 
     # Web Services
 
-    if asbool(settings.get('pyshop.enable_xmlrpc', 'true')):
-        config.add_view('pyshop.views.xmlrpc.PyPI', name='pypi')
+    config.add_renderer('pyshopxmlrpc', XMLRPCRenderer(allow_none=True))
+    config.add_xmlrpc_endpoint(
+        'api', '/pypi/xmlrpc', default_renderer='pyshopxmlrpc')
+    config.scan('pyshop.views.xmlrpc')
 
     # Backoffice Views
 
