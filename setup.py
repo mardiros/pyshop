@@ -22,7 +22,7 @@ requires = [
 
     'pyramid_filterwarnings',
     'pyramid_jinja2',
-    'pyramid_xmlrpc',
+    'pyramid_rpc',
     'pyramid_tm',
     'zope.sqlalchemy',
 
