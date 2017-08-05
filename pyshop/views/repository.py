@@ -3,6 +3,7 @@
 PyShop Release File Download View.
 """
 from pyramid.settings import asbool
+import datetime
 
 from pyshop.models import DBSession, Release, ReleaseFile
 
@@ -39,6 +40,9 @@ def show_release_file(root, request):
     session.add(f.release.package)
     session.add(f.release)
     session.add(f)
+    request.response.etag = f.md5_digest
+    request.response.cache_control = 'max-age=31557600, public'
+    request.response.date = datetime.datetime.utcnow()
     return rv
 
 
@@ -70,4 +74,5 @@ def show_external_release_file(root, request):
     release.package.downloads += 1
     session.add(release.package)
     session.add(release)
+    request.response.date = datetime.datetime.utcnow()
     return rv
