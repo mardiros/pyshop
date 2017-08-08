@@ -8,7 +8,7 @@
             {%- endif -%}
         {%- else -%}
             <a href="{{ route_url('show_release_file', file_id=f.id, filename=f.filename)
-                     }}#{{ f.md5_digest }}">{{f.filename}}</a><br/>
+                     }}#md5={{ f.md5_digest }}">{{f.filename}}</a><br/>
         {% endif -%}
     {% endfor -%}
     {% if not r.files %}
