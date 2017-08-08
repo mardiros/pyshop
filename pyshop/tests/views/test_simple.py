@@ -1,14 +1,31 @@
 
-from pyshop.tests import case
-from pyshop.tests import setUpModule, tearDownModule
+import unittest
+
+import pyramid
+
+import pyshop.tests
+
+from copy import deepcopy
+
+from nose.tools import raises
+from pyramid.exceptions import HTTPForbidden
+
+from ..case import ViewTestCase
+from pyshop.models import create_engine, dispose_engine
 from pyshop.compat import StringIO
+
+
+setUpModule = pyshop.tests.setUpModule
+
+tearDownModule = pyshop.tests.tearDownModule
+
 
 class DummyContent(object):
     filename = u'whatever.tar.gz'
     file = StringIO()
 
 
-class SimpleTestCase(case.ViewTestCase):
+class SimpleTestCase(ViewTestCase):
 
     def test_get_list_ok(self):
         from pyshop.views.simple import List
@@ -42,10 +59,8 @@ class SimpleTestCase(case.ViewTestCase):
         self.assertIsInstance(view['release_file'], ReleaseFile)
 
     def test_post_uploadreleasefile_existing_pkg_ok(self):
-        from pyramid.httpexceptions import HTTPForbidden
 
         from pyshop.views.simple import UploadReleaseFile
-        from pyshop.models import Package, Release, ReleaseFile
 
         view = UploadReleaseFile(self.create_request({
             'name': u'local_package1',
@@ -56,10 +71,47 @@ class SimpleTestCase(case.ViewTestCase):
             'home_page': u'http://local_package1'
             }))()
         self.assertEqual(set(view.keys()),
-                          set(['pyshop', 'release_file']))
+                         set(['pyshop', 'release_file']))
         self.assertEqual(view['release_file'].filename,
-                          u'local_package1-0.2.tar.gz')
+                         u'local_package1-0.2.tar.gz')
         self.assertEqual(view['release_file'].release.home_page,
-                          u'http://local_package1')
+                         u'http://local_package1')
         self.assertEqual(view['release_file'].release.author.login,
-                          u'admin')
+                         u'admin')
+
+    @raises(HTTPForbidden)
+    def test_post_uploadreleasefile_bad_version(self):
+
+        from pyshop.views.simple import UploadReleaseFile
+
+        settings = pyramid.threadlocal.get_current_registry().settings
+        settings['pyshop.upload.sanitize'] = 1
+
+        UploadReleaseFile(self.create_request({
+            'version': u'0.1dev',
+        }))()
+
+
+class SimpleUploadReleaseFileBadVersionFunctionalTests(unittest.TestCase):
+
+    def setUp(self):
+        from pyshop import main
+        from ..conf import settings
+        settings = deepcopy(settings)
+        settings['pyshop.upload.sanitize'] = 1
+        app = main({}, **settings)
+
+        from pyshop.bin.install import populate
+        engine = create_engine(settings)
+        populate(engine, interactive=False)
+
+        from webtest import TestApp
+        self.testapp = TestApp(app)
+
+    def tearDown(self):
+        dispose_engine()
+
+    def test_post_uploadreleasefile_bad_version_403(self):
+
+        self.testapp.authorization = ('Basic', ('admin', 'changeme'))
+        self.testapp.post('/simple/', {'version': '0.1dev'}, status=403)
