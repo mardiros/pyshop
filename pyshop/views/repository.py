@@ -2,8 +2,9 @@
 """
 PyShop Release File Download View.
 """
-from pyramid.settings import asbool
 import datetime
+
+from pyramid.settings import asbool
 
 from pyshop.models import DBSession, Release, ReleaseFile
 
