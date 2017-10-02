@@ -116,6 +116,11 @@ class UploadReleaseFile(View):
 
         filepath = os.path.join(dir_, filename)
         while os.path.exists(filepath):
+            if asbool(settings.get('pyshop.upload.never_overwrite', '0')):
+                # policy: don't overwrite files that already exist in the repo
+                raise exc.HTTPConflict(
+                    "Uploading version ({}) would overwrite existing file"
+                    .format(params['version']))
             log.warning('File %s exists but new upload self.request, deleting',
                         filepath)
             os.unlink(filepath)
