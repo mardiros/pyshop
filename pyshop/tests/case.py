@@ -13,6 +13,7 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.authorization import ACLAuthorizationPolicy
 
 from pyshop.models import DBSession
+from pyfakefs import fake_filesystem_unittest
 
 
 class ModelTestCase(TestCase):
@@ -37,7 +38,7 @@ class DummyRequest(testing.DummyRequest):
     matched_route = DummyRoute
 
 
-class UnauthenticatedViewTestCase(TestCase):
+class UnauthenticatedViewTestCase(fake_filesystem_unittest.TestCase):
 
     def setUp(self):
         from pyshop.config import includeme
@@ -50,6 +51,10 @@ class UnauthenticatedViewTestCase(TestCase):
         self.config.include(includeme)
         self.session = DBSession()
         transaction.begin()
+
+        # NB: testing.setUp() etc. depend on the real filesystem, so leave
+        # pyfakefs setup until last.
+        self.setUpPyfakefs()
 
     def tearDown(self):
         super(UnauthenticatedViewTestCase, self).tearDown()
