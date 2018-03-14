@@ -52,6 +52,10 @@ extras_require = {
     'shell': [
         'IPython',
     ],
+    'docs': [
+        'sphinx',
+        'sphinx_rtd_theme'
+    ],
     'wheelify': [
         'wheel',             # build wheels from source on the proxy
     ],
