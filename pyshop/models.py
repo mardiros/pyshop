@@ -225,6 +225,28 @@ class User(Base):
             return user
 
     @classmethod
+    def by_remote_user_value(cls, session, login, email=None):
+        """User from a SSO service via REMOTE_USER or similar"""
+        user = cls.by_login(session, login)
+        if user is None:
+            log.debug('create user %s'%login)
+            user = User()
+            user.login = login
+            user.local = True
+            user.email = email
+            user.firstname = ''
+            user.lastname = ''
+            user.password = ''
+
+            for groupname in ["installer"]:
+                user.groups.append(Group.by_name(session, groupname))
+            if user.validate(session):
+                session.add(user)
+                log.debug('User "%s" added' % login)
+                transaction.commit()
+        return user
+
+    @classmethod
     def by_ldap_credentials(cls, session, login, password, settings):
         """if possible try to contact the LDAP for authentification if success
         and login don't exist localy create one and return it

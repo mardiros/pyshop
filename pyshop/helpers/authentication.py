@@ -8,7 +8,7 @@ from zope.interface import implementer
 
 from pyramid.interfaces import IAuthenticationPolicy
 from pyramid.authentication import CallbackAuthenticationPolicy, \
-        AuthTktAuthenticationPolicy
+        AuthTktAuthenticationPolicy, RemoteUserAuthenticationPolicy
 
 from pyshop.models import DBSession, User
 from pyshop.compat import unicode
@@ -64,9 +64,23 @@ class AuthBasicAuthenticationPolicy(CallbackAuthenticationPolicy):
 
 
 @implementer(IAuthenticationPolicy)
+class DBRemoteUserAuthenticationPolicy(RemoteUserAuthenticationPolicy):
+    def __init__(self, email_factory, environ_key='REMOTE_USER', callback=None, debug=False):
+        super(DBRemoteUserAuthenticationPolicy, self).__init__(environ_key, callback, debug)
+        self.email_factory = email_factory
+
+    def authenticated_userid(self, request):
+        login = super(DBRemoteUserAuthenticationPolicy, self).authenticated_userid(request)
+        if User.by_remote_user_value(DBSession(), login, email=self.email_factory(login, request)):
+            return login
+        return None
+
+
+@implementer(IAuthenticationPolicy)
 class RouteSwitchAuthPolicy(CallbackAuthenticationPolicy):
 
-    def __init__(self, secret='key',callback=None):
+    def __init__(self, secret='key',callback=None, use_remote_user=False,
+            remote_user_key='REMOTE_USER', remote_user_email_factory=None):
         try:
             authtk = AuthTktAuthenticationPolicy(secret,
                                                  callback=callback,
@@ -75,9 +89,14 @@ class RouteSwitchAuthPolicy(CallbackAuthenticationPolicy):
             # pyramid < 1.4
             authtk = AuthTktAuthenticationPolicy(secret, callback=callback)
 
-        self.impl = {'basic': AuthBasicAuthenticationPolicy(callback=callback),
-                     'tk': authtk
-                     }
+        remote_user_auth = DBRemoteUserAuthenticationPolicy(remote_user_email_factory,
+                environ_key=remote_user_key, callback=callback)
+        basic_auth = AuthBasicAuthenticationPolicy(callback=callback)
+
+        if use_remote_user:
+            self.impl = {'basic': basic_auth, 'tk': remote_user_auth}
+        else:
+            self.impl = {'basic': basic_auth, 'tk': authtk}
         self.callback = callback
 
     def get_impl(self, request):
