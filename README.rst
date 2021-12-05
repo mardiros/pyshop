@@ -6,6 +6,11 @@ pyshop
 .. image:: https://travis-ci.org/mardiros/pyshop.png?branch=master
    :target: https://travis-ci.org/mardiros/pyshop
 
+.. important::
+
+    This project is unmaintained
+
+
 Getting Started
 ===============
 
